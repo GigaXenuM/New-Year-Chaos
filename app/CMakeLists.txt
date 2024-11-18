@@ -14,6 +14,8 @@ set(HEADER_FILES
     src/scene/visitors/ivisitor.h
     src/scene/visitors/defaultvisitor.h
 
+    src/resources/resourceManager.h
+
     src/graphics-elements/button/ibutton.h
     src/graphics-elements/button/textbutton.h
 
@@ -47,6 +49,8 @@ set(SOURCE_FILES
 
     src/scene/items/abstractitem.cpp
     src/scene/visitors/defaultvisitor.cpp
+
+    src/resources/resourceManager.cpp
 
     src/graphics-elements/button/textbutton.cpp
 

@@ -4,6 +4,8 @@
 
 #include "SFML/System/Vector2.hpp"
 
+#include <algorithm>
+
 template <typename T> struct Point
 {
     Point();

@@ -36,3 +36,7 @@ build
 
 # Qt local files
 *.user
+
+# CLion
+.idea
+cmake-build-debug

@@ -23,6 +23,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
+#include <Resources/ResourceManager.h>
 #include <iostream>
 
 MainWindow::MainWindow(unsigned int width, unsigned int height, const char *name)
@@ -35,6 +36,8 @@ MainWindow::MainWindow(unsigned int width, unsigned int height, const char *name
       _renderer{ _menu },
       _view{ _menuView }
 {
+    ResourseManager::getInstance()->loadAllTextures();
+
     composeMenu();
 }
 
