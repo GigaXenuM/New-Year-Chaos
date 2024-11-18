@@ -1,4 +1,5 @@
 #include "ResourceManager.h"
+#include "SFML/Graphics/Font.hpp"
 #include "SFML/Graphics/Texture.hpp"
 
 #include <filesystem>
@@ -14,6 +15,17 @@ ResourseManager *ResourseManager::getInstance()
     return _instance.get();
 }
 
+void ResourseManager::loadResourses()
+{
+    loadAllFonst();
+    loadAllTextures();
+}
+
+void ResourseManager::loadAllFonst()
+{
+    loadFonts("fonts/", FontType::Arial, "arial");
+}
+
 void ResourseManager::loadAllTextures()
 {
     loadTextures("player/png/", TextureType::Player_run, "Run");
@@ -22,6 +34,35 @@ void ResourseManager::loadAllTextures()
     loadTextures("player/png/", TextureType::Player_jump, "Jump");
     loadTextures("player/png/", TextureType::Player_idle, "Idle");
     loadTextures("player/png/", TextureType::Player_slide, "Slide");
+}
+
+void ResourseManager::loadfont(const std::string &filePath, const FontType type)
+{
+    sf::Font font;
+    if (font.loadFromFile(filePath))
+    {
+        _fonts[type] = std::move(font);
+        std::cout << "Loaded font: " << filePath << std::endl;
+    }
+    else
+    {
+        std::cerr << "Failed to load font: " << filePath << std::endl;
+    }
+}
+
+void ResourseManager::loadFonts(const std::filesystem::path &path, const FontType type,
+                                const std::string &fileNamepart)
+{
+    for (const auto &entry : std::filesystem::directory_iterator(path))
+    {
+        if (entry.is_regular_file() && entry.path().extension() == ".ttf")
+        {
+            if (entry.path().filename().string().find(fileNamepart) == 0)
+            {
+                loadfont(entry.path().string(), type);
+            }
+        }
+    }
 }
 
 void ResourseManager::loadTexture(const std::string &filePath, const TextureType type)

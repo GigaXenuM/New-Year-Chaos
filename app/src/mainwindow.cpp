@@ -36,8 +36,7 @@ MainWindow::MainWindow(unsigned int width, unsigned int height, const char *name
       _renderer{ _menu },
       _view{ _menuView }
 {
-    ResourseManager::getInstance()->loadAllTextures();
-
+    ResourseManager::getInstance()->loadResourses();
     composeMenu();
 }
 
