@@ -26,13 +26,10 @@ enum class TextureType
     Player_slide
 };
 
-struct TexturePack
-{
-    std::vector<sf::Texture> _textures;
-};
-
 class ResourseManager
 {
+    using TexturePack = std::vector<sf::Texture>;
+
 public:
     static ResourseManager *getInstance();
 
@@ -46,11 +43,14 @@ private:
 
     void loadfont(const std::string &filePath, const FontType type);
     void loadFonts(const std::filesystem::path &path, const FontType type,
-                   const std::string &fileNamepart);
+                   const std::string &fileNamePart);
 
     void loadTexture(const std::string &filePath, const TextureType type);
     void loadTextures(const std::filesystem::path &path, const TextureType type,
-                      const std::string &fileNamepart);
+                      const std::string &fileNamePart);
+
+    [[nodiscard]] sf::Font &getFont(const FontType type);
+    [[nodiscard]] TexturePack &getTextures(const TextureType type);
 
 private:
     std::unordered_map<FontType, sf::Font> _fonts;
