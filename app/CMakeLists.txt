@@ -37,6 +37,8 @@ set(HEADER_FILES
 
     src/menu/menu.h
     src/menu/view/menuview.h
+
+    src/action/actionstorage.h
 )
 
 set(SOURCE_FILES
