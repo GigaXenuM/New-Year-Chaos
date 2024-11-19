@@ -13,11 +13,12 @@ set(HEADER_FILES
 
     src/resources/resourceManager.h
 
-    src/graphics-element/button/ibutton.h
-    src/graphics-element/button/textbutton.h
     src/graphics-element/item/drawable.h
-    src/graphics-element/item/abstractitem.h
+    src/graphics-element/player/player.h
     src/graphics-element/layout/layout.h
+    src/graphics-element/button/ibutton.h
+    src/graphics-element/item/abstractitem.h
+    src/graphics-element/button/textbutton.h
     src/graphics-element/layout/verticallayout.h
 
     src/event/event.h
@@ -53,9 +54,10 @@ set(SOURCE_FILES
 
     src/resources/resourceManager.cpp
 
+    src/graphics-element/player/player.cpp
+    src/graphics-element/layout/layout.cpp
     src/graphics-element/button/textbutton.cpp
     src/graphics-element/item/abstractitem.cpp
-    src/graphics-element/layout/layout.cpp
     src/graphics-element/layout/verticallayout.cpp
 
     src/event/eventhandler.cpp
@@ -82,4 +84,9 @@ include_directories(
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} )
 
 target_link_libraries(${PROJECT_NAME} sfml-graphics)
+
+target_sources(New-Year-Chaos
+  PRIVATE
+    src/graphics-element/player/player.h src/graphics-element/player/player.cpp
+)
 target_link_libraries(${PROJECT_NAME} sfml-audio)
