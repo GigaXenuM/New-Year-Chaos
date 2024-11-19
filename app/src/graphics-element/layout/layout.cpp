@@ -1,13 +1,13 @@
 #include "layout.h"
 
 #include "geometry/rect.h"
-#include "scene/items/abstractitem.h"
+#include "item/abstractitem.h"
 
-Layout::Layout(RectF rect, EventHandler *eventHandler) : _rect{ rect }
+Layout::Layout(RectF rect) : _rect{ rect }
 {
 }
 
-void Layout::addItem(std::shared_ptr<Scene::AbstractItem> item)
+void Layout::addItem(std::shared_ptr<Graphics::AbstractItem> item)
 {
     if (std::find(_items.cbegin(), _items.cend(), item) != _items.cend())
         return;

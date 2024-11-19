@@ -1,35 +1,42 @@
 #pragma once
 
-#include "iupdatable.h"
+#include "action/actionstorage.h"
+#include "eventhandler.h"
+#include "iview.h"
 
 #include <memory>
-
-class EventHandler;
 
 class Layout;
 
 namespace sf
 {
 class RenderTarget;
+class View;
 } // namespace sf
 
-namespace Scene
+namespace Graphics
 {
 class AbstractItem;
-} // namespace Scene
+} // namespace Graphics
 
-class Menu : public IUpdatable
+namespace Menu
+{
+
+class Menu : public IView, public Action::ActionStorage
 {
 public:
-    explicit Menu(sf::RenderTarget *renderTarget, EventHandler *eventHandler);
+    explicit Menu(sf::RenderTarget *renderTarget, EventHandler *parent);
+    ~Menu();
 
     void update(float deltatime) override;
-
-    void setLayout(std::unique_ptr<Layout> layout);
+    sf::View *view() const override;
 
 private:
-    sf::RenderTarget *_renderTarget;
-    std::unique_ptr<Layout> _layout;
+    void init();
 
-    EventHandler *_eventHandler;
+    sf::RenderTarget *_renderTarget;
+    std::unique_ptr<sf::View> _view;
+    std::unique_ptr<Layout> _layout;
 };
+
+} // namespace Menu

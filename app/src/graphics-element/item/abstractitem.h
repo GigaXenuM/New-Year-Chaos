@@ -8,11 +8,15 @@
 
 enum class Align;
 
-namespace Scene
+namespace Visitor
 {
 class IVisitor;
+} // namespace Visitor
 
-class AbstractItem : public EventHandler, public Drawable
+namespace Graphics
+{
+
+class AbstractItem : public Drawable
 {
 public:
     explicit AbstractItem(EventHandler *parent);
@@ -25,6 +29,7 @@ public:
     virtual void setPos(PointF position) = 0;
     virtual void setOrigin(Align origin) = 0;
 
-    virtual void accept(IVisitor *visitor);
+    virtual void accept(Visitor::IVisitor *visitor);
 };
-} // namespace Scene
+
+} // namespace Graphics

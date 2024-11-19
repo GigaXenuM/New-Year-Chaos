@@ -6,18 +6,19 @@ set(HEADER_FILES
     src/iview.h
     src/iupdatable.h
 
-    src/graphics-elements/layout/layout.h
-    src/graphics-elements/layout/verticallayout.h
+    src/scene/scene.h
 
-    src/scene/items/drawable.h
-    src/scene/items/abstractitem.h
-    src/scene/visitors/ivisitor.h
-    src/scene/visitors/defaultvisitor.h
+    src/visitor/ivisitor.h
+    src/visitor/defaultvisitor.h
 
     src/resources/resourceManager.h
 
-    src/graphics-elements/button/ibutton.h
-    src/graphics-elements/button/textbutton.h
+    src/graphics-element/button/ibutton.h
+    src/graphics-element/button/textbutton.h
+    src/graphics-element/item/drawable.h
+    src/graphics-element/item/abstractitem.h
+    src/graphics-element/layout/layout.h
+    src/graphics-element/layout/verticallayout.h
 
     src/event/event.h
     src/event/eventhandler.h
@@ -36,7 +37,9 @@ set(HEADER_FILES
     src/geometry/alignment.h
 
     src/menu/menu.h
-    src/menu/view/menuview.h
+    src/menu/actionvariant.h
+
+    src/action/actionstorage.h
 )
 
 set(SOURCE_FILES
@@ -44,15 +47,16 @@ set(SOURCE_FILES
 
     src/mainwindow.cpp
 
-    src/graphics-elements/layout/layout.cpp
-    src/graphics-elements/layout/verticallayout.cpp
+    src/scene/scene.cpp
 
-    src/scene/items/abstractitem.cpp
-    src/scene/visitors/defaultvisitor.cpp
+    src/visitor/defaultvisitor.cpp
 
     src/resources/resourceManager.cpp
 
-    src/graphics-elements/button/textbutton.cpp
+    src/graphics-element/button/textbutton.cpp
+    src/graphics-element/item/abstractitem.cpp
+    src/graphics-element/layout/layout.cpp
+    src/graphics-element/layout/verticallayout.cpp
 
     src/event/eventhandler.cpp
     src/event/keyevents/keypressevent.cpp
@@ -64,7 +68,6 @@ set(SOURCE_FILES
     src/geometry/utils.cpp
 
     src/menu/menu.cpp
-    src/menu/view/menuview.cpp
 )
 
 include_directories(
@@ -72,7 +75,7 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/app/src/scene"
     "${CMAKE_SOURCE_DIR}/app/src/geometry"
     "${CMAKE_SOURCE_DIR}/app/src/menu"
-    "${CMAKE_SOURCE_DIR}/app/src/graphics-elements"
+    "${CMAKE_SOURCE_DIR}/app/src/graphics-element"
     "${CMAKE_SOURCE_DIR}/app/src/event"
 )
 

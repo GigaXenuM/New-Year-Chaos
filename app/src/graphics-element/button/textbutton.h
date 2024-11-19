@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ibutton.h"
-#include "scene/items/abstractitem.h"
+#include "item/abstractitem.h"
 
 #include "geometry/point.h"
 #include "geometry/rect.h"
@@ -11,17 +11,15 @@
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Graphics/Text.hpp"
 
-#include <string>
-
 class EventHandler;
 
-namespace Scene
+namespace Graphics
 {
 
 class TextButton : public AbstractItem, public IButton
 {
 public:
-    explicit TextButton(const std::string &text, const sf::Font &font, SizeF size,
+    explicit TextButton(const sf::String &text, const sf::Font &font, SizeF size,
                         EventHandler *parent);
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
@@ -46,7 +44,7 @@ private:
     void setup();
     void updateGeometry();
 
-    std::string _text;
+    sf::String _text;
 
     sf::Font _font;
     sf::Text _textItem;
@@ -56,4 +54,4 @@ private:
 
     OnClickCallback _onClickCallback;
 };
-} // namespace Scene
+} // namespace Graphics

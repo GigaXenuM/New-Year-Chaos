@@ -1,9 +1,8 @@
 #include "verticallayout.h"
 
-#include "scene/items/abstractitem.h"
+#include "item/abstractitem.h"
 
-VerticalLayout::VerticalLayout(RectF rect, EventHandler *eventHandler)
-    : Layout{ rect, eventHandler }
+VerticalLayout::VerticalLayout(RectF rect) : Layout{ rect }
 {
 }
 

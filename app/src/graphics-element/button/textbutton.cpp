@@ -14,9 +14,9 @@ const sf::Color DEFAULT_BACKGROUND_COLOR{ 38, 35, 36, 255 };
 const sf::Color ACTIVE_BACKGROUND_COLOR{ 140, 34, 179, 255 };
 } // namespace
 
-namespace Scene
+namespace Graphics
 {
-TextButton::TextButton(const std::string &text, const sf::Font &font, SizeF size,
+TextButton::TextButton(const sf::String &text, const sf::Font &font, SizeF size,
                        EventHandler *parent)
     : AbstractItem{ parent },
       _text{ text },
@@ -25,9 +25,6 @@ TextButton::TextButton(const std::string &text, const sf::Font &font, SizeF size
       _shape{ Geometry::toSfmlSize(size) },
       _onClickCallback{ []() {} }
 {
-    if (parent != nullptr)
-        parent->addEventHandler(this);
-
     setup();
     updateGeometry();
 }
@@ -133,4 +130,4 @@ void TextButton::updateGeometry()
 {
     _textItem.setPosition(Geometry::toSfmlPoint(center()));
 }
-} // namespace Scene
+} // namespace Graphics

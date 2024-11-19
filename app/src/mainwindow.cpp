@@ -2,39 +2,35 @@
 
 #include "layout/verticallayout.h"
 
-#include "graphics-elements/button/textbutton.h"
+#include "graphics-element/button/textbutton.h"
 
 #include "event/keyevents/keypressevent.h"
 #include "event/keyevents/keyreleaseevent.h"
 #include "event/mouseevents/mousepressevent.h"
 #include "event/mouseevents/mousereleaseevent.h"
 
-#include "geometry/rect.h"
 #include "geometry/utils.h"
 
-#include "iupdatable.h"
 #include "iview.h"
 
-#include "view/menuview.h"
-
+#include "menu/actionvariant.h"
 #include "menu/menu.h"
+
+#include "scene/scene.h"
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
 #include <Resources/ResourceManager.h>
-#include <iostream>
 
 MainWindow::MainWindow(unsigned int width, unsigned int height, const char *name)
     : sf::RenderWindow{ sf::VideoMode({ width, height }), name },
-      _menuView{ std::make_shared<MenuView>(
-          this, RectF{ { 0.f, 0.f }, { static_cast<float>(width), static_cast<float>(height) } },
-          this) },
-      _menu{ std::make_shared<Menu>(this, this) },
-      _latestMouseMoveEvent{ {}, {} },
-      _renderer{ _menu },
-      _view{ _menuView }
+      EventHandler{ nullptr },
+      _menu{ std::make_unique<Menu::Menu>(this, this) },
+      _scene{ std::make_unique<Scene::Scene>(this, this) },
+      _currentView{ _menu.get() },
+      _latestMouseMoveEvent{ {}, {} }
 {
     ResourseManager::getInstance()->loadResourses();
     composeMenu();
@@ -54,8 +50,7 @@ int MainWindow::gameLoop()
         while (pollEvent(event))
             handleSfmlEvent(event);
 
-        _view->update(deltatime);
-        _renderer->update(deltatime);
+        _currentView->update(deltatime);
 
         display();
     }
@@ -66,7 +61,7 @@ int MainWindow::gameLoop()
 void MainWindow::keyPressEvent(KeyPressEvent *event)
 {
     if (event->key() == Keyboard::Key::Escape)
-        switchContent();
+        switchView();
 }
 
 void MainWindow::handleSfmlEvent(const sf::Event &event)
@@ -124,45 +119,22 @@ void MainWindow::handleSfmlEvent(const sf::Event &event)
 
 void MainWindow::composeMenu()
 {
-    auto layout{ std::make_unique<VerticalLayout>(
-        static_cast<RectF>(Geometry::toRect(getViewport(getView()))), this) };
-    layout->setSpacing(20);
-
-    sf::Font font;
-    bool successLoad{ font.loadFromFile("fonts/arial.ttf") };
-    if (!successLoad)
-        std::cerr << "GameMenu: Failed load font." << std::endl;
-
-    auto startButton{ std::make_shared<Scene::TextButton>("Start Game", font,
-                                                          SizeF{ 180.0f, 50.0f }, this) };
-    auto exitButton{ std::make_shared<Scene::TextButton>("Exit", font, SizeF{ 180.0f, 50.0f },
-                                                         this) };
-
-    startButton->onClick([this]() { switchContent(); });
-    exitButton->onClick([this]() { close(); });
-
-    layout->addItem(startButton);
-    layout->addItem(exitButton);
-
-    _menu->setLayout(std::move(layout));
+    _menu->registerAction(Menu::ActionVariant::Exit, [this]() { close(); });
+    _menu->registerAction(Menu::ActionVariant::StartGame, [this]() { switchView(); });
 }
 
-void MainWindow::switchContent()
+void MainWindow::switchView()
 {
-    _showMenu = !_showMenu;
+    static bool showMenu{ true };
+    showMenu = !showMenu;
 
-    if (_showMenu)
-        switchToMenu();
-    else
-        switchToGame();
+    IView *view{ showMenu ? dynamic_cast<IView *>(_menu.get())
+                          : dynamic_cast<IView *>(_scene.get()) };
+    switchView(view);
 }
 
-void MainWindow::switchToGame()
+void MainWindow::switchView(IView *view)
 {
-}
-
-void MainWindow::switchToMenu()
-{
-    _renderer = _menu;
-    _view = _menuView;
+    grabContext(view);
+    _currentView = view;
 }

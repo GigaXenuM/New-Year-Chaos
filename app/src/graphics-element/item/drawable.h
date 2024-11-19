@@ -4,13 +4,17 @@
 
 #include "SFML/Graphics/Drawable.hpp"
 
-namespace Scene
+namespace Graphics
 {
 class Drawable : public IUpdatable, public sf::Drawable
 {
 public:
+    Drawable(EventHandler *parent) : IUpdatable{ parent }
+    {
+    }
+
     void update(float /*deltatime*/) override
     {
     }
 };
-} // namespace Scene
+} // namespace Graphics
