@@ -16,7 +16,7 @@ class IVisitor;
 namespace Graphics
 {
 
-class AbstractItem : public EventHandler, public Drawable
+class AbstractItem : public Drawable
 {
 public:
     explicit AbstractItem(EventHandler *parent);

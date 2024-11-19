@@ -28,6 +28,7 @@ MainWindow::MainWindow(unsigned int width, unsigned int height, const char *name
     : sf::RenderWindow{ sf::VideoMode({ width, height }), name },
       EventHandler{ nullptr },
       _menu{ std::make_unique<Menu::Menu>(this, this) },
+      _scene{ std::make_unique<Scene::Scene>(this, this) },
       _currentView{ _menu.get() },
       _latestMouseMoveEvent{ {}, {} }
 {
@@ -60,7 +61,7 @@ int MainWindow::gameLoop()
 void MainWindow::keyPressEvent(KeyPressEvent *event)
 {
     if (event->key() == Keyboard::Key::Escape)
-        switchContent();
+        switchView();
 }
 
 void MainWindow::handleSfmlEvent(const sf::Event &event)
@@ -119,24 +120,21 @@ void MainWindow::handleSfmlEvent(const sf::Event &event)
 void MainWindow::composeMenu()
 {
     _menu->registerAction(Menu::ActionVariant::Exit, [this]() { close(); });
-    _menu->registerAction(Menu::ActionVariant::StartGame, [this]() { switchContent(); });
+    _menu->registerAction(Menu::ActionVariant::StartGame, [this]() { switchView(); });
 }
 
-void MainWindow::switchContent()
+void MainWindow::switchView()
 {
-    _showMenu = !_showMenu;
+    static bool showMenu{ true };
+    showMenu = !showMenu;
 
-    if (_showMenu)
-        switchToMenu();
-    else
-        switchToGame();
+    IView *view{ showMenu ? dynamic_cast<IView *>(_menu.get())
+                          : dynamic_cast<IView *>(_scene.get()) };
+    switchView(view);
 }
 
-void MainWindow::switchToGame()
+void MainWindow::switchView(IView *view)
 {
-}
-
-void MainWindow::switchToMenu()
-{
-    _currentView = _menu.get();
+    grabContext(view);
+    _currentView = view;
 }

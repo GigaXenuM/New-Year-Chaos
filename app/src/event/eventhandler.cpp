@@ -36,19 +36,53 @@ void EventHandler::handleEvent(Event *event)
         break;
     }
 
-    for (auto *handler : _handlers)
+    if (_grabbed != nullptr)
+    {
+        _grabbed->handleEvent(event);
+        return;
+    }
+
+    for (auto *handler : _children)
         handler->handleEvent(event);
 }
 
 void EventHandler::addEventHandler(EventHandler *handler)
 {
-    _handlers.push_back(handler);
+    if (handler == nullptr)
+        return;
+
+    _children.push_back(handler);
+
+    EventHandler *handlerParent{ handler->_parent };
+    if (handlerParent != nullptr)
+        handlerParent->removeEventHandler(handler);
+
+    handlerParent = this;
 }
 
 void EventHandler::removeEventHandler(EventHandler *handler)
 {
-    auto toRemove{ std::find(_handlers.begin(), _handlers.end(), handler) };
-    _handlers.erase(toRemove);
+    auto toRemove{ std::find(_children.begin(), _children.end(), handler) };
+    _children.erase(toRemove);
+}
+
+void EventHandler::grabContext(const EventHandler *handler)
+{
+    auto it{ std::find(_children.begin(), _children.end(), handler) };
+    if (it == _children.end())
+    {
+        std::cerr << "EventHandler::grabContext: The handler you want to grab not found."
+                  << std::endl;
+        assert(false);
+        return;
+    }
+
+    _grabbed = *it;
+}
+
+void EventHandler::releaseContext()
+{
+    _grabbed = nullptr;
 }
 
 void EventHandler::keyPressEvent(KeyPressEvent * /*event*/)

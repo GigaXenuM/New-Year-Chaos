@@ -22,7 +22,7 @@ class AbstractItem;
 namespace Menu
 {
 
-class Menu : public IView, public Action::ActionStorage, public EventHandler
+class Menu : public IView, public Action::ActionStorage
 {
 public:
     explicit Menu(sf::RenderTarget *renderTarget, EventHandler *parent);
@@ -37,8 +37,6 @@ private:
     sf::RenderTarget *_renderTarget;
     std::unique_ptr<sf::View> _view;
     std::unique_ptr<Layout> _layout;
-
-    EventHandler *_eventHandler;
 };
 
 } // namespace Menu

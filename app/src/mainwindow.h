@@ -34,9 +34,8 @@ private:
 
     void composeMenu();
 
-    void switchContent();
-    void switchToGame();
-    void switchToMenu();
+    void switchView();
+    void switchView(IView *view);
 
     sf::Clock _clock;
 
@@ -46,6 +45,4 @@ private:
     IView *_currentView{ nullptr };
 
     MouseMoveEvent _latestMouseMoveEvent;
-
-    bool _showMenu{ true };
 };

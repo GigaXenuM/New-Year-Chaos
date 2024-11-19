@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+#include <iostream>
 #include <vector>
 
 class Event;
@@ -12,13 +14,23 @@ class MouseMoveEvent;
 class EventHandler
 {
 public:
-    EventHandler(EventHandler *parent);
+    EventHandler(EventHandler *parent = nullptr);
     virtual ~EventHandler() = default;
+
+    EventHandler(const EventHandler &other) = delete;
+    EventHandler &operator=(const EventHandler &other) = delete;
+
+    EventHandler(EventHandler &&other) = delete;
+    EventHandler &operator=(EventHandler &&other) = delete;
 
     virtual void handleEvent(Event *event);
 
     void addEventHandler(EventHandler *handler);
     void removeEventHandler(EventHandler *handler);
+
+    void grabContext(const EventHandler *handler);
+
+    void releaseContext();
 
 protected:
     virtual void keyPressEvent(KeyPressEvent *event);
@@ -28,5 +40,7 @@ protected:
     virtual void mouseMoveEvent(MouseMoveEvent *event);
 
 private:
-    std::vector<EventHandler *> _handlers;
+    EventHandler *_parent{ nullptr };
+    std::vector<EventHandler *> _children;
+    EventHandler *_grabbed{ nullptr };
 };

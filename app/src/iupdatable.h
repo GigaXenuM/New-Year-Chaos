@@ -1,7 +1,13 @@
 #pragma once
 
-class IUpdatable
+#include "eventhandler.h"
+
+class IUpdatable : public EventHandler
 {
 public:
+    IUpdatable(EventHandler *parent) : EventHandler{ parent }
+    {
+    }
+
     virtual void update(float deltatime) = 0;
 };

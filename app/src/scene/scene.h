@@ -1,8 +1,9 @@
 #pragma once
 
 #include "event/eventhandler.h"
-#include "iupdatable.h"
+#include "iview.h"
 
+#include <memory>
 #include <vector>
 
 namespace sf
@@ -19,18 +20,21 @@ class AbstractItem;
 namespace Scene
 {
 
-class Scene : public EventHandler, public IUpdatable
+class Scene : public IView
 {
 public:
     explicit Scene(sf::RenderTarget *renderTarget, EventHandler *parent);
     virtual ~Scene() = default;
 
     void update(float deltatime) override;
+    sf::View *view() const override;
 
     void addItem(Graphics::AbstractItem *item);
 
 private:
     sf::RenderTarget *_renderTarget{ nullptr };
+    std::unique_ptr<sf::View> _view;
+
     std::vector<Graphics::Drawable *> _itemsToDrawing;
 };
 

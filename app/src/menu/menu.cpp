@@ -17,7 +17,7 @@ namespace Menu
 {
 
 Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent)
-    : EventHandler{ parent },
+    : IView{ parent },
       _renderTarget{ renderTarget },
       _view{ std::make_unique<sf::View>(
           sf::FloatRect(sf::Vector2f{},

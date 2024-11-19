@@ -9,7 +9,11 @@
 namespace Scene
 {
 Scene::Scene(sf::RenderTarget *renderTarget, EventHandler *parent)
-    : EventHandler{ parent }, _renderTarget{ renderTarget }
+    : IView{ parent },
+      _renderTarget{ renderTarget },
+      _view{ std::make_unique<sf::View>(
+          sf::FloatRect(sf::Vector2f{},
+                        sf::Vector2f(renderTarget->getSize().x, renderTarget->getSize().y))) }
 {
 }
 
@@ -22,6 +26,11 @@ void Scene::update(float deltatime)
         item->update(deltatime);
         _renderTarget->draw(*item);
     }
+}
+
+sf::View *Scene::view() const
+{
+    return _view.get();
 }
 
 void Scene::addItem(Graphics::AbstractItem *item)

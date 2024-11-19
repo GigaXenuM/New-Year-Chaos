@@ -4,7 +4,7 @@
 
 namespace Graphics
 {
-AbstractItem::AbstractItem(EventHandler *parent) : EventHandler{ parent }
+AbstractItem::AbstractItem(EventHandler *parent) : Drawable{ parent }
 {
 }
 
