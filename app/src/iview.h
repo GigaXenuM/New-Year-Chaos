@@ -1,7 +1,14 @@
 #pragma once
 
-class IView
+#include "iupdatable.h"
+
+namespace sf
+{
+class View;
+}
+
+class IView : public IUpdatable
 {
 public:
-    virtual void update(float deltaTime) = 0;
+    virtual sf::View *view() const = 0;
 };

@@ -7,11 +7,11 @@
 
 #include <memory>
 
-class Menu;
-class MenuView;
-class SceneView;
-class IUpdatable;
 class IView;
+namespace Menu
+{
+class Menu;
+} // namespace Menu
 
 namespace Scene
 {
@@ -40,13 +40,12 @@ private:
 
     sf::Clock _clock;
 
-    std::shared_ptr<MenuView> _menuView;
-    std::shared_ptr<Menu> _menu;
+    std::unique_ptr<Menu::Menu> _menu;
+    std::unique_ptr<Scene::Scene> _scene;
+
+    IView *_currentView{ nullptr };
 
     MouseMoveEvent _latestMouseMoveEvent;
-
-    std::shared_ptr<IUpdatable> _renderer;
-    std::shared_ptr<IView> _view;
 
     bool _showMenu{ true };
 };

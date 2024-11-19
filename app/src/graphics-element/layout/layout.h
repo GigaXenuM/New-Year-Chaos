@@ -6,21 +6,19 @@
 #include <memory>
 #include <vector>
 
-class EventHandler;
-
-namespace Scene
+namespace Graphics
 {
 class AbstractItem;
-} // namespace Scene
+} // namespace Graphics
 
 class Layout
 {
-    using Items = std::vector<std::shared_ptr<Scene::AbstractItem>>;
+    using Items = std::vector<std::shared_ptr<Graphics::AbstractItem>>;
 
 public:
-    explicit Layout(RectF rect, EventHandler *eventHandler);
+    explicit Layout(RectF rect);
 
-    void addItem(std::shared_ptr<Scene::AbstractItem> item);
+    void addItem(std::shared_ptr<Graphics::AbstractItem> item);
     Items items() const;
 
     void setAlignment(Align alingment);

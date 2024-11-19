@@ -4,7 +4,7 @@
 
 #include "SFML/Graphics/Drawable.hpp"
 
-namespace Scene
+namespace Graphics
 {
 class Drawable : public IUpdatable, public sf::Drawable
 {
@@ -13,4 +13,4 @@ public:
     {
     }
 };
-} // namespace Scene
+} // namespace Graphics

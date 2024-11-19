@@ -10,7 +10,7 @@ class EventHandler;
 class VerticalLayout : public Layout
 {
 public:
-    explicit VerticalLayout(RectF rect, EventHandler *eventHandler);
+    explicit VerticalLayout(RectF rect);
 
 protected:
     void updateGeometry() override;

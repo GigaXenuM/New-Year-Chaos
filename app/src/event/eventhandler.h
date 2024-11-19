@@ -12,6 +12,7 @@ class MouseMoveEvent;
 class EventHandler
 {
 public:
+    EventHandler(EventHandler *parent);
     virtual ~EventHandler() = default;
 
     virtual void handleEvent(Event *event);

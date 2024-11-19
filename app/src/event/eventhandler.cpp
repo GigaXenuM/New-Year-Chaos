@@ -7,6 +7,12 @@
 #include "event/mouseevents/mousepressevent.h"
 #include "event/mouseevents/mousereleaseevent.h"
 
+EventHandler::EventHandler(EventHandler *parent)
+{
+    if (parent != nullptr)
+        parent->addEventHandler(this);
+}
+
 void EventHandler::handleEvent(Event *event)
 {
     switch (event->type())
