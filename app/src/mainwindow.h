@@ -5,6 +5,8 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
+#include <memory>
+
 class Menu;
 class MenuView;
 class SceneView;
