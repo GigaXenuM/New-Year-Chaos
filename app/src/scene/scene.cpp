@@ -13,8 +13,10 @@ Scene::Scene(sf::RenderTarget *renderTarget, EventHandler *parent)
       _renderTarget{ renderTarget },
       _view{ std::make_unique<sf::View>(
           sf::FloatRect(sf::Vector2f{},
-                        sf::Vector2f(renderTarget->getSize().x, renderTarget->getSize().y))) }
+                        sf::Vector2f(renderTarget->getSize().x, renderTarget->getSize().y))) },
+      _player{ std::make_unique<Player>(_renderTarget, this) }
 {
+    addItem(_player.get());
 }
 
 void Scene::update(float deltatime)
