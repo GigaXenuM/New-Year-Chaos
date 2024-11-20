@@ -7,6 +7,10 @@ set(HEADER_FILES
     src/iupdatable.h
 
     src/scene/scene.h
+    src/scene/level/layer/tile-layer/animation/animationstate.h
+    src/scene/level/layer/tile-layer/chunk/chunk.h
+    src/scene/level/layer/tile-layer/chunk/chunkarray.h
+    src/scene/level/layer/tile-layer/tilelayer.h
 
     src/visitor/ivisitor.h
     src/visitor/defaultvisitor.h
@@ -51,6 +55,9 @@ set(SOURCE_FILES
     src/mainwindow.cpp
 
     src/scene/scene.cpp
+    src/scene/level/layer/tile-layer/chunk/chunk.cpp
+    src/scene/level/layer/tile-layer/chunk/chunkarray.cpp
+    src/scene/level/layer/tile-layer/tilelayer.cpp
 
     src/visitor/defaultvisitor.cpp
 
@@ -81,6 +88,8 @@ set(SOURCE_FILES
 include_directories(
     "${CMAKE_SOURCE_DIR}/app/src"
     "${CMAKE_SOURCE_DIR}/app/src/scene"
+    "${CMAKE_SOURCE_DIR}/app/src/scene/level"
+    "${CMAKE_SOURCE_DIR}/app/src/scene/level/layer"
     "${CMAKE_SOURCE_DIR}/app/src/geometry"
     "${CMAKE_SOURCE_DIR}/app/src/menu"
     "${CMAKE_SOURCE_DIR}/app/src/graphics-element"
