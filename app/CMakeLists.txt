@@ -96,3 +96,4 @@ target_sources(New-Year-Chaos
     src/graphics-element/player/player.h src/graphics-element/player/player.cpp
 )
 target_link_libraries(${PROJECT_NAME} sfml-audio)
+target_link_libraries(${PROJECT_NAME} tmxlite)
