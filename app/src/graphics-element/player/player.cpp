@@ -1,10 +1,11 @@
 #include "player.h"
-#include "SFML/Graphics/RenderTarget.hpp"
 
+#include "SFML/Graphics/RenderTarget.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 
-Player::Player(const sf::RenderTarget *targetRender, EventHandler *eventHandler)
-    : Graphics::AbstractItem(eventHandler)
+#include "event/keyevents/keypressevent.h"
+
+Player::Player(EventHandler *eventHandler) : Graphics::AbstractItem(eventHandler)
 {
 }
 
@@ -33,6 +34,18 @@ void Player::setOrigin(Align origin)
 
 void Player::keyPressEvent(KeyPressEvent *event)
 {
+    if (event->key() == sf::Keyboard::Right)
+    {
+    }
+    if (event->key() == sf::Keyboard::Left)
+    {
+    }
+    if (event->key() == sf::Keyboard::Down)
+    {
+    }
+    if (event->key() == sf::Keyboard::Space)
+    {
+    }
 }
 
 void Player::keyReleaseEvent(KeyReleaseEvent *event)

@@ -14,7 +14,7 @@ Scene::Scene(sf::RenderTarget *renderTarget, EventHandler *parent)
       _view{ std::make_unique<sf::View>(
           sf::FloatRect(sf::Vector2f{},
                         sf::Vector2f(renderTarget->getSize().x, renderTarget->getSize().y))) },
-      _player{ std::make_unique<Player>(_renderTarget, this) }
+      _player{ std::make_unique<Player>(this) }
 {
     addItem(_player.get());
 }

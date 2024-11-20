@@ -5,7 +5,7 @@
 class Player : public Graphics::AbstractItem
 {
 public:
-    Player(const sf::RenderTarget *targetRender, EventHandler *eventHandler);
+    Player(EventHandler *eventHandler);
 
 protected:
     RectF globalRect() const override;
