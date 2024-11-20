@@ -22,5 +22,7 @@ protected:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
-    sf::RenderTarget *_targetRender;
+    PointF _position{};
+    bool _movingRight{ false };
+    bool _movingLeft = { false };
 };
