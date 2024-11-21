@@ -21,6 +21,8 @@ set(HEADER_FILES
     src/graphics-element/button/textbutton.h
     src/graphics-element/layout/verticallayout.h
 
+    src/animation/animation.h
+
     src/event/event.h
     src/event/eventhandler.h
     src/event/keyevents/keyboard.h
@@ -60,6 +62,8 @@ set(SOURCE_FILES
     src/graphics-element/item/abstractitem.cpp
     src/graphics-element/layout/verticallayout.cpp
 
+    src/animation/animation.h
+
     src/event/eventhandler.cpp
     src/event/keyevents/keypressevent.cpp
     src/event/keyevents/keyreleaseevent.cpp
@@ -70,6 +74,8 @@ set(SOURCE_FILES
     src/geometry/utils.cpp
 
     src/menu/menu.cpp
+        src/animation/Animation.cpp
+        src/animation/Animation.h
 )
 
 include_directories(

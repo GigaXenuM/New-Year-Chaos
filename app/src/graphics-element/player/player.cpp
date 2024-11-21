@@ -6,9 +6,14 @@
 #include "event/keyevents/keypressevent.h"
 #include "event/keyevents/keyreleaseevent.h"
 
-Player::Player(EventHandler *eventHandler) : Graphics::AbstractItem(eventHandler)
+Player::Player(EventHandler *eventHandler)
+    : Graphics::AbstractItem(eventHandler),
+      _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_walk) },
+      _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run) },
+      _jumpAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_jump) }
 {
-    _sprite.setScale({ 0.2, 0.2 });
+    _walkAnimation.start();
+    _sprite.setScale(_scaleFactors);
 }
 
 RectF Player::globalRect() const
@@ -40,10 +45,6 @@ void Player::keyPressEvent(KeyPressEvent *event)
         _movingRight = true;
     if (event->key() == sf::Keyboard::Left)
         _movingLeft = true;
-    if (event->key() == sf::Keyboard::Down)
-        _slideMode = true;
-    if (event->key() == sf::Keyboard::LShift)
-        _runMode = true;
 }
 
 void Player::keyReleaseEvent(KeyReleaseEvent *event)
@@ -52,32 +53,18 @@ void Player::keyReleaseEvent(KeyReleaseEvent *event)
         _movingRight = false;
     if (event->key() == sf::Keyboard::Left)
         _movingLeft = false;
-    if (event->key() == sf::Keyboard::Down)
-        _slideMode = false;
-    if (event->key() == sf::Keyboard::LShift)
-        _runMode = false;
 }
 
 void Player::animation(float deltatime)
 {
     _sprite.setOrigin(_sprite.getLocalBounds().width / 2.f, _sprite.getLocalBounds().height / 2.f);
-
     if (_movingRight || _movingLeft)
     {
-        _elapsedTime += deltatime;
-
-        if (_elapsedTime >= _frameTime)
-        {
-            _elapsedTime = 0.f;
-
-            _currentFrame = (_currentFrame + 1) % _walkTextures.size();
-            _sprite.setTexture(_walkTextures[_currentFrame]);
-
-            if (_movingRight)
-                _sprite.setScale({ 0.2, 0.2 });
-            else if (_movingLeft)
-                _sprite.setScale({ -0.2, 0.2 });
-        }
+        _walkAnimation.update(deltatime, _sprite);
+        if (_movingRight)
+            _sprite.setScale(_scaleFactors);
+        else if (_movingLeft)
+            _sprite.setScale(_rscaleFactors);
     }
     else
     {

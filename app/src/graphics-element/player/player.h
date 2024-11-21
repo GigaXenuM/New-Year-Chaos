@@ -2,6 +2,7 @@
 
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/Texture.hpp"
+#include "animation/animation.h"
 #include "resources/resourceManager.h"
 
 #include <item/abstractitem.h>
@@ -30,7 +31,9 @@ private:
     void updatePosition(float deltatime);
 
 private:
-    const float _speed = 200.f;
+    const float _speed{ 200.f };
+    const sf::Vector2f _scaleFactors{ 0.2f, 0.2f };
+    const sf::Vector2f _rscaleFactors{ -0.2f, 0.2f };
 
     std::vector<sf::Texture> &_walkTextures
         = ResourseManager::getInstance()->getTextures(TextureType::Player_walk);
@@ -39,7 +42,7 @@ private:
     std::vector<sf::Texture> &_runTextures
         = ResourseManager::getInstance()->getTextures(TextureType::Player_run);
 
-    PointF _position{300,300};
+    PointF _position{ 300, 300 };
     sf::Sprite _sprite;
 
     int _currentFrame{ 0 };
@@ -51,4 +54,9 @@ private:
 
     bool _movingRight{ false };
     bool _movingLeft = { false };
+
+private:
+    Animation _walkAnimation;
+    Animation _runAnimation;
+    Animation _jumpAnimation;
 };
