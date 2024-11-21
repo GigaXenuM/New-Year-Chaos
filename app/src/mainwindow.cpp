@@ -32,7 +32,6 @@ MainWindow::MainWindow(unsigned int width, unsigned int height, const char *name
       _currentView{ _menu.get() },
       _latestMouseMoveEvent{ {}, {} }
 {
-    ResourseManager::getInstance()->loadResourses();
     composeMenu();
 }
 

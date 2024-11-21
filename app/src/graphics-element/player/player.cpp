@@ -1,18 +1,19 @@
 #include "player.h"
 
 #include "SFML/Graphics/RenderTarget.hpp"
-#include <SFML/Graphics/RectangleShape.hpp>
 
+#include "Resources/ResourceManager.h"
 #include "event/keyevents/keypressevent.h"
 #include "event/keyevents/keyreleaseevent.h"
 
 Player::Player(EventHandler *eventHandler) : Graphics::AbstractItem(eventHandler)
 {
+    _sprite.setScale({ 0.2, 0.2 });
 }
 
 RectF Player::globalRect() const
 {
-    return RectF{ { 0, 0 }, { 100, 100 } };
+    return {};
 }
 
 RectF Player::localRect() const
@@ -40,11 +41,9 @@ void Player::keyPressEvent(KeyPressEvent *event)
     if (event->key() == sf::Keyboard::Left)
         _movingLeft = true;
     if (event->key() == sf::Keyboard::Down)
-    {
-    }
-    if (event->key() == sf::Keyboard::Space)
-    {
-    }
+        _slideMode = true;
+    if (event->key() == sf::Keyboard::LShift)
+        _runMode = true;
 }
 
 void Player::keyReleaseEvent(KeyReleaseEvent *event)
@@ -53,27 +52,55 @@ void Player::keyReleaseEvent(KeyReleaseEvent *event)
         _movingRight = false;
     if (event->key() == sf::Keyboard::Left)
         _movingLeft = false;
+    if (event->key() == sf::Keyboard::Down)
+        _slideMode = false;
+    if (event->key() == sf::Keyboard::LShift)
+        _runMode = false;
+}
+
+void Player::animation(float deltatime)
+{
+    _sprite.setOrigin(_sprite.getLocalBounds().width / 2.f, _sprite.getLocalBounds().height / 2.f);
+
+    if (_movingRight || _movingLeft)
+    {
+        _elapsedTime += deltatime;
+
+        if (_elapsedTime >= _frameTime)
+        {
+            _elapsedTime = 0.f;
+
+            _currentFrame = (_currentFrame + 1) % _walkTextures.size();
+            _sprite.setTexture(_walkTextures[_currentFrame]);
+
+            if (_movingRight)
+                _sprite.setScale({ 0.2, 0.2 });
+            else if (_movingLeft)
+                _sprite.setScale({ -0.2, 0.2 });
+        }
+    }
+    else
+    {
+        _sprite.setTexture(_walkTextures[0]);
+    }
+}
+
+void Player::updatePosition(float deltatime)
+{
+    if (_movingRight)
+        _position.setX(_position.x() + _speed * deltatime);
+    if (_movingLeft)
+        _position.setX(_position.x() - _speed * deltatime);
+    _sprite.setPosition(_position.x(), _position.y());
 }
 
 void Player::update(float deltatime)
 {
-    const float speed = 200.f;
-    static PointF newPos{};
-    if (_movingRight)
-       newPos.setX(_position.x() + speed * deltatime);
-    if (_movingLeft)
-       newPos.setX(_position.x() - speed * deltatime);
-
-    _position = newPos;
+    updatePosition(deltatime);
+    animation(deltatime);
 }
 
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    sf::RectangleShape rectangle;
-    rectangle.setSize(sf::Vector2f(100.f, 100.f));
-    rectangle.setFillColor(sf::Color::Red);
-
-    rectangle.setPosition(_position.x(), _position.y());
-
-    target.draw(rectangle, states);
+    target.draw(_sprite, states);
 }
