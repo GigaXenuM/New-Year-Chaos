@@ -71,6 +71,7 @@ void ResourseManager::loadTexture(const std::string &filePath, const TextureType
         return;
     }
 
+    texture.setSmooth(true);
     _textures[type].emplace_back(std::move(texture));
     std::cout << "Loaded texture: " << filePath << std::endl;
 }
