@@ -5,24 +5,8 @@ Animation::Animation(std::vector<sf::Texture> &textures, float frameTime)
 {
 }
 
-void Animation::start()
+void Animation::start(const float deltatime, sf::Sprite &sprite)
 {
-    _isPlaying = true;
-    _currentFrame = 0;
-    _elapsedTime = 0.f;
-}
-
-void Animation::stop()
-{
-    _isPlaying = false;
-    _currentFrame = 0;
-}
-
-void Animation::update(float deltatime, sf::Sprite &sprite)
-{
-    if (!_isPlaying || _textures.empty())
-        return;
-
     _elapsedTime += deltatime;
     if (_elapsedTime >= _frameTime)
     {
@@ -30,4 +14,9 @@ void Animation::update(float deltatime, sf::Sprite &sprite)
         _currentFrame = (_currentFrame + 1) % _textures.size();
         sprite.setTexture(_textures[_currentFrame]);
     }
+}
+
+void Animation::stop()
+{
+    _currentFrame = 0;
 }

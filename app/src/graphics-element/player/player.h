@@ -1,9 +1,7 @@
 #pragma once
 
 #include "SFML/Graphics/Sprite.hpp"
-#include "SFML/Graphics/Texture.hpp"
 #include "animation/animation.h"
-#include "resources/resourceManager.h"
 
 #include <item/abstractitem.h>
 
@@ -27,36 +25,28 @@ protected:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
-    void animation(float deltatime);
-    void updatePosition(float deltatime);
+    void updateAnimation(const float deltatime);
+    void updatePosition(const float deltatime);
 
 private:
     const float _speed{ 200.f };
     const sf::Vector2f _scaleFactors{ 0.2f, 0.2f };
     const sf::Vector2f _rscaleFactors{ -0.2f, 0.2f };
 
-    std::vector<sf::Texture> &_walkTextures
-        = ResourseManager::getInstance()->getTextures(TextureType::Player_walk);
-    std::vector<sf::Texture> &_jumpTextures
-        = ResourseManager::getInstance()->getTextures(TextureType::Player_jump);
-    std::vector<sf::Texture> &_runTextures
-        = ResourseManager::getInstance()->getTextures(TextureType::Player_run);
-
     PointF _position{ 300, 300 };
     sf::Sprite _sprite;
-
-    int _currentFrame{ 0 };
-    float _frameTime{ 0.1f };
-    float _elapsedTime{ 0.f };
 
     bool _runMode = { false };
     bool _slideMode = { false };
 
+    bool _idleState = { true };
     bool _movingRight{ false };
     bool _movingLeft = { false };
 
 private:
-    Animation _walkAnimation;
     Animation _runAnimation;
+    Animation _deadAnimation;
+    Animation _walkAnimation;
+    Animation _idleAnimation;
     Animation _jumpAnimation;
 };

@@ -7,9 +7,8 @@ class Animation
 public:
     explicit Animation(std::vector<sf::Texture> &textures, float frameTime = 0.1f);
 
-    void start();
+    void start(const float deltatime, sf::Sprite &sprite);
     void stop();
-    void update(float deltatime, sf::Sprite &sprite);
 
 private:
     std::vector<sf::Texture> &_textures;
