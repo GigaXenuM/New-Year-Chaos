@@ -51,6 +51,8 @@ private:
     void loadTextures(const std::filesystem::path &path, const TextureType type,
                       const std::string &fileNamePart);
 
+    void sortFilesByNameNumbers(std::vector<std::filesystem::path> &files);
+
 private:
     std::unordered_map<FontType, sf::Font> _fonts;
     std::unordered_map<TextureType, TexturePack> _textures;
