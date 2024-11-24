@@ -34,6 +34,8 @@ public:
     static ResourseManager *getInstance();
 
     void loadResourses();
+    [[nodiscard]] sf::Font &getFont(const FontType type);
+    [[nodiscard]] TexturePack &getTextures(const TextureType type);
 
 private:
     ResourseManager() = default;
@@ -49,8 +51,7 @@ private:
     void loadTextures(const std::filesystem::path &path, const TextureType type,
                       const std::string &fileNamePart);
 
-    [[nodiscard]] sf::Font &getFont(const FontType type);
-    [[nodiscard]] TexturePack &getTextures(const TextureType type);
+    void sortFilesByNameNumbers(std::vector<std::filesystem::path> &files);
 
 private:
     std::unordered_map<FontType, sf::Font> _fonts;

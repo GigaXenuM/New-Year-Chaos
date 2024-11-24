@@ -4,6 +4,7 @@
 
 #include <filesystem>
 #include <iostream>
+#include <regex>
 
 ResourseManager *ResourseManager::getInstance()
 {
@@ -70,6 +71,7 @@ void ResourseManager::loadTexture(const std::string &filePath, const TextureType
         return;
     }
 
+    texture.setSmooth(true);
     _textures[type].emplace_back(std::move(texture));
     std::cout << "Loaded texture: " << filePath << std::endl;
 }
@@ -77,14 +79,39 @@ void ResourseManager::loadTexture(const std::string &filePath, const TextureType
 void ResourseManager::loadTextures(const std::filesystem::path &path, const TextureType type,
                                    const std::string &fileNamePart)
 {
+    std::vector<std::filesystem::path> files;
+
     for (const auto &entry : std::filesystem::directory_iterator(path))
     {
         if (entry.is_regular_file() && entry.path().extension() == ".png")
         {
             if (entry.path().filename().string().find(fileNamePart) == 0)
-                loadTexture(entry.path().string(), type);
+                files.push_back(entry.path());
         }
     }
+
+    sortFilesByNameNumbers(files);
+
+    for (const auto &file : files)
+        loadTexture(file.string(), type);
+}
+void ResourseManager::sortFilesByNameNumbers(std::vector<std::filesystem::path> &files)
+{
+    std::sort(files.begin(), files.end(),
+              [](const std::filesystem::path &a, const std::filesystem::path &b)
+              {
+                  auto extractNumber = [](const std::string &str) -> int
+                  {
+                      std::smatch match;
+                      if (std::regex_search(str, match, std::regex(R"(\((\d+)\))")))
+                      {
+                          return std::stoi(match[1].str());
+                      }
+                      return 0;
+                  };
+                  return extractNumber(a.filename().string())
+                         < extractNumber(b.filename().string());
+              });
 }
 
 sf::Font &ResourseManager::getFont(const FontType type)

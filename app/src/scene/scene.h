@@ -2,6 +2,7 @@
 
 #include "event/eventhandler.h"
 #include "iview.h"
+#include "player/player.h"
 
 #include <memory>
 #include <vector>
@@ -34,6 +35,8 @@ public:
 private:
     sf::RenderTarget *_renderTarget{ nullptr };
     std::unique_ptr<sf::View> _view;
+
+    std::unique_ptr<Player> _player;
 
     std::vector<Graphics::Drawable *> _itemsToDrawing;
 };
