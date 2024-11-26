@@ -5,7 +5,7 @@
 class IUpdatable : public EventHandler
 {
 public:
-    IUpdatable(EventHandler *parent) : EventHandler{ parent }
+    IUpdatable(EventHandler *parent = nullptr) : EventHandler{ parent }
     {
     }
 

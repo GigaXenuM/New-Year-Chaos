@@ -8,8 +8,7 @@
 #include "event/keyevents/keyreleaseevent.h"
 #include "event/mouseevents/mousepressevent.h"
 #include "event/mouseevents/mousereleaseevent.h"
-
-#include "geometry/utils.h"
+#include "event/mouseevents/mousescrollevent.h"
 
 #include "iview.h"
 
@@ -88,16 +87,16 @@ void MainWindow::handleSfmlEvent(const sf::Event &event)
     }
     case sf::Event::MouseButtonPressed:
     {
-        sf::Vector2f sfmlPos{ mapPixelToCoords(sf::Mouse::getPosition(*this), this->getView()) };
-        MousePressEvent e{ Mouse::Button(event.mouseButton.button), Geometry::toPoint(sfmlPos) };
+        sf::Vector2f position{ mapPixelToCoords(sf::Mouse::getPosition(*this), this->getView()) };
+        MousePressEvent e{ Mouse::Button(event.mouseButton.button), position };
 
         handleEvent(&e);
         break;
     }
     case sf::Event::MouseButtonReleased:
     {
-        sf::Vector2f sfmlPos{ mapPixelToCoords(sf::Mouse::getPosition(*this), this->getView()) };
-        MouseReleaseEvent e{ Mouse::Button(event.mouseButton.button), Geometry::toPoint(sfmlPos) };
+        sf::Vector2f position{ mapPixelToCoords(sf::Mouse::getPosition(*this), this->getView()) };
+        MouseReleaseEvent e{ Mouse::Button(event.mouseButton.button), position };
 
         handleEvent(&e);
         break;
@@ -109,6 +108,14 @@ void MainWindow::handleSfmlEvent(const sf::Event &event)
                           _latestMouseMoveEvent.position() };
         handleEvent(&e);
         _latestMouseMoveEvent = e;
+        break;
+    }
+    case sf::Event::MouseWheelScrolled:
+    {
+        MouseScrollEvent e{ event.mouseWheelScroll.delta,
+                            { static_cast<float>(event.mouseWheelScroll.x),
+                              static_cast<float>(event.mouseWheelScroll.y) } };
+        handleEvent(&e);
         break;
     }
     default:

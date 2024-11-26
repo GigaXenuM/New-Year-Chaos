@@ -3,8 +3,7 @@
 #include "drawable.h"
 #include "event/eventhandler.h"
 
-#include "geometry/point.h"
-#include "geometry/rect.h"
+#include <SFML/System/Vector2.hpp>
 
 enum class Align;
 
@@ -22,12 +21,13 @@ public:
     explicit AbstractItem(EventHandler *parent);
     virtual ~AbstractItem() = default;
 
-    virtual RectF globalRect() const = 0;
-    virtual RectF localRect() const = 0;
-    virtual PointF center() const = 0;
+    virtual void setPosition(const sf::Vector2f &position) = 0;
+    virtual sf::Vector2f position() const = 0;
 
-    virtual void setPos(PointF position) = 0;
-    virtual void setOrigin(Align origin) = 0;
+    void move(const sf::Vector2f delta);
+
+    virtual sf::FloatRect globalRect() const = 0;
+    virtual sf::FloatRect localRect() const = 0;
 
     virtual void accept(Visitor::IVisitor *visitor);
 };

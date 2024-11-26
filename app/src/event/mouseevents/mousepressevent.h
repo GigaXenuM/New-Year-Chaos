@@ -4,12 +4,10 @@
 
 #include "event/mouseevents/mouse.h"
 
-#include "geometry/point.h"
-
 class MousePressEvent : public Event
 {
 public:
-    MousePressEvent(Mouse::Button button, PointF position);
+    MousePressEvent(Mouse::Button button, const sf::Vector2f &position);
 
     EventType type() const override
     {
@@ -17,9 +15,9 @@ public:
     }
 
     Mouse::Button button() const;
-    PointF position() const;
+    sf::Vector2f position() const;
 
 private:
     Mouse::Button _button;
-    PointF _position;
+    sf::Vector2f _position;
 };

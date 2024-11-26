@@ -2,22 +2,22 @@
 
 #include "event/event.h"
 
-#include "geometry/point.h"
+#include "SFML/System/Vector2.hpp"
 
 class MouseMoveEvent : public Event
 {
 public:
-    explicit MouseMoveEvent(PointF pos, PointF lastPos);
+    explicit MouseMoveEvent(const sf::Vector2f &pos, const sf::Vector2f &lastPos);
 
     EventType type() const override
     {
         return EventType::MOUSE_MOVE;
     }
 
-    PointF position() const;
-    PointF lastPosition() const;
+    sf::Vector2f position() const;
+    sf::Vector2f lastPosition() const;
 
 private:
-    PointF _pos;
-    PointF _lastPos;
+    sf::Vector2f _pos;
+    sf::Vector2f _lastPos;
 };

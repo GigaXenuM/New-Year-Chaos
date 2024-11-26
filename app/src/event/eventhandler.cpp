@@ -6,6 +6,9 @@
 #include "event/mouseevents/mousemoveevent.h"
 #include "event/mouseevents/mousepressevent.h"
 #include "event/mouseevents/mousereleaseevent.h"
+#include "event/mouseevents/mousescrollevent.h"
+
+#include <iostream>
 
 EventHandler::EventHandler(EventHandler *parent)
 {
@@ -33,6 +36,7 @@ void EventHandler::handleEvent(Event *event)
         mouseReleaseEvent(dynamic_cast<MouseReleaseEvent *>(event));
         break;
     case Event::EventType::MOUSE_SCROLL:
+        mouseScrollEvent(dynamic_cast<MouseScrollEvent *>(event));
         break;
     }
 
@@ -106,6 +110,11 @@ void EventHandler::mouseReleaseEvent(MouseReleaseEvent *event)
 }
 
 void EventHandler::mouseMoveEvent(MouseMoveEvent *event)
+{
+    // Override it to define the logic.
+}
+
+void EventHandler::mouseScrollEvent(MouseScrollEvent *event)
 {
     // Override it to define the logic.
 }
