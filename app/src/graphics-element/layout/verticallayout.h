@@ -1,22 +1,22 @@
 #pragma once
 
-#include "geometry/rect.h"
 #include "layout.h"
 
-#include "geometry/point.h"
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/System/Vector2.hpp>
 
 class EventHandler;
 
 class VerticalLayout : public Layout
 {
 public:
-    explicit VerticalLayout(RectF rect);
+    explicit VerticalLayout(const sf::FloatRect &rect);
 
 protected:
     void updateGeometry() override;
 
 private:
-    SizeF contentSize() const;
+    sf::Vector2f contentSize() const;
 
     void alignCenter();
     void alignLeft();
@@ -24,5 +24,5 @@ private:
     void alignTop();
     void alignBottom();
 
-    PointF _nextItemPos{ 0.f, 0.f };
+    sf::Vector2f _nextItemPos{ 0.f, 0.f };
 };

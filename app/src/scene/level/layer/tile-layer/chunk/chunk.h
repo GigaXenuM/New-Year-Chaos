@@ -41,7 +41,7 @@ public:
     Chunk(const Chunk &) = delete;
     Chunk &operator=(const Chunk &) = delete;
 
-    std::vector<Scene::Level::AnimationState> &getActiveAnimations();
+    std::vector<AnimationState> &getActiveAnimations();
 
     tmx::TileLayer::Tile getTile(std::int32_t x, std::int32_t y) const;
 

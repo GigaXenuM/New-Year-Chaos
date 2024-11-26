@@ -1,11 +1,7 @@
 #pragma once
 
 #include "ibutton.h"
-#include "item/abstractitem.h"
-
-#include "geometry/point.h"
-#include "geometry/rect.h"
-#include "geometry/size.h"
+#include "item/ilayoutitem.h"
 
 #include "SFML/Graphics/Font.hpp"
 #include "SFML/Graphics/RectangleShape.hpp"
@@ -16,20 +12,21 @@ class EventHandler;
 namespace Graphics
 {
 
-class TextButton : public AbstractItem, public IButton
+class TextButton : public ILayoutItem, public IButton
 {
 public:
-    explicit TextButton(const sf::String &text, const sf::Font &font, SizeF size,
+    explicit TextButton(const sf::String &text, const sf::Font &font, const sf::Vector2f &size,
                         EventHandler *parent);
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
-    void setPos(PointF position) override;
-    void setOrigin(Align origin) override;
+    void setPosition(const sf::Vector2f &position) override;
+    sf::Vector2f position() const override;
+    void setOrigin(const Util::EnumFlag<Align> &origin) override;
 
-    RectF globalRect() const override;
-    RectF localRect() const override;
-    PointF center() const override;
+    sf::FloatRect globalRect() const override;
+    sf::FloatRect localRect() const override;
+    sf::Vector2f center() const override;
 
     void setTextColor(sf::Color color);
     void setBackgroundColor(sf::Color color);

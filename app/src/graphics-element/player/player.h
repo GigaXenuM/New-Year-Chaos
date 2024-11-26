@@ -1,49 +1,29 @@
 #pragma once
 
-#include "SFML/Graphics/Sprite.hpp"
 #include "animation/animation.h"
+#include "item/phisicalitem.h"
 
-#include <item/abstractitem.h>
+#include <SFML/Graphics/Sprite.hpp>
 
-class Player : public Graphics::AbstractItem
+class Player : public Graphics::PhisicalItem
 {
 public:
-    Player(EventHandler *eventHandler);
+    Player(sf::RectangleShape *collider, EventHandler *eventHandler);
 
 protected:
-    RectF globalRect() const override;
-    RectF localRect() const override;
-    PointF center() const override;
-
-    void setPos(PointF position) override;
-    void setOrigin(Align origin) override;
-
-    void keyPressEvent(KeyPressEvent *event) override;
-    void keyReleaseEvent(KeyReleaseEvent *event) override;
-
     void update(float deltatime) override;
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
-    void updateAnimation(const float deltatime);
-    void updatePosition(const float deltatime);
+    void updateAnimation(float deltatime);
+    void updatePosition(float deltatime);
 
 private:
     const float _speed{ 200.f };
-    const sf::Vector2f _scaleFactors{ 0.2f, 0.2f };
-    const sf::Vector2f _rscaleFactors{ -0.2f, 0.2f };
+    const float _scale{ 0.15f };
 
-    PointF _position{ 300, 300 };
     sf::Sprite _sprite;
 
-    bool _runMode = { false };
-    bool _slideMode = { false };
-
-    bool _idleState = { true };
-    bool _movingRight{ false };
-    bool _movingLeft = { false };
-
-private:
     Animation _runAnimation;
     Animation _deadAnimation;
     Animation _walkAnimation;

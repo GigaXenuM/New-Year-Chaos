@@ -1,18 +1,17 @@
 #include "layout.h"
 
-#include "geometry/rect.h"
-#include "item/abstractitem.h"
+#include "item/ilayoutitem.h"
 
-Layout::Layout(RectF rect) : _rect{ rect }
+Layout::Layout(const sf::FloatRect &rect) : _rect{ rect }
 {
 }
 
-void Layout::addItem(std::shared_ptr<Graphics::AbstractItem> item)
+void Layout::addItem(std::shared_ptr<Graphics::ILayoutItem> item)
 {
     if (std::find(_items.cbegin(), _items.cend(), item) != _items.cend())
         return;
 
-    _items.push_back(item);
+    _items.push_back(std::move(item));
 
     updateGeometry();
 }
@@ -28,12 +27,12 @@ void Layout::setAlignment(Align alingment)
     updateGeometry();
 }
 
-Align Layout::alignment() const
+Util::EnumFlag<Align> Layout::alignment() const
 {
     return _alignment;
 }
 
-RectF Layout::rect() const
+const sf::FloatRect &Layout::rect() const
 {
     return _rect;
 }

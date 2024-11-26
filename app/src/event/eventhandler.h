@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cassert>
-#include <iostream>
 #include <vector>
 
 class Event;
@@ -10,6 +9,7 @@ class MousePressEvent;
 class MouseReleaseEvent;
 class KeyReleaseEvent;
 class MouseMoveEvent;
+class MouseScrollEvent;
 
 class EventHandler
 {
@@ -38,6 +38,7 @@ protected:
     virtual void mousePressEvent(MousePressEvent *event);
     virtual void mouseReleaseEvent(MouseReleaseEvent *event);
     virtual void mouseMoveEvent(MouseMoveEvent *event);
+    virtual void mouseScrollEvent(MouseScrollEvent *event);
 
 private:
     EventHandler *_parent{ nullptr };

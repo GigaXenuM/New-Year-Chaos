@@ -1,15 +1,16 @@
 #include "mousemoveevent.h"
 
-MouseMoveEvent::MouseMoveEvent(PointF pos, PointF lastPos) : _pos{ pos }, _lastPos{ lastPos }
+MouseMoveEvent::MouseMoveEvent(const sf::Vector2f &pos, const sf::Vector2f &lastPos)
+    : _pos{ pos }, _lastPos{ lastPos }
 {
 }
 
-PointF MouseMoveEvent::position() const
+sf::Vector2f MouseMoveEvent::position() const
 {
     return _pos;
 }
 
-PointF MouseMoveEvent::lastPosition() const
+sf::Vector2f MouseMoveEvent::lastPosition() const
 {
     return _lastPos;
 }

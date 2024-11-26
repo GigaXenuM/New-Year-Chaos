@@ -1,6 +1,12 @@
 #include "scene.h"
 
 #include "item/abstractitem.h"
+#include "level/controller.h"
+
+#include "event/mouseevents/mousescrollevent.h"
+#include "mouseevents/mousemoveevent.h"
+#include "mouseevents/mousepressevent.h"
+#include "mouseevents/mousereleaseevent.h"
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -9,25 +15,21 @@
 namespace Scene
 {
 Scene::Scene(sf::RenderTarget *renderTarget, EventHandler *parent)
-    : IView{ parent },
+    : IView{ renderTarget, parent },
       _renderTarget{ renderTarget },
-      _view{ std::make_unique<sf::View>(
-          sf::FloatRect(sf::Vector2f{},
-                        sf::Vector2f(renderTarget->getSize().x, renderTarget->getSize().y))) },
-      _player{ std::make_unique<Player>(this) }
+      _viewSize{ sf::Vector2f(renderTarget->getSize().x, renderTarget->getSize().y) },
+      _view{ std::make_unique<sf::View>(sf::FloatRect(sf::Vector2f{}, _viewSize)) },
+      _levelController{ std::make_unique<Level::Controller>(renderTarget, this) }
 {
-    addItem(_player.get());
 }
 
 void Scene::update(float deltatime)
 {
-    _renderTarget->clear(sf::Color(87, 179, 113, 255));
+    IView::update(deltatime);
 
-    for (const auto &item : _itemsToDrawing)
-    {
-        item->update(deltatime);
-        _renderTarget->draw(*item);
-    }
+    _renderTarget->clear(sf::Color(125, 117, 138, 255));
+
+    _levelController->update(deltatime);
 }
 
 sf::View *Scene::view() const
@@ -35,8 +37,30 @@ sf::View *Scene::view() const
     return _view.get();
 }
 
-void Scene::addItem(Graphics::AbstractItem *item)
+void Scene::mousePressEvent(MousePressEvent *event)
 {
-    _itemsToDrawing.push_back(item);
+    if (event->button() == Mouse::Button::Right)
+        _sceneState.set(State::DragView);
+}
+
+void Scene::mouseReleaseEvent(MouseReleaseEvent *event)
+{
+    if (event->button() == Mouse::Button::Right)
+        _sceneState.unset(State::DragView);
+}
+
+void Scene::mouseMoveEvent(MouseMoveEvent *event)
+{
+    if (_sceneState.test(State::DragView))
+        _view->move((event->lastPosition() - event->position()) * _scaling);
+}
+
+void Scene::mouseScrollEvent(MouseScrollEvent *event)
+{
+    const float rawDelta{ event->delta() };
+    const float delta{ rawDelta / rawDelta - rawDelta / 10.f };
+    _scaling *= delta;
+
+    _view->setSize(_viewSize * _scaling);
 }
 } // namespace Scene

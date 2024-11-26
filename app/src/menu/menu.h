@@ -29,6 +29,8 @@ public:
     ~Menu();
 
     void update(float deltatime) override;
+
+protected:
     sf::View *view() const override;
 
 private:

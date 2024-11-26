@@ -17,7 +17,7 @@ class TileLayer final : public sf::Drawable
     using TextureResource = std::map<std::string, std::unique_ptr<sf::Texture>>;
 
 public:
-    TileLayer(const tmx::Map &map, std::size_t idx);
+    TileLayer(const tmx::Map &map, const tmx::TileLayer &layer);
 
     ~TileLayer() = default;
     TileLayer(const TileLayer &) = delete;
@@ -30,7 +30,7 @@ public:
     void update(sf::Time elapsed);
 
 private:
-    void draw(sf::RenderTarget &rt, sf::RenderStates states) const override;
+    void draw(sf::RenderTarget &rendererTarget, sf::RenderStates states) const override;
 
     Chunk::Ptr &getChunkAndTransform(std::int32_t x, std::int32_t y, sf::Vector2u &chunkRelative);
     void createChunks(const tmx::Map &map, const tmx::TileLayer &layer);

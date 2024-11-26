@@ -1,40 +1,16 @@
 #include "tilelayer.h"
 
-#include <iostream>
-
 namespace Scene::Level
 {
 
-TileLayer::TileLayer(const tmx::Map &map, size_t idx)
+TileLayer::TileLayer(const tmx::Map &map, const tmx::TileLayer &layer)
 {
-    const auto &layers = map.getLayers();
-    if (map.getOrientation() != tmx::Orientation::Orthogonal)
-    {
-        std::cout << "Map is not orthogonal - nothing will be drawn" << std::endl;
-    }
-    else if (idx >= layers.size())
-    {
-        std::cout << "Layer index " << idx << " is out of range, layer count is " << layers.size()
-                  << std::endl;
-    }
-    else if (layers[idx]->getType() != tmx::Layer::Type::Tile)
-    {
-        std::cout << "layer " << idx << " is not a Tile layer..." << std::endl;
-    }
-
-    else
-    {
-        // round the chunk size to the nearest tile
-        const auto tileSize = map.getTileSize();
-        _chunkSize.x = std::floor(_chunkSize.x / tileSize.x) * tileSize.x;
-        _chunkSize.y = std::floor(_chunkSize.y / tileSize.y) * tileSize.y;
-        _mapTileSize.x = map.getTileSize().x;
-        _mapTileSize.y = map.getTileSize().y;
-        const auto &layer = layers[idx]->getLayerAs<tmx::TileLayer>();
-        createChunks(map, layer);
-
-        auto mapSize = map.getBounds();
-    }
+    const auto tileSize = map.getTileSize();
+    _chunkSize.x = std::floor(_chunkSize.x / tileSize.x) * tileSize.x;
+    _chunkSize.y = std::floor(_chunkSize.y / tileSize.y) * tileSize.y;
+    _mapTileSize.x = map.getTileSize().x;
+    _mapTileSize.y = map.getTileSize().y;
+    createChunks(map, layer);
 }
 
 void TileLayer::setTile(int32_t tileX, int32_t tileY, tmx::TileLayer::Tile tile, bool refresh)
@@ -115,25 +91,25 @@ void TileLayer::createChunks(const tmx::Map &map, const tmx::TileLayer &layer)
 
     sf::Image fallback;
     fallback.create(2, 2, sf::Color::Magenta);
-    for (const auto &ts : usedTileSets)
+    for (const auto &tileSet : usedTileSets)
     {
-        const auto &path = ts->getImagePath();
+        const auto &path = tileSet->getImagePath();
 
         std::unique_ptr<sf::Texture> newTexture = std::make_unique<sf::Texture>();
-        sf::Image img;
-        if (!img.loadFromFile(path))
+        sf::Image image;
+        if (!image.loadFromFile(path))
         {
             newTexture->loadFromImage(fallback);
         }
         else
         {
-            if (ts->hasTransparency())
+            if (tileSet->hasTransparency())
             {
-                auto transparency = ts->getTransparencyColour();
-                img.createMaskFromColor(
+                auto transparency = tileSet->getTransparencyColour();
+                image.createMaskFromColor(
                     { transparency.r, transparency.g, transparency.b, transparency.a });
             }
-            newTexture->loadFromImage(img);
+            newTexture->loadFromImage(image);
         }
         _textureResource.insert(std::make_pair(path, std::move(newTexture)));
     }
@@ -144,28 +120,24 @@ void TileLayer::createChunks(const tmx::Map &map, const tmx::TileLayer &layer)
     _chunkCount.x = static_cast<sf::Uint32>(std::ceil(bounds.width / _chunkSize.x));
     _chunkCount.y = static_cast<sf::Uint32>(std::ceil(bounds.height / _chunkSize.y));
 
-    sf::Vector2u tileSize(map.getTileSize().x, map.getTileSize().y);
-
     for (auto y = 0u; y < _chunkCount.y; ++y)
     {
-        sf::Vector2f tileCount(_chunkSize.x / tileSize.x, _chunkSize.y / tileSize.y);
+        sf::Vector2f tileCount(_chunkSize.x / _mapTileSize.x, _chunkSize.y / _mapTileSize.y);
         for (auto x = 0u; x < _chunkCount.x; ++x)
         {
             // calculate size of each Chunk (clip against map)
             if ((x + 1) * _chunkSize.x > bounds.width)
             {
-                tileCount.x = (bounds.width - x * _chunkSize.x) / map.getTileSize().x;
+                tileCount.x = (bounds.width - x * _chunkSize.x) / _mapTileSize.x;
             }
             if ((y + 1) * _chunkSize.y > bounds.height)
             {
-                tileCount.y = (bounds.height - y * _chunkSize.y) / map.getTileSize().y;
+                tileCount.y = (bounds.height - y * _chunkSize.y) / _mapTileSize.y;
             }
-            // m_chunks.emplace_back(std::make_unique<Chunk>(layer, usedTileSets,
-            //     sf::Vector2f(x * m_chunkSize.x, y * m_chunkSize.y), tileCount,
-            //     map.getTileCount().x, m_textureResource));
+
             _chunks.emplace_back(std::make_unique<Chunk>(
                 layer, usedTileSets, sf::Vector2f(x * _chunkSize.x, y * _chunkSize.y), tileCount,
-                tileSize, map.getTileCount().x, _textureResource, map.getAnimatedTiles()));
+                _mapTileSize, map.getTileCount().x, _textureResource, map.getAnimatedTiles()));
         }
     }
 }
@@ -198,12 +170,13 @@ void TileLayer::updateVisibility(const sf::View &view) const
     std::swap(_visibleChunks, visible);
 }
 
-void TileLayer::draw(sf::RenderTarget &rt, sf::RenderStates states) const
+void TileLayer::draw(sf::RenderTarget &rendererTarget, sf::RenderStates states) const
 {
     // calc view coverage and draw nearest chunks
-    updateVisibility(rt.getView());
-    for (const auto &c : _visibleChunks)
-        rt.draw(*c, states);
+    updateVisibility(rendererTarget.getView());
+
+    for (const auto &chunk : _visibleChunks)
+        rendererTarget.draw(*chunk, states);
 }
 
 } // namespace Scene::Level

@@ -1,8 +1,9 @@
 #include "verticallayout.h"
 
-#include "item/abstractitem.h"
+#include "item/ilayoutitem.h"
+#include "util/geometryoperation.h"
 
-VerticalLayout::VerticalLayout(RectF rect) : Layout{ rect }
+VerticalLayout::VerticalLayout(const sf::FloatRect &rect) : Layout{ rect }
 {
 }
 
@@ -10,71 +11,74 @@ void VerticalLayout::updateGeometry()
 {
     alignCenter();
 
-    Align itemOrigin{ Align::Top };
+    Util::EnumFlag<Align> itemOrigin;
 
-    if ((alignment() & Align::Left) != Align(0))
+    if (alignment().test(Align::Left))
     {
         alignLeft();
-        itemOrigin |= Align::Left;
+        itemOrigin.set(Align::Left);
     }
-    if ((alignment() & Align::Right) != Align(0))
+    if (alignment().test(Align::Right))
     {
         alignRight();
-        itemOrigin |= Align::Right;
+        itemOrigin.set(Align::Right);
     }
-    if ((alignment() & Align::Top) != Align(0))
+    if (alignment().test(Align::Top))
     {
         alignTop();
+        itemOrigin.set(Align::Top);
     }
-    if ((alignment() & Align::Bottom) != Align(0))
+    if (alignment().test(Align::Bottom))
     {
         alignBottom();
+        itemOrigin.set(Align::Bottom);
     }
 
     for (const auto &item : items())
     {
         item->setOrigin(itemOrigin);
-        item->setPos(_nextItemPos);
-        _nextItemPos.moveY(item->localRect().height() + spacing());
+        item->setPosition(_nextItemPos);
+        _nextItemPos.y += item->localRect().height + spacing();
     }
 }
 
 void VerticalLayout::alignCenter()
 {
-    _nextItemPos = rect().center();
-    _nextItemPos.moveY(-contentSize().height / 2);
+    const auto rect{ this->rect() };
+    _nextItemPos = Util::pointBy(rect, { Align::Bottom, Align::Left, Align::Right, Align::Top });
+    _nextItemPos.y -= contentSize().y / 2;
 }
 
 void VerticalLayout::alignLeft()
 {
-    _nextItemPos.moveX(-rect().width() / 2);
+    _nextItemPos.x -= rect().width / 2;
 }
 
 void VerticalLayout::alignRight()
 {
-    _nextItemPos.moveX(rect().width() / 2);
+    _nextItemPos.x += rect().width / 2;
 }
 
 void VerticalLayout::alignTop()
 {
-    _nextItemPos.moveY((contentSize().height / 2) - (rect().height() / 2));
+    _nextItemPos.y += (contentSize().y / 2) - (rect().height / 2);
 }
 
 void VerticalLayout::alignBottom()
 {
-    _nextItemPos.moveY((rect().height() / 2) - (contentSize().height / 2));
+    _nextItemPos.y += (rect().height / 2) - (contentSize().y / 2);
 }
 
-SizeF VerticalLayout::contentSize() const
+sf::Vector2f VerticalLayout::contentSize() const
 {
-    SizeF size{};
+    sf::Vector2f size{};
     for (const auto &item : items())
     {
-        size.width = std::max(size.width, item->globalRect().width());
-        size.height += item->globalRect().height();
+        size.x = std::max(size.x, item->globalRect().width);
+        size.y += item->globalRect().height;
     }
 
-    size.height += (items().size() - 1) * spacing();
+    size.y += (items().size() - 1) * spacing();
 
     return size;
 }

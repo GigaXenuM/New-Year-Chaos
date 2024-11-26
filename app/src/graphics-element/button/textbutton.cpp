@@ -4,7 +4,8 @@
 #include "event/mouseevents/mousereleaseevent.h"
 
 #include "geometry/alignment.h"
-#include "geometry/utils.h"
+#include "util/enumflag.h"
+#include "util/geometryoperation.h"
 
 #include "SFML/Graphics/RenderTarget.hpp"
 
@@ -16,13 +17,13 @@ const sf::Color ACTIVE_BACKGROUND_COLOR{ 140, 34, 179, 255 };
 
 namespace Graphics
 {
-TextButton::TextButton(const sf::String &text, const sf::Font &font, SizeF size,
+TextButton::TextButton(const sf::String &text, const sf::Font &font, const sf::Vector2f &size,
                        EventHandler *parent)
-    : AbstractItem{ parent },
+    : ILayoutItem{ parent },
       _text{ text },
       _font{ font },
       _textItem{ _text, _font },
-      _shape{ Geometry::toSfmlSize(size) },
+      _shape{ size },
       _onClickCallback{ []() {} }
 {
     setup();
@@ -35,32 +36,37 @@ void TextButton::draw(sf::RenderTarget &target, sf::RenderStates states) const
     target.draw(_textItem, states);
 }
 
-void TextButton::setPos(PointF position)
+void TextButton::setPosition(const sf::Vector2f &position)
 {
-    _shape.setPosition(Geometry::toSfmlPoint(position));
+    _shape.setPosition(position);
     updateGeometry();
 }
 
-void TextButton::setOrigin(Align origin)
+sf::Vector2f TextButton::position() const
 {
-    _shape.setOrigin(Geometry::toSfmlPoint(localRect().pointBy(origin)));
+    return _shape.getPosition();
 }
 
-RectF TextButton::globalRect() const
+void TextButton::setOrigin(const Util::EnumFlag<Align> &origin)
 {
-    return Geometry::toRect(_shape.getGlobalBounds());
+    const auto rect{ localRect() };
+    _shape.setOrigin(Util::pointBy(rect, origin));
 }
 
-RectF TextButton::localRect() const
+sf::FloatRect TextButton::globalRect() const
 {
-    return Geometry::toRect(_shape.getLocalBounds());
+    return _shape.getGlobalBounds();
 }
 
-PointF TextButton::center() const
+sf::FloatRect TextButton::localRect() const
+{
+    return _shape.getLocalBounds();
+}
+
+sf::Vector2f TextButton::center() const
 {
     const sf::Transform &transform = _shape.getTransform();
-    return Geometry::toPoint(
-        transform.transformPoint(_shape.getSize().x / 2, _shape.getSize().y / 2));
+    return transform.transformPoint(_shape.getSize().x / 2, _shape.getSize().y / 2);
 }
 
 void TextButton::setTextColor(sf::Color color)
@@ -83,11 +89,11 @@ void TextButton::mousePressEvent(MousePressEvent *event)
     if (event->button() != Mouse::Button::Left)
         return;
 
-    RectF rect{ globalRect() };
-    bool mouseHovered{ event->position().x() > rect.pos.x()
-                       && event->position().x() < rect.pos.x() + rect.width()
-                       && event->position().y() > rect.pos.y()
-                       && event->position().y() < rect.pos.y() + rect.height() };
+    sf::FloatRect rect{ globalRect() };
+    bool mouseHovered{ event->position().x > rect.getPosition().x
+                       && event->position().x < rect.getPosition().x + rect.width
+                       && event->position().y > rect.getPosition().y
+                       && event->position().y < rect.getPosition().y + rect.height };
 
     if (mouseHovered)
     {
@@ -128,6 +134,6 @@ void TextButton::setup()
 
 void TextButton::updateGeometry()
 {
-    _textItem.setPosition(Geometry::toSfmlPoint(center()));
+    _textItem.setPosition(center());
 }
 } // namespace Graphics
