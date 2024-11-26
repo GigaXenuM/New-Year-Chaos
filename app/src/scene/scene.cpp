@@ -1,6 +1,5 @@
 #include "scene.h"
 
-#include "item/abstractitem.h"
 #include "level/controller.h"
 
 #include "event/mouseevents/mousescrollevent.h"

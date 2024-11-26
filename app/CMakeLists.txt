@@ -20,6 +20,8 @@ set(HEADER_FILES
 
     src/resources/resourceManager.h
 
+    src/graphics-element/hud/hudhealthbar.h
+
     src/graphics-element/item/drawable.h
     src/graphics-element/player/player.h
     src/graphics-element/item/ilayoutitem.h
@@ -69,6 +71,8 @@ set(SOURCE_FILES
     src/visitor/defaultvisitor.cpp
 
     src/resources/resourceManager.cpp
+
+    src/graphics-element/hud/hudhealthbar.cpp
 
     src/graphics-element/player/player.cpp
     src/graphics-element/layout/layout.cpp

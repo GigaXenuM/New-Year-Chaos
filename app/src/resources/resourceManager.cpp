@@ -28,12 +28,16 @@ void ResourseManager::loadAllFonst()
 
 void ResourseManager::loadAllTextures()
 {
+    // PLayer
     loadTextures("player/png/", TextureType::Player_run, "Run");
     loadTextures("player/png/", TextureType::Player_walk, "Walk");
     loadTextures("player/png/", TextureType::Player_dead, "Dead");
     loadTextures("player/png/", TextureType::Player_jump, "Jump");
     loadTextures("player/png/", TextureType::Player_idle, "Idle");
     loadTextures("player/png/", TextureType::Player_slide, "Slide");
+
+    //HUD
+    loadTextures("hud/", TextureType::Health_bar, "Health");
 }
 
 void ResourseManager::loadfont(const std::string &filePath, const FontType type)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "event/eventhandler.h"
+#include "hud/hudhealthbar.h"
 #include "iview.h"
 
 #include "util/enumflag.h"
