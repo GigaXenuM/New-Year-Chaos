@@ -1,33 +1,35 @@
 #pragma once
 
+#include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Graphics/Sprite.hpp"
 #include <item/abstractitem.h>
-
-namespace sf
-{
-class View;
-}
 
 class HUDHealthBar : public Graphics::AbstractItem
 {
 public:
-    HUDHealthBar(sf::View *view);
+    HUDHealthBar(const sf::Texture &iconTexture);
 
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+    void setPosition(const sf::Vector2f pos);
+    void setIconScaleFactors(float factorX, float factorY);
+    void setColor(const sf::Color &color);
+
+    void setValue(const float value);
+
+    [[nodiscard]] const sf::Sprite *getSprite() const;
 
 protected:
-    void update(float deltatime) override;
+    void update(float deltatime) override{};
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
     void setup();
-
     void setSize();
     void setTextures();
-    void setPosition();
 
 private:
-    sf::View *_gameView{ nullptr };
+    sf::Sprite _barIcon;
+    sf::Sprite _healthBar;
+    sf::RectangleShape _health;
 
-    sf::Sprite _freezBarSprite;
-    sf::Sprite _healthBarSprite;
+    std::pair<float, float> _iconScaleFactors{ 0.02, 0.02 };
 };

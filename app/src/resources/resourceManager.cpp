@@ -38,6 +38,8 @@ void ResourseManager::loadAllTextures()
 
     //HUD
     loadTextures("hud/", TextureType::Health_bar, "Health");
+    loadTextures("hud/", TextureType::HeartBar_icon, "Heart");
+    loadTextures("hud/", TextureType::FreezBar_icon, "Ice");
 }
 
 void ResourseManager::loadfont(const std::string &filePath, const FontType type)

@@ -1,57 +1,77 @@
 #include "hudhealthbar.h"
+
+#include "Resources/ResourceManager.h"
+#include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/Texture.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-#include <Resources/ResourceManager.h>
-#include <SFML/Graphics/Sprite.hpp>
-
-HUDHealthBar::HUDHealthBar(sf::View *view) : Graphics::AbstractItem(nullptr), _gameView(view)
+HUDHealthBar::HUDHealthBar(const sf::Texture &iconTexture) : Graphics::AbstractItem(nullptr)
 {
+    _barIcon.setTexture(iconTexture);
     setup();
 }
 
-void HUDHealthBar::update(float deltatime)
+const sf::Sprite *HUDHealthBar::getSprite() const
 {
+    return &_healthBar;
 }
 
 void HUDHealthBar::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    target.draw(_freezBarSprite, states);
-    target.draw(_healthBarSprite, states);
+    target.draw(_healthBar, states);
+    target.draw(_health, states);
+    target.draw(_barIcon, states);
 }
 
 void HUDHealthBar::setup()
 {
-    setSize();
     setTextures();
-    setPosition();
+    setSize();
 }
 
 void HUDHealthBar::setSize()
 {
-    _freezBarSprite.setScale(0.3, 0.3);
-    _healthBarSprite.setScale(0.3, 0.3);
+    _healthBar.setScale(0.3, 0.3);
+    _barIcon.setScale(_iconScaleFactors.first, _iconScaleFactors.second);
+
+    const sf::Vector2f healthValueRect
+        = { _healthBar.getGlobalBounds().width - 12, _healthBar.getGlobalBounds().height / 2.2f };
+    _health.setSize(healthValueRect);
 }
 
 void HUDHealthBar::setTextures()
 {
-    _healthBarSprite.setTexture(
-        ResourseManager::getInstance()->getTextures(TextureType::Health_bar)[0]);
-    _freezBarSprite.setTexture(
-        ResourseManager::getInstance()->getTextures(TextureType::Health_bar)[0]);
+    _healthBar.setTexture(ResourseManager::getInstance()->getTextures(TextureType::Health_bar)[0]);
 }
 
-void HUDHealthBar::setPosition()
+void HUDHealthBar::setPosition(const sf::Vector2f pos)
 {
-    const sf::Vector2f viewSize = _gameView->getSize();
-    const sf::Vector2f viewCenter = _gameView->getCenter();
-    const auto healthTextureHeight = _healthBarSprite.getTexture()->getSize().y / 2;
-    const sf::Vector2f bottomLeft(viewCenter.x - viewSize.x / 2.f, viewCenter.y + viewSize.y / 2.f);
+    const sf::Vector2f texturePos = { pos.x + _barIcon.getGlobalBounds().width,
+                                      pos.y - _healthBar.getGlobalBounds().height * 3 };
+    _healthBar.setPosition(texturePos);
 
-    const sf::Vector2f freezBarPos{ bottomLeft.x, bottomLeft.y - healthTextureHeight };
-    const sf::Vector2f healthBarPos{ bottomLeft.x, bottomLeft.y - (healthTextureHeight * 2) };
+    _health.setPosition(texturePos.x + 6,
+                        texturePos.y + (_healthBar.getGlobalBounds().height * 0.28));
 
-    _freezBarSprite.setPosition(freezBarPos);
-    _healthBarSprite.setPosition(healthBarPos);
+    _barIcon.setPosition(texturePos.x - _barIcon.getGlobalBounds().width, texturePos.y);
+}
+
+void HUDHealthBar::setIconScaleFactors(float factorX, float factorY)
+{
+    _barIcon.setScale(factorX, factorY);
+}
+
+void HUDHealthBar::setColor(const sf::Color &color)
+{
+    _health.setFillColor(color);
+}
+
+void HUDHealthBar::setValue(const float value)
+{
+    if (value > 100 || value < 0)
+        assert(false, "HUDHealthBar::setValue the value cannot exceed 100 and be less than 0");
+    sf::Vector2f currentSize = _health.getSize();
+    currentSize.x = (_healthBar.getGlobalBounds().width - 12) * (value / 100.f);
+    _health.setSize(currentSize);
 }

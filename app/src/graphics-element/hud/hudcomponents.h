@@ -3,22 +3,27 @@
 #include "hud/hudhealthbar.h"
 #include "item/abstractitem.h"
 
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/View.hpp>
-
+#include <memory>
 #include <vector>
+
+namespace sf
+{
+class View;
+}
 
 class HUDComponents
 {
 public:
-    HUDComponents(sf::View *view);
+    HUDComponents(sf::RenderTarget *renderTarget, sf::View *view);
 
-    void draw(sf::RenderTarget *renderTarget);
-
-    [[nodiscard]] std::vector<Graphics::AbstractItem *> &hudItems();
+    void update(const float deltatime);
 
 private:
-    std::vector<Graphics::AbstractItem *> _hudItems;
+    void updateBarPosition();
+
+private:
+    sf::View *_gameView{ nullptr };
+    sf::RenderTarget *_renderTarget{ nullptr };
 
     std::unique_ptr<HUDHealthBar> _freezBar;
     std::unique_ptr<HUDHealthBar> _healthBar;

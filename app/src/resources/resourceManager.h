@@ -27,7 +27,9 @@ enum class TextureType
     Player_slide,
 
     // HUD
-    Health_bar
+    Health_bar,
+    HeartBar_icon,
+    FreezBar_icon
 };
 
 class ResourseManager

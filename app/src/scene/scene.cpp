@@ -7,8 +7,6 @@
 #include "mouseevents/mousepressevent.h"
 #include "mouseevents/mousereleaseevent.h"
 
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
 namespace Scene
@@ -18,7 +16,8 @@ Scene::Scene(sf::RenderTarget *renderTarget, EventHandler *parent)
       _renderTarget{ renderTarget },
       _viewSize{ sf::Vector2f(renderTarget->getSize().x, renderTarget->getSize().y) },
       _view{ std::make_unique<sf::View>(sf::FloatRect(sf::Vector2f{}, _viewSize)) },
-      _levelController{ std::make_unique<Level::Controller>(renderTarget, this) }
+      _levelController{ std::make_unique<Level::Controller>(renderTarget, this) },
+      _hudComponents{ std::make_unique<HUDComponents>(_renderTarget, _view.get()) }
 {
 }
 
@@ -29,6 +28,7 @@ void Scene::update(float deltatime)
     _renderTarget->clear(sf::Color(125, 117, 138, 255));
 
     _levelController->update(deltatime);
+    _hudComponents->update(deltatime);
 }
 
 sf::View *Scene::view() const

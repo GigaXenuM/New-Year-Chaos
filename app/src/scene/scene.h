@@ -53,8 +53,8 @@ private:
     float _scaling{ 1.0f };
     const sf::Vector2f _viewSize;
     std::unique_ptr<sf::View> _view;
+    std::unique_ptr<HUDComponents> _hudComponents;
     std::unique_ptr<Level::Controller> _levelController;
-     std::unique_ptr<HUDComponents> _hudComponents;
 
     Util::EnumFlag<State> _sceneState;
 };
