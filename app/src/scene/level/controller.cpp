@@ -13,8 +13,12 @@
 namespace Scene::Level
 {
 
-Controller::Controller(sf::RenderTarget *renderTarget, EventHandler *parent)
-    : IUpdatable{ parent }, _renderTarget{ renderTarget }
+Controller::Controller(sf::RenderTarget *renderTarget, sf::View *view, EventHandler *parent)
+    : IUpdatable{ parent },
+      _renderTarget{ renderTarget },
+      _gameView{ view },
+      _safeZoneSize{ view->getSize().x * 0.2f, view->getSize().y * 0.2f },
+      _halfSafeZone{ _safeZoneSize / 2.f }
 {
     loadLevel();
     _player = std::make_unique<Player>(dynamic_cast<sf::RectangleShape *>(
@@ -41,7 +45,7 @@ void Controller::update(float deltatime)
         item->update(deltatime);
         _renderTarget->draw(*item);
     }
-
+    updateCameraPos();
     handleCollisions();
 }
 
@@ -103,6 +107,26 @@ void Controller::handleCollisions() const
     for (const auto &objectLayer : _objectLayers)
         for (const auto *object : objectLayer->getObjects("collider"))
             _player->handleCollision(*object);
+}
+
+void Controller::updateCameraPos()
+{
+    const sf::Vector2f playerPosition = _player->getPosition();
+
+    sf::Vector2f viewCenter = _gameView->getCenter();
+    const sf::Vector2f safeZoneMin(viewCenter.x - _halfSafeZone.x, viewCenter.y - _halfSafeZone.y);
+    const sf::Vector2f safeZoneMax(viewCenter.x + _halfSafeZone.x, viewCenter.y + _halfSafeZone.y);
+
+    if (playerPosition.x < safeZoneMin.x)
+        viewCenter.x = playerPosition.x + _halfSafeZone.x;
+    else if (playerPosition.x > safeZoneMax.x)
+        viewCenter.x = playerPosition.x - _halfSafeZone.x;
+    if (playerPosition.y < safeZoneMin.y)
+        viewCenter.y = playerPosition.y + _halfSafeZone.y;
+    else if (playerPosition.y > safeZoneMax.y)
+        viewCenter.y = playerPosition.y - _halfSafeZone.y;
+
+    _gameView->setCenter(viewCenter);
 }
 
 } // namespace Scene::Level

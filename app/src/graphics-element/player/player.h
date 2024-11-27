@@ -10,6 +10,8 @@ class Player : public Graphics::PhisicalItem
 public:
     Player(sf::RectangleShape *collider, EventHandler *eventHandler);
 
+    sf::Vector2f getPosition() const;
+
 protected:
     void update(float deltatime) override;
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;

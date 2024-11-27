@@ -18,6 +18,11 @@ Player::Player(sf::RectangleShape *collider, EventHandler *eventHandler)
     _sprite.setScale({ _scale, _scale });
 }
 
+sf::Vector2f Player::getPosition() const
+{
+    return _sprite.getPosition();
+}
+
 void Player::updateAnimation(float deltatime)
 {
     // TODO: reset animation if keyboadrd action changed!

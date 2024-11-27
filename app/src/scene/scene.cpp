@@ -16,7 +16,7 @@ Scene::Scene(sf::RenderTarget *renderTarget, EventHandler *parent)
       _renderTarget{ renderTarget },
       _viewSize{ sf::Vector2f(renderTarget->getSize().x, renderTarget->getSize().y) },
       _view{ std::make_unique<sf::View>(sf::FloatRect(sf::Vector2f{}, _viewSize)) },
-      _levelController{ std::make_unique<Level::Controller>(renderTarget, this) },
+      _levelController{ std::make_unique<Level::Controller>(renderTarget, _view.get(), this) },
       _hudComponents{ std::make_unique<HUDComponents>(_renderTarget, _view.get()) }
 {
 }
