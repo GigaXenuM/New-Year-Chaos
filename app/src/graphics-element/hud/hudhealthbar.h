@@ -13,10 +13,10 @@ class HUDHealthBar : public Graphics::AbstractItem
 public:
     HUDHealthBar(sf::View *view);
 
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+
 protected:
     void update(float deltatime) override;
-
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
     void setup();

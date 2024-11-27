@@ -1,7 +1,7 @@
 #pragma once
 
 #include "event/eventhandler.h"
-#include "hud/hudhealthbar.h"
+#include "hud/hudcomponents.h"
 #include "iview.h"
 
 #include "util/enumflag.h"
@@ -54,6 +54,7 @@ private:
     const sf::Vector2f _viewSize;
     std::unique_ptr<sf::View> _view;
     std::unique_ptr<Level::Controller> _levelController;
+     std::unique_ptr<HUDComponents> _hudComponents;
 
     Util::EnumFlag<State> _sceneState;
 };
