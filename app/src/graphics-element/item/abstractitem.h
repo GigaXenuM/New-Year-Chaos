@@ -21,13 +21,24 @@ public:
     explicit AbstractItem(EventHandler *parent);
     virtual ~AbstractItem() = default;
 
-    virtual void setPosition(const sf::Vector2f &position) = 0;
-    virtual sf::Vector2f position() const = 0;
+    virtual void setPosition(const sf::Vector2f &position)
+    {
+    }
+    virtual sf::Vector2f position() const
+    {
+        return {};
+    }
 
     void move(const sf::Vector2f delta);
 
-    virtual sf::FloatRect globalRect() const = 0;
-    virtual sf::FloatRect localRect() const = 0;
+    virtual sf::FloatRect globalRect() const
+    {
+        return {};
+    }
+    virtual sf::FloatRect localRect() const
+    {
+        return {};
+    }
 
     virtual void accept(Visitor::IVisitor *visitor);
 };

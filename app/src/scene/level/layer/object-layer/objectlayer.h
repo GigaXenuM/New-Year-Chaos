@@ -7,6 +7,8 @@
 #include <memory>
 #include <unordered_map>
 
+#include <string>
+
 namespace tmx
 {
 class ObjectGroup;

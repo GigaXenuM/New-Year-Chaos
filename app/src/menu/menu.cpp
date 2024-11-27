@@ -4,6 +4,7 @@
 #include "button/textbutton.h"
 #include "item/abstractitem.h"
 #include "layout/verticallayout.h"
+#include <Resources/ResourceManager.h>
 
 #include "SFML/Graphics/Font.hpp"
 #include "SFML/Graphics/Rect.hpp"
@@ -48,10 +49,7 @@ void Menu::init()
 {
     _layout->setSpacing(20);
 
-    sf::Font font;
-    const bool successLoad{ font.loadFromFile("fonts/arial.ttf") };
-    if (!successLoad)
-        std::cerr << "GameMenu: Failed load font." << std::endl;
+    const sf::Font font{ ResourseManager::getInstance()->getFont(FontType::Arial) };
 
     auto startButton{ std::make_shared<Graphics::TextButton>("Start Game", font,
                                                              sf::Vector2f{ 180.0f, 50.0f }, this) };

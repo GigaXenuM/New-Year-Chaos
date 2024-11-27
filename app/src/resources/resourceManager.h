@@ -18,12 +18,18 @@ enum class FontType
 
 enum class TextureType
 {
+    // Player
     Player_run,
     Player_idle,
     Player_jump,
     Player_dead,
     Player_walk,
-    Player_slide
+    Player_slide,
+
+    // HUD
+    Health_bar,
+    HeartBar_icon,
+    FreezBar_icon
 };
 
 class ResourseManager

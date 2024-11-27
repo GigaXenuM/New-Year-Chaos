@@ -1,6 +1,7 @@
 #pragma once
 
 #include "event/eventhandler.h"
+#include "hud/hudcomponents.h"
 #include "iview.h"
 
 #include "util/enumflag.h"
@@ -52,6 +53,7 @@ private:
     float _scaling{ 1.0f };
     const sf::Vector2f _viewSize;
     std::unique_ptr<sf::View> _view;
+    std::unique_ptr<HUDComponents> _hudComponents;
     std::unique_ptr<Level::Controller> _levelController;
 
     Util::EnumFlag<State> _sceneState;
