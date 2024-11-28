@@ -3,7 +3,7 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
 
-namespace Scene::Level
+namespace Game::Level
 {
 
 struct AnimationState
@@ -15,4 +15,4 @@ struct AnimationState
     std::uint8_t flipFlags;
 };
 
-} // namespace Scene::Level
+} // namespace Game::Level

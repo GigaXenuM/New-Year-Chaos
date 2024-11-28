@@ -1,7 +1,5 @@
 #pragma once
 
-#include "objectvariant.h"
-
 #include <SFML/Graphics/Drawable.hpp>
 
 #include <memory>
@@ -20,10 +18,10 @@ class Shape;
 class RectangleShape;
 } // namespace sf
 
-namespace Scene::Level
+namespace Game::Level
 {
 
-class ObjectLayer final : public sf::Drawable
+class ObjectLayer final
 {
     using CollidersMap = std::unordered_map<std::string, std::vector<std::unique_ptr<sf::Shape>>>;
 
@@ -31,14 +29,13 @@ public:
     ObjectLayer(const tmx::ObjectGroup &layer);
     ~ObjectLayer();
 
-    std::vector<sf::Shape *> getObjects(const std::string &objectName) const;
+    std::vector<sf::Shape *> objects(const std::string &objectName) const;
+    std::vector<sf::Shape *> objects() const;
 
 private:
-    void draw(sf::RenderTarget &rendererTarget, sf::RenderStates states) const override;
-
     void fillObjects(const tmx::ObjectGroup &layer);
 
     CollidersMap _collidersMap;
 };
 
-} // namespace Scene::Level
+} // namespace Game::Level

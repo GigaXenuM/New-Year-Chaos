@@ -1,10 +1,7 @@
 #include "objectlayer.h"
 #include "SFML/Graphics/RectangleShape.hpp"
-#include "SFML/Graphics/RenderTarget.hpp"
 
 #include <tmxlite/ObjectGroup.hpp>
-
-#include <iostream>
 
 namespace
 {
@@ -32,7 +29,7 @@ private:
 
 } // namespace
 
-namespace Scene::Level
+namespace Game::Level
 {
 
 ObjectLayer::ObjectLayer(const tmx::ObjectGroup &layer)
@@ -40,7 +37,7 @@ ObjectLayer::ObjectLayer(const tmx::ObjectGroup &layer)
     fillObjects(layer);
 }
 
-std::vector<sf::Shape *> ObjectLayer::getObjects(const std::string &objectName) const
+std::vector<sf::Shape *> ObjectLayer::objects(const std::string &objectName) const
 {
     const std::vector<std::unique_ptr<sf::Shape>> &objects{ _collidersMap.at(objectName) };
 
@@ -52,14 +49,24 @@ std::vector<sf::Shape *> ObjectLayer::getObjects(const std::string &objectName) 
     return result;
 }
 
-ObjectLayer::~ObjectLayer() = default;
-
-void ObjectLayer::draw(sf::RenderTarget &rendererTarget, sf::RenderStates states) const
+std::vector<sf::Shape *> ObjectLayer::objects() const
 {
-    for (const auto &[_, colliders] : _collidersMap)
-        for (const auto &collider : colliders)
-            rendererTarget.draw(*collider, states);
+    size_t objectCount{ 0 };
+    for (const auto &[_, objectShapes] : _collidersMap)
+        objectCount += objectShapes.size();
+
+    std::vector<sf::Shape *> result;
+    result.reserve(objectCount);
+    for (const auto &[_, objectShapes] : _collidersMap)
+    {
+        std::transform(objectShapes.cbegin(), objectShapes.cend(), std::back_inserter(result),
+                       [](const std::unique_ptr<sf::Shape> &obj) { return obj.get(); });
+    }
+
+    return result;
 }
+
+ObjectLayer::~ObjectLayer() = default;
 
 void ObjectLayer::fillObjects(const tmx::ObjectGroup &layer)
 {
@@ -84,16 +91,8 @@ void ObjectLayer::fillObjects(const tmx::ObjectGroup &layer)
         object->setOutlineColor(sf::Color::Red);
         object->setOutlineThickness(1);
 
-        if (std::any_of(_collidersMap.cbegin(), _collidersMap.cend(),
-                        [name = tmxObject.getName()](const auto &nameToCollider)
-                        { return nameToCollider.first == name; }))
-        {
-            std::cerr << "The collader with the name \"" << tmxObject.getName()
-                      << "\" already exists." << std::endl;
-            assert(false);
-        }
-        _collidersMap[tmxObject.getName()].push_back(std::move(object));
+        _collidersMap[tmxObject.getClass()].push_back(std::move(object));
     }
 }
 
-} // namespace Scene::Level
+} // namespace Game::Level

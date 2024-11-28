@@ -20,7 +20,7 @@ class Drawable;
 class AbstractItem;
 } // namespace Graphics
 
-namespace Scene
+namespace Game
 {
 
 namespace Level
@@ -59,4 +59,4 @@ private:
     Util::EnumFlag<State> _sceneState;
 };
 
-} // namespace Scene
+} // namespace Game

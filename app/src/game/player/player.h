@@ -5,10 +5,14 @@
 
 #include <SFML/Graphics/Sprite.hpp>
 
+#include <box2d/b2_body.h>
+
+struct b2Body;
+
 class Player : public Graphics::PhisicalItem
 {
 public:
-    Player(sf::RectangleShape *collider, EventHandler *eventHandler);
+    Player(b2Body *collider, EventHandler *eventHandler);
 
     sf::Vector2f getPosition() const;
 

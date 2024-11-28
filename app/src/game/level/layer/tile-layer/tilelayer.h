@@ -1,18 +1,18 @@
 #pragma once
 
 #include "chunk/chunk.h"
+#include "graphics-element/item/drawable.h"
 
 #include <tmxlite/Map.hpp>
 #include <tmxlite/TileLayer.hpp>
 
 #include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Drawable.hpp>
 #include <SFML/System/Time.hpp>
 
-namespace Scene::Level
+namespace Game::Level
 {
 
-class TileLayer final : public sf::Drawable
+class TileLayer final : public Graphics::Drawable
 {
     using TextureResource = std::map<std::string, std::unique_ptr<sf::Texture>>;
 
@@ -27,7 +27,7 @@ public:
                  bool refresh = true);
     tmx::TileLayer::Tile getTile(std::int32_t tileX, std::int32_t tileY);
 
-    void update(sf::Time elapsed);
+    void update(float deltatime) override;
 
 private:
     void draw(sf::RenderTarget &rendererTarget, sf::RenderStates states) const override;
@@ -48,4 +48,4 @@ private:
     mutable std::vector<Chunk *> _visibleChunks;
 };
 
-} // namespace Scene::Level
+} // namespace Game::Level

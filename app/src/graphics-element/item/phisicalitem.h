@@ -1,15 +1,15 @@
 #pragma once
 
-#include "item/abstractitem.h"
+#include "item/drawable.h"
 
 #include "util/enumflag.h"
 
-#include <SFML/Graphics/RectangleShape.hpp>
+struct b2Body;
 
 namespace Graphics
 {
 
-class PhisicalItem : public AbstractItem
+class PhisicalItem : public Drawable
 {
 public:
     enum class State
@@ -17,40 +17,28 @@ public:
         OnGround,
         Left,
         Right,
+        Jump,
     };
 
-    struct PhisicalContext
+    struct Context
     {
-        const float gravity{ 0.0f };
-        const float speed{ 0.0f };
-        const float limitVerticalSpeed{ 0.0f };
+        float velocity{ 0.f };
+        float jumpImpulse{ 0.f };
     };
 
-    PhisicalItem(sf::RectangleShape *collider, const PhisicalContext &context,
-                 EventHandler *parent);
+    PhisicalItem(b2Body *collider, const Context &context, EventHandler *parent);
 
-    void setPosition(const sf::Vector2f &position) override;
-    sf::Vector2f position() const override;
-
-    sf::FloatRect globalRect() const override;
-    sf::FloatRect localRect() const override;
-
-    void handleCollision(const sf::Shape &externalCollider);
     void updateState(State state, bool isActive);
     bool isStateActive(State state) const;
 
 protected:
     void update(float deltatime) override;
 
-private:
-    void updatePosition(float deltatime);
-    sf::Vector2f gravityCorrection();
-    void handleMoving(const sf::Vector2f &delta, float deltatime);
+    const b2Body *collider();
 
-    sf::RectangleShape *_collider{ nullptr };
-    PhisicalContext _context;
-    float _verticalVelocity{ 0.f };
-    sf::Vector2f _collisionCorrection;
+private:
+    b2Body *_collider{ nullptr };
+    const Context _context;
     Util::EnumFlag<State> _state;
 };
 

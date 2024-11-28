@@ -6,14 +6,18 @@ set(HEADER_FILES
     src/iview.h
     src/iupdatable.h
 
-    src/scene/scene.h
-    src/scene/level/controller.h
-    src/scene/level/layer/tile-layer/animation/animationstate.h
-    src/scene/level/layer/tile-layer/chunk/chunk.h
-    src/scene/level/layer/tile-layer/chunk/chunkarray.h
-    src/scene/level/layer/tile-layer/tilelayer.h
-    src/scene/level/layer/object-layer/objectlayer.h
-    src/scene/level/layer/object-layer/objectvariant.h
+    src/game/scene.h
+    src/game/userdata.h
+    src/game/actionvariant.h
+    src/game/level/controller.h
+    src/game/level/layer/tile-layer/animation/animationstate.h
+    src/game/level/layer/tile-layer/chunk/chunk.h
+    src/game/level/layer/tile-layer/chunk/chunkarray.h
+    src/game/level/layer/tile-layer/tilelayer.h
+    src/game/level/layer/object-layer/objectlayer.h
+    src/game/level/layer/object-layer/objectvariant.h
+    src/game/contact/contactlistener.h
+    src/game/player/player.h
 
     src/visitor/ivisitor.h
     src/visitor/defaultvisitor.h
@@ -24,7 +28,6 @@ set(HEADER_FILES
     src/graphics-element/hud/hudcomponents.cpp
 
     src/graphics-element/item/drawable.h
-    src/graphics-element/player/player.h
     src/graphics-element/item/ilayoutitem.h
     src/graphics-element/layout/layout.h
     src/graphics-element/button/ibutton.h
@@ -55,6 +58,7 @@ set(HEADER_FILES
 
     src/util/enumflag.h
     src/util/geometryoperation.h
+    src/util/debugdrawer.h
 )
 
 set(SOURCE_FILES
@@ -62,12 +66,14 @@ set(SOURCE_FILES
 
     src/mainwindow.cpp
 
-    src/scene/scene.cpp
-    src/scene/level/controller.cpp
-    src/scene/level/layer/tile-layer/chunk/chunk.cpp
-    src/scene/level/layer/tile-layer/chunk/chunkarray.cpp
-    src/scene/level/layer/tile-layer/tilelayer.cpp
-    src/scene/level/layer/object-layer/objectlayer.cpp
+    src/game/scene.cpp
+    src/game/level/controller.cpp
+    src/game/level/layer/tile-layer/chunk/chunk.cpp
+    src/game/level/layer/tile-layer/chunk/chunkarray.cpp
+    src/game/level/layer/tile-layer/tilelayer.cpp
+    src/game/level/layer/object-layer/objectlayer.cpp
+    src/game/contact/contactlistener.cpp
+    src/game/player/player.cpp
 
     src/visitor/defaultvisitor.cpp
 
@@ -76,14 +82,13 @@ set(SOURCE_FILES
     src/graphics-element/hud/hudhealthbar.cpp
     src/graphics-element/hud/hudcomponents.cpp
 
-    src/graphics-element/player/player.cpp
     src/graphics-element/layout/layout.cpp
     src/graphics-element/button/textbutton.cpp
     src/graphics-element/item/abstractitem.cpp
     src/graphics-element/layout/verticallayout.cpp
     src/graphics-element/item/phisicalitem.cpp
 
-    src/animation/animation.h
+    src/animation/animation.cpp
 
     src/event/eventhandler.cpp
     src/event/keyevents/keypressevent.cpp
@@ -94,28 +99,24 @@ set(SOURCE_FILES
     src/event/mouseevents/mousescrollevent.cpp
 
     src/menu/menu.cpp
-        src/animation/Animation.cpp
-        src/animation/Animation.h
+
+    src/util/debugdrawer.cpp
 )
 
 include_directories(
     "${CMAKE_SOURCE_DIR}/app/src"
-    "${CMAKE_SOURCE_DIR}/app/src/scene"
-    "${CMAKE_SOURCE_DIR}/app/src/scene/level"
-    "${CMAKE_SOURCE_DIR}/app/src/scene/level/layer"
+    "${CMAKE_SOURCE_DIR}/app/src/game"
+    "${CMAKE_SOURCE_DIR}/app/src/game/level"
+    "${CMAKE_SOURCE_DIR}/app/src/game/level/layer"
     "${CMAKE_SOURCE_DIR}/app/src/geometry"
     "${CMAKE_SOURCE_DIR}/app/src/menu"
     "${CMAKE_SOURCE_DIR}/app/src/graphics-element"
     "${CMAKE_SOURCE_DIR}/app/src/event"
 )
 
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES}
+    src/util/geometryoperation.cpp)
 
-target_link_libraries(${PROJECT_NAME} sfml-graphics)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-audio sfml-graphics tmxlite box2d)
 
-target_sources(New-Year-Chaos
-  PRIVATE
-    src/graphics-element/player/player.h src/graphics-element/player/player.cpp
-)
-target_link_libraries(${PROJECT_NAME} sfml-audio)
-target_link_libraries(${PROJECT_NAME} tmxlite)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/libs/earcut/include)

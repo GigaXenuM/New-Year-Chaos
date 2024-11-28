@@ -10,7 +10,7 @@
 
 #include <memory>
 
-namespace Scene
+namespace Game
 {
 namespace Level
 {
@@ -45,4 +45,4 @@ private:
 };
 
 } // namespace Level
-} // namespace Scene
+} // namespace Game
