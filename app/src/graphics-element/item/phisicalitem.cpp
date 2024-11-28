@@ -1,6 +1,9 @@
 #include "phisicalitem.h"
 
 #include "box2d/b2_body.h"
+#include <MacTypes.h>
+
+#include <iostream>
 
 namespace Graphics
 {
@@ -32,6 +35,7 @@ void PhisicalItem::update(float deltatime)
 
     const bool onGround{ isStateActive(State::OnGround) };
     const bool needJumping{ isStateActive(State::Jump) && onGround };
+
     if (needJumping)
         velocity.y = 0.0f;
 
@@ -39,7 +43,7 @@ void PhisicalItem::update(float deltatime)
         velocity *= _context.velocity / velocity.Length();
     _collider->SetLinearVelocity(velocity);
 
-    if (isStateActive(State::Jump) && onGround)
+    if (needJumping)
     {
         b2Vec2 jumpImpulse(0.0f, -_collider->GetMass() * _context.jumpImpulse);
         _collider->ApplyLinearImpulseToCenter(jumpImpulse, true);

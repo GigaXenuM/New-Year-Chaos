@@ -33,13 +33,9 @@ void ContactListener::handleContact(b2Contact *contact, Util::EnumFlag<UserData>
     {
         b2WorldManifold worldManifold;
         contact->GetWorldManifold(&worldManifold);
-        b2Vec2 normal = worldManifold.normal;
+        const b2Vec2 normal{ worldManifold.normal };
 
-        std::cout << "normal.x = " << normal.x << std::endl;
-        std::cout << "normal.y = " << normal.y << std::endl;
-        std::cout << "onGround = " << contacted << std::endl << std::endl;
-
-        if (std::fabs(normal.x) > 0.9f && std::fabs(normal.y) < 0.6f)
+        if (std::fabs(normal.x) > 0.99f && std::fabs(normal.y) < 0.6f)
         {
             executeActions(ActionVariant::PlayerAboveGround);
             return;

@@ -16,7 +16,12 @@
 #include <tmxlite/Layer.hpp>
 #include <tmxlite/Map.hpp>
 
-#include <iostream>
+namespace
+{
+constexpr float TIME_STEP = 1.0f / 60.0f;
+constexpr int VELOCITY_ITERATIONS = 8;
+constexpr int POSITION_ITERATIONS = 3;
+} // namespace
 
 namespace Game::Level
 {
@@ -39,25 +44,8 @@ Controller::~Controller() = default;
 
 void Controller::update(float deltatime)
 {
-    for (const auto &layer : _tileLayers)
-    {
-        layer->update(deltatime);
-        _renderTarget->draw(*layer);
-    }
-
-    const float timeStep = 1.0f / 60.0f;
-    const int velocityIterations = 8;
-    const int positionIterations = 3;
-
-    _phisicalWorld->Step(timeStep, velocityIterations, positionIterations);
-    _phisicalWorld->DebugDraw();
-
-    for (const auto &item : _itemsToDrawing)
-    {
-        item->update(deltatime);
-        _renderTarget->draw(*item);
-    }
-    updateCameraPos();
+    calculate(deltatime);
+    render(deltatime);
 }
 
 void Controller::keyPressEvent(KeyPressEvent *event)
@@ -82,6 +70,9 @@ void Controller::keyReleaseEvent(KeyReleaseEvent *event)
 
 void Controller::loadLevel()
 {
+    _elements.clear();
+    _contactListener->clear();
+
     tmx::Map map;
     map.load("level/terrain.tmx");
     if (map.getOrientation() != tmx::Orientation::Orthogonal)
@@ -91,7 +82,6 @@ void Controller::loadLevel()
     }
 
     const auto &layers{ map.getLayers() };
-    _tileLayers.clear();
 
     for (const auto &layer : layers)
     {
@@ -99,7 +89,7 @@ void Controller::loadLevel()
         {
         case tmx::Layer::Type::Tile:
         {
-            _tileLayers.push_back(
+            _elements.push_back(
                 std::make_unique<TileLayer>(map, layer->getLayerAs<tmx::TileLayer>()));
             break;
         }
@@ -137,14 +127,14 @@ void Controller::initPhisicalWorld()
     std::vector<sf::Shape *> terrainShapes{ _objectLayer->objects("terrain") };
 
     boundingBoxDef.userData.pointer = static_cast<uintptr_t>(UserData::Terrain);
-    b2Body *terrainBody = _phisicalWorld->CreateBody(&boundingBoxDef);
+    b2Body *terrainBody{ _phisicalWorld->CreateBody(&boundingBoxDef) };
     for (const sf::Shape *shape : terrainShapes)
         Util::createComplexFixture(terrainBody, shape, &fixtureDefinition);
 
     std::vector<sf::Shape *> terrainObstacleShapes{ _objectLayer->objects("terrain_obstacle") };
 
     boundingBoxDef.userData.pointer = static_cast<uintptr_t>(UserData::TerrainObstacle);
-    b2Body *terrainObstacleBody = _phisicalWorld->CreateBody(&boundingBoxDef);
+    b2Body *terrainObstacleBody{ _phisicalWorld->CreateBody(&boundingBoxDef) };
     for (const sf::Shape *shape : terrainObstacleShapes)
         Util::createComplexFixture(terrainObstacleBody, shape, &fixtureDefinition);
 }
@@ -165,26 +155,50 @@ void Controller::initPlayer()
     bodyDefinition.fixedRotation = true;
     bodyDefinition.userData.pointer = static_cast<uintptr_t>(UserData::Player);
 
-    b2Body *body = _phisicalWorld->CreateBody(&bodyDefinition);
+    b2Body *body{ _phisicalWorld->CreateBody(&bodyDefinition) };
     Util::createComplexFixture(body, playerShape, &fixtureDefinition);
 
-    _player = std::make_unique<Player>(body, nullptr);
+    _player = new Player{ body, nullptr };
+    _elements.push_back(std::unique_ptr<Player>{ _player });
 
-    _itemsToDrawing.push_back(_player.get());
-
-    _contactListener->registerAction(ActionVariant::PlayerOnGround, [player = _player.get()]()
+    _contactListener->registerAction(ActionVariant::PlayerOnGround, [player = _player]()
                                      { player->updateState(Player::State::OnGround, true); });
-    _contactListener->registerAction(ActionVariant::PlayerAboveGround, [player = _player.get()]()
+    _contactListener->registerAction(ActionVariant::PlayerAboveGround, [player = _player]()
                                      { player->updateState(Player::State::OnGround, false); });
+}
+
+void Controller::calculate(float deltatime)
+{
+    _timeAccumulator.update(deltatime);
+
+    while (_timeAccumulator.resolve(TIME_STEP))
+    {
+        _phisicalWorld->Step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
+
+        for (const auto &item : _elements)
+            item->update(deltatime);
+    }
+
+    updateCameraPos();
+}
+
+void Controller::render(float deltatime)
+{
+    for (const auto &item : _elements)
+        _renderTarget->draw(*item);
+
+    _phisicalWorld->DebugDraw();
 }
 
 void Controller::updateCameraPos()
 {
     const sf::Vector2f playerPosition = _player->getPosition();
 
-    sf::Vector2f viewCenter = _gameView->getCenter();
-    const sf::Vector2f safeZoneMin(viewCenter.x - _halfSafeZone.x, viewCenter.y - _halfSafeZone.y);
-    const sf::Vector2f safeZoneMax(viewCenter.x + _halfSafeZone.x, viewCenter.y + _halfSafeZone.y);
+    sf::Vector2f viewCenter{ _gameView->getCenter() };
+    const sf::Vector2f safeZoneMin{ viewCenter.x - _halfSafeZone.x,
+                                    viewCenter.y - _halfSafeZone.y };
+    const sf::Vector2f safeZoneMax{ viewCenter.x + _halfSafeZone.x,
+                                    viewCenter.y + _halfSafeZone.y };
 
     if (playerPosition.x < safeZoneMin.x)
         viewCenter.x = playerPosition.x + _halfSafeZone.x;

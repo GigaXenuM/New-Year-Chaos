@@ -29,6 +29,11 @@ public:
             action();
     }
 
+    void clear()
+    {
+        _actions.clear();
+    }
+
 private:
     std::unordered_map<size_t, std::vector<std::function<void()>>> _actions;
 };
