@@ -22,7 +22,7 @@ set(HEADER_FILES
     src/visitor/ivisitor.h
     src/visitor/defaultvisitor.h
 
-    src/resources/resourceManager.h
+    src/resources/resourcemanager.h
 
     src/graphics-element/hud/hudhealthbar.h
     src/graphics-element/hud/hudcomponents.cpp
@@ -77,7 +77,7 @@ set(SOURCE_FILES
 
     src/visitor/defaultvisitor.cpp
 
-    src/resources/resourceManager.cpp
+    src/resources/resourcemanager.cpp
 
     src/graphics-element/hud/hudhealthbar.cpp
     src/graphics-element/hud/hudcomponents.cpp

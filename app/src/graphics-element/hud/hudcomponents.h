@@ -1,22 +1,20 @@
 #pragma once
 
 #include "hud/hudhealthbar.h"
-#include "item/abstractitem.h"
 
 #include <memory>
-#include <vector>
 
 namespace sf
 {
 class View;
 }
 
-class HUDComponents
+class HUDComponents : public IUpdatable
 {
 public:
     HUDComponents(sf::RenderTarget *renderTarget, sf::View *view);
 
-    void update(const float deltatime);
+    void update(float deltatime) override;
 
 private:
     void updateBarPosition();

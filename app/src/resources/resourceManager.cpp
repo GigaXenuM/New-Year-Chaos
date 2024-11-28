@@ -1,4 +1,4 @@
-#include "ResourceManager.h"
+#include "resourcemanager.h"
 #include "SFML/Graphics/Font.hpp"
 #include "SFML/Graphics/Texture.hpp"
 
@@ -36,7 +36,7 @@ void ResourseManager::loadAllTextures()
     loadTextures("player/png/", TextureType::Player_idle, "Idle");
     loadTextures("player/png/", TextureType::Player_slide, "Slide");
 
-    //HUD
+    // HUD
     loadTextures("hud/", TextureType::Health_bar, "Health");
     loadTextures("hud/", TextureType::HeartBar_icon, "Heart");
     loadTextures("hud/", TextureType::FreezBar_icon, "Ice");

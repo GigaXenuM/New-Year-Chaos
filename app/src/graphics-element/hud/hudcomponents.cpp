@@ -1,8 +1,9 @@
 #include "hudcomponents.h"
 
-#include "SFML/Graphics/RenderTarget.hpp"
-#include "SFML/Graphics/Texture.hpp"
-#include "resources/resourceManager.h"
+#include "resources/resourcemanager.h"
+
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 HUDComponents::HUDComponents(sf::RenderTarget *renderTarget, sf::View *view)
     : _gameView{ view },
@@ -38,5 +39,6 @@ void HUDComponents::updateBarPosition()
     _freezBar->setPosition(bottomLeft);
     _freezBar->setIconScaleFactors(0.07, 0.07);
     _healthBar->setPosition(
-        { bottomLeft.x + 2, bottomLeft.y - (_freezBar->getSprite()->getGlobalBounds().height * 1.5f) });
+        { bottomLeft.x + 2,
+          bottomLeft.y - (_freezBar->getSprite()->getGlobalBounds().height * 1.5f) });
 }

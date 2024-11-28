@@ -19,6 +19,7 @@ class Layout
 
 public:
     explicit Layout(const sf::FloatRect &rect);
+    virtual ~Layout() = default;
 
     void addItem(std::shared_ptr<Graphics::ILayoutItem> item);
     Items items() const;

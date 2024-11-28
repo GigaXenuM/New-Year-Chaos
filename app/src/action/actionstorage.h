@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <functional>
 #include <unordered_map>
+#include <vector>
 
 namespace Action
 {
