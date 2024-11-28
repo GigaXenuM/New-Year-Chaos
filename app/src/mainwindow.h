@@ -13,10 +13,10 @@ namespace Menu
 class Menu;
 } // namespace Menu
 
-namespace Scene
+namespace Game
 {
 class Scene;
-} // namespace Scene
+} // namespace Game
 
 class MainWindow : public sf::RenderWindow, public EventHandler
 {
@@ -40,7 +40,7 @@ private:
     sf::Clock _clock;
 
     std::unique_ptr<Menu::Menu> _menu;
-    std::unique_ptr<Scene::Scene> _scene;
+    std::unique_ptr<Game::Scene> _scene;
 
     IView *_currentView{ nullptr };
 

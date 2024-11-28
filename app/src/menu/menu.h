@@ -1,6 +1,7 @@
 #pragma once
 
 #include "action/actionstorage.h"
+#include "actionvariant.h"
 #include "eventhandler.h"
 #include "iview.h"
 
@@ -22,7 +23,7 @@ class AbstractItem;
 namespace Menu
 {
 
-class Menu : public IView, public Action::ActionStorage
+class Menu : public IView, public Action::ActionStorage<ActionVariant>
 {
 public:
     explicit Menu(sf::RenderTarget *renderTarget, EventHandler *parent);

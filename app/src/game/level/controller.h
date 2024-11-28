@@ -3,11 +3,15 @@
 #include "SFML/System/Vector2.hpp"
 #include "iupdatable.h"
 
+#include "contact/contactlistener.h"
+
+#include <box2d/b2_body.h>
+
 #include <memory>
-#include <string>
 #include <vector>
 
 class Player;
+class b2World;
 
 namespace sf
 {
@@ -21,7 +25,7 @@ namespace Graphics
 class Drawable;
 } // namespace Graphics
 
-namespace Scene::Level
+namespace Game::Level
 {
 
 class TileLayer;
@@ -41,22 +45,26 @@ protected:
 
 private:
     void loadLevel();
-    void handleCollisions() const;
+    void initPhisicalWorld();
+    void initPlayer();
 
     void updateCameraPos();
 
-    sf::RenderTarget *_renderTarget;
-
-    std::vector<std::unique_ptr<TileLayer>> _tileLayers;
-    std::vector<std::unique_ptr<ObjectLayer>> _objectLayers;
-
+    sf::RenderTarget *_renderTarget{ nullptr };
     sf::View *_gameView{ nullptr };
-
-    std::unique_ptr<Player> _player;
-    std::vector<Graphics::Drawable *> _itemsToDrawing;
 
     sf::Vector2f _safeZoneSize;
     sf::Vector2f _halfSafeZone;
+
+    std::vector<std::unique_ptr<TileLayer>> _tileLayers;
+    std::unique_ptr<ObjectLayer> _objectLayer;
+
+    std::unique_ptr<ContactListener> _contactListener;
+
+    std::unique_ptr<b2World> _phisicalWorld;
+    std::unique_ptr<Player> _player;
+
+    std::vector<Graphics::Drawable *> _itemsToDrawing;
 };
 
-} // namespace Scene::Level
+} // namespace Game::Level

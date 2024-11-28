@@ -3,7 +3,22 @@
 #include "alignment.h"
 #include "util/enumflag.h"
 
+#include <SFML/Graphics/ConvexShape.hpp>
 #include <SFML/Graphics/Rect.hpp>
+
+#include <box2d/b2_body.h>
+#include <box2d/b2_math.h>
+#include <box2d/b2_types.h>
+
+struct b2Color;
+struct b2FixtureDef;
+
+namespace sf
+{
+class Color;
+class Shape;
+class ConvexShape;
+} // namespace sf
 
 namespace Util
 {
@@ -25,4 +40,14 @@ template <typename T> sf::Vector2<T> pointBy(const sf::Rect<T> &rect, Util::Enum
 
     return result;
 }
+
+sf::Vector2f b2VecToSFVec(const b2Vec2 &vector);
+b2Vec2 sfVecToB2Vec(sf::Vector2f vector);
+
+sf::Color glColorToSFML(const b2Color &color, uint8 alpha = 255);
+
+void createComplexFixture(b2Body *body, const sf::Shape *sfShape, b2FixtureDef *bodyDefinition);
+
+sf::ConvexShape convertBodyToSFMLShape(const b2Body *body);
+
 } // namespace Util

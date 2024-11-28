@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-namespace Scene::Level
+namespace Game::Level
 {
 
 class Chunk final : public sf::Transformable, public sf::Drawable
@@ -78,4 +78,4 @@ private:
     std::vector<ChunkArray::Ptr> _chunkArrays;
 };
 
-} // namespace Scene::Level
+} // namespace Game::Level

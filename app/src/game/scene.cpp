@@ -9,7 +9,7 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-namespace Scene
+namespace Game
 {
 Scene::Scene(sf::RenderTarget *renderTarget, EventHandler *parent)
     : IView{ renderTarget, parent },
@@ -62,4 +62,4 @@ void Scene::mouseScrollEvent(MouseScrollEvent *event)
 
     _view->setSize(_viewSize * _scaling);
 }
-} // namespace Scene
+} // namespace Game

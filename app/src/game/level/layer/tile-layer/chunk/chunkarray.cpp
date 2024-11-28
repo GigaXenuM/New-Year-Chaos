@@ -1,6 +1,6 @@
 #include "chunkarray.h"
 
-namespace Scene::Level
+namespace Game::Level
 {
 
 ChunkArray::ChunkArray(const sf::Texture &texture, const tmx::Tileset &tileset)
@@ -52,4 +52,4 @@ void ChunkArray::draw(sf::RenderTarget &rt, sf::RenderStates states) const
     rt.draw(_vertices.data(), _vertices.size(), sf::Triangles, states);
 }
 
-} // namespace Scene::Level
+} // namespace Game::Level

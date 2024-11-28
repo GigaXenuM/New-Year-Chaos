@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Scene::Level
+namespace Game::Level
 {
 
 enum class ObjectVariant

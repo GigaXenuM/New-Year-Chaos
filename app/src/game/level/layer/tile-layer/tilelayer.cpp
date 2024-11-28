@@ -1,9 +1,10 @@
 #include "tilelayer.h"
 
-namespace Scene::Level
+namespace Game::Level
 {
 
 TileLayer::TileLayer(const tmx::Map &map, const tmx::TileLayer &layer)
+    : Graphics::Drawable{ nullptr }
 {
     const auto tileSize = map.getTileSize();
     _chunkSize.x = std::floor(_chunkSize.x / tileSize.x) * tileSize.x;
@@ -27,11 +28,13 @@ tmx::TileLayer::Tile TileLayer::getTile(int32_t tileX, int32_t tileY)
     return selectedChunk->getTile(chunkLocale.x, chunkLocale.y);
 }
 
-void TileLayer::update(sf::Time elapsed)
+void TileLayer::update(float deltatime)
 {
+    const sf::Time elapsed{ sf::seconds(deltatime) };
+
     for (auto &c : _visibleChunks)
     {
-        for (Scene::Level::AnimationState &as : c->getActiveAnimations())
+        for (AnimationState &as : c->getActiveAnimations())
         {
             as.currentTime += elapsed;
 
@@ -179,4 +182,4 @@ void TileLayer::draw(sf::RenderTarget &rendererTarget, sf::RenderStates states) 
         rendererTarget.draw(*chunk, states);
 }
 
-} // namespace Scene::Level
+} // namespace Game::Level

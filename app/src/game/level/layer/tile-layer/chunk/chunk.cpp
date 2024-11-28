@@ -1,6 +1,6 @@
 #include "chunk.h"
 
-namespace Scene::Level
+namespace Game::Level
 {
 
 Chunk::Chunk(const tmx::TileLayer &layer, std::vector<const tmx::Tileset *> tilesets,
@@ -240,7 +240,7 @@ void Chunk::generateTiles(bool registerAnimation)
                     if (registerAnimation
                         && _animTiles.find(_chunkTileIDs[idx].ID) != _animTiles.end())
                     {
-                        Scene::Level::AnimationState as;
+                        AnimationState as;
                         as.animTile = _animTiles[_chunkTileIDs[idx].ID];
                         as.startTime = sf::milliseconds(0);
                         as.tileCords = sf::Vector2u(x, y);
@@ -295,4 +295,4 @@ void Chunk::generateTiles(bool registerAnimation)
     }
 }
 
-} // namespace Scene::Level
+} // namespace Game::Level

@@ -8,11 +8,6 @@ AbstractItem::AbstractItem(EventHandler *parent) : Drawable{ parent }
 {
 }
 
-void AbstractItem::move(const sf::Vector2f delta)
-{
-    setPosition(position() + delta);
-}
-
 void AbstractItem::accept(Visitor::IVisitor *visitor)
 {
     visitor->visitAbstractItem(this);

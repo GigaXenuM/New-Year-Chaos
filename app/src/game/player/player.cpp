@@ -3,12 +3,12 @@
 #include "Resources/ResourceManager.h"
 #include "util/geometryoperation.h"
 
-#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/ConvexShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
-Player::Player(sf::RectangleShape *collider, EventHandler *eventHandler)
-    : Graphics::PhisicalItem(collider, Graphics::PhisicalItem::PhisicalContext{ 20, 200, 10 },
-                             eventHandler),
+Player::Player(b2Body *collider, EventHandler *eventHandler)
+    : Graphics::PhisicalItem(collider, { 5, 30 }, eventHandler),
       _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run) },
       _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_dead) },
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_walk) },
@@ -44,8 +44,12 @@ void Player::updateAnimation(float deltatime)
 
 void Player::updatePosition(float deltatime)
 {
-    const auto playerPos{ Util::pointBy(globalRect(), { Align::Bottom }) };
-    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), { Align::Bottom }));
+    const sf::ConvexShape shape{ Util::convertBodyToSFMLShape(collider()) };
+    const sf::Vector2f playerPos{ Util::pointBy(shape.getLocalBounds(),
+                                                { Align::Bottom, Align::Left, Align::Right,
+                                                  Align::Top }) };
+    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(),
+                                    { Align::Bottom, Align::Left, Align::Right, Align::Top }));
     _sprite.setPosition(playerPos);
 }
 
