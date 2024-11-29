@@ -29,7 +29,10 @@ enum class TextureType
     // HUD
     Health_bar,
     HeartBar_icon,
-    FreezBar_icon
+    FreezBar_icon,
+
+    // Bot
+    Viking_walk
 };
 
 class ResourseManager
