@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <functional>
 #include <unordered_map>
+#include <vector>
 
 namespace Action
 {
@@ -26,6 +27,11 @@ public:
         const auto castedKey{ static_cast<size_t>(key) };
         for (const auto &action : _actions[castedKey])
             action();
+    }
+
+    void clear()
+    {
+        _actions.clear();
     }
 
 private:

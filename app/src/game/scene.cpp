@@ -21,6 +21,8 @@ Scene::Scene(sf::RenderTarget *renderTarget, EventHandler *parent)
 {
 }
 
+Scene::~Scene() = default;
+
 void Scene::update(float deltatime)
 {
     IView::update(deltatime);

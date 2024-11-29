@@ -4,6 +4,7 @@
 #include "iupdatable.h"
 
 #include "contact/contactlistener.h"
+#include "util/timeaccumulator.h"
 
 #include <box2d/b2_body.h>
 
@@ -48,6 +49,9 @@ private:
     void initPhisicalWorld();
     void initPlayer();
 
+    void calculate(float deltatime);
+    void render(float deltatime);
+
     void updateCameraPos();
 
     sf::RenderTarget *_renderTarget{ nullptr };
@@ -56,15 +60,15 @@ private:
     sf::Vector2f _safeZoneSize;
     sf::Vector2f _halfSafeZone;
 
-    std::vector<std::unique_ptr<TileLayer>> _tileLayers;
     std::unique_ptr<ObjectLayer> _objectLayer;
 
     std::unique_ptr<ContactListener> _contactListener;
 
     std::unique_ptr<b2World> _phisicalWorld;
-    std::unique_ptr<Player> _player;
+    Player *_player;
+    Util::TimeAccumulator _timeAccumulator;
 
-    std::vector<Graphics::Drawable *> _itemsToDrawing;
+    std::vector<std::unique_ptr<Graphics::Drawable>> _elements;
 };
 
 } // namespace Game::Level

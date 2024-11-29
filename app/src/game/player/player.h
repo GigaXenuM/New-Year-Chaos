@@ -25,7 +25,6 @@ private:
     void updatePosition(float deltatime);
 
 private:
-    const float _speed{ 200.f };
     const float _scale{ 0.15f };
 
     sf::Sprite _sprite;

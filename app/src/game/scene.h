@@ -37,7 +37,7 @@ class Scene : public IView
 {
 public:
     explicit Scene(sf::RenderTarget *renderTarget, EventHandler *parent);
-    virtual ~Scene() = default;
+    virtual ~Scene();
 
     void update(float deltatime) override;
     sf::View *view() const override;

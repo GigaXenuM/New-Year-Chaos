@@ -18,7 +18,6 @@ public:
     [[nodiscard]] const sf::Sprite *getSprite() const;
 
 protected:
-    void update(float deltatime) override{};
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:

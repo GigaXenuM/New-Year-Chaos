@@ -4,13 +4,11 @@
 #include "button/textbutton.h"
 #include "item/abstractitem.h"
 #include "layout/verticallayout.h"
-#include <Resources/ResourceManager.h>
+#include <resources/resourcemanager.h>
 
 #include "SFML/Graphics/Font.hpp"
 #include "SFML/Graphics/Rect.hpp"
 #include "SFML/Graphics/RenderTarget.hpp"
-
-#include <iostream>
 
 namespace Menu
 {

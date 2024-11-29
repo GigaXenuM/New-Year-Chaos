@@ -16,6 +16,10 @@ public:
     {
     }
 
+    ~IView()
+    {
+    }
+
     void update(float deltatime)
     {
         _renderTarget->setView(*view());

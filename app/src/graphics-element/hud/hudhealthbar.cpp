@@ -1,10 +1,10 @@
 #include "hudhealthbar.h"
 
-#include "Resources/ResourceManager.h"
-#include "SFML/Graphics/Sprite.hpp"
-#include "SFML/Graphics/Texture.hpp"
+#include "resources/resourcemanager.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 HUDHealthBar::HUDHealthBar(const sf::Texture &iconTexture) : Graphics::AbstractItem(nullptr)
 {
@@ -70,7 +70,7 @@ void HUDHealthBar::setColor(const sf::Color &color)
 void HUDHealthBar::setValue(const float value)
 {
     if (value > 100 || value < 0)
-        assert(false, "HUDHealthBar::setValue the value cannot exceed 100 and be less than 0");
+        assert(false && "HUDHealthBar::setValue the value cannot exceed 100 and be less than 0");
     sf::Vector2f currentSize = _health.getSize();
     currentSize.x = (_healthBar.getGlobalBounds().width - 12) * (value / 100.f);
     _health.setSize(currentSize);

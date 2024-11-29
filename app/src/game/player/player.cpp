@@ -1,6 +1,6 @@
 #include "player.h"
 
-#include "Resources/ResourceManager.h"
+#include "resources/resourcemanager.h"
 #include "util/geometryoperation.h"
 
 #include <SFML/Graphics/ConvexShape.hpp>
