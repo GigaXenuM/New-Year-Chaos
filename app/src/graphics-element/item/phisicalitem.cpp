@@ -1,7 +1,8 @@
 #include "phisicalitem.h"
 
 #include "box2d/b2_body.h"
-#include <MacTypes.h>
+#include "util/geometryoperation.h"
+// #include <MacTypes.h>
 
 #include <iostream>
 
@@ -21,6 +22,11 @@ void PhisicalItem::updateState(State state, bool isActive)
 bool PhisicalItem::isStateActive(State state) const
 {
     return _state.test(state);
+}
+
+sf::FloatRect PhisicalItem::boundingRect() const
+{
+    return Util::convertBodyToSFMLShape(_collider).getGlobalBounds();
 }
 
 void PhisicalItem::update(float deltatime)

@@ -38,6 +38,7 @@ Controller::Controller(sf::RenderTarget *renderTarget, sf::View *view, EventHand
     loadLevel();
     initPhisicalWorld();
     initPlayer();
+    initBot();
 }
 
 Controller::~Controller() = default;
@@ -165,6 +166,29 @@ void Controller::initPlayer()
                                      { player->updateState(Player::State::OnGround, true); });
     _contactListener->registerAction(ActionVariant::PlayerAboveGround, [player = _player]()
                                      { player->updateState(Player::State::OnGround, false); });
+}
+
+void Controller::initBot()
+{
+    const auto &playerContainer{ _objectLayer->objects("viking_enemy") };
+    assert(playerContainer.size() == 1 && "");
+
+    sf::Shape *playerShape{ _objectLayer->objects("viking_enemy").front() };
+
+    b2FixtureDef fixtureDefinition;
+    fixtureDefinition.density = 1.0f;
+    fixtureDefinition.friction = 0.0f;
+
+    b2BodyDef bodyDefinition;
+    bodyDefinition.type = b2_dynamicBody;
+    bodyDefinition.fixedRotation = true;
+    bodyDefinition.userData.pointer = static_cast<uintptr_t>(UserData::Bot);
+
+    b2Body *body{ _phisicalWorld->CreateBody(&bodyDefinition) };
+    Util::createComplexFixture(body, playerShape, &fixtureDefinition);
+
+    _bot = new Bot{ body, nullptr };
+    _elements.push_back(std::unique_ptr<Bot>{ _bot });
 }
 
 void Controller::calculate(float deltatime)

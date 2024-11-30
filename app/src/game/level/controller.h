@@ -4,6 +4,7 @@
 #include "iupdatable.h"
 
 #include "contact/contactlistener.h"
+#include "player/bot.h"
 #include "util/timeaccumulator.h"
 
 #include <box2d/b2_body.h>
@@ -48,6 +49,7 @@ private:
     void loadLevel();
     void initPhisicalWorld();
     void initPlayer();
+    void initBot();
 
     void calculate(float deltatime);
     void render(float deltatime);
@@ -66,6 +68,8 @@ private:
 
     std::unique_ptr<b2World> _phisicalWorld;
     Player *_player;
+    Bot *_bot;
+
     Util::TimeAccumulator _timeAccumulator;
 
     std::vector<std::unique_ptr<Graphics::Drawable>> _elements;
