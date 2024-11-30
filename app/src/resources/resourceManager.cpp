@@ -40,6 +40,9 @@ void ResourseManager::loadAllTextures()
     loadTextures("hud/", TextureType::Health_bar, "Health");
     loadTextures("hud/", TextureType::HeartBar_icon, "Heart");
     loadTextures("hud/", TextureType::FreezBar_icon, "Ice");
+
+    // Bot
+    loadTextures("bot/", TextureType::Viking_walk, "Viking");
 }
 
 void ResourseManager::loadfont(const std::string &filePath, const FontType type)

@@ -17,6 +17,7 @@ set(HEADER_FILES
     src/game/level/layer/object-layer/objectlayer.h
     src/game/level/layer/object-layer/objectvariant.h
     src/game/contact/contactlistener.h
+    src/game/player/bot.h
     src/game/player/player.h
 
     src/visitor/ivisitor.h
@@ -73,6 +74,7 @@ set(SOURCE_FILES
     src/game/level/layer/tile-layer/tilelayer.cpp
     src/game/level/layer/object-layer/objectlayer.cpp
     src/game/contact/contactlistener.cpp
+    src/game/player/bot.cpp
     src/game/player/player.cpp
 
     src/visitor/defaultvisitor.cpp

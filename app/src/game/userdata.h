@@ -8,6 +8,7 @@ enum class UserData
     Terrain,
     TerrainObstacle,
     Player,
+    Bot,
 };
 
 } // namespace Game

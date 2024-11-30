@@ -31,6 +31,8 @@ public:
     void updateState(State state, bool isActive);
     bool isStateActive(State state) const;
 
+    sf::FloatRect boundingRect() const;
+
 protected:
     void update(float deltatime) override;
 
