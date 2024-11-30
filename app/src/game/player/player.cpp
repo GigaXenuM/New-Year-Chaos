@@ -9,8 +9,8 @@
 
 Player *gPlayer = nullptr;
 
-Player::Player(b2Body *collider, EventHandler *eventHandler)
-    : Graphics::PhisicalItem(collider, { 5, 30 }, eventHandler),
+Player::Player(b2Body *collider)
+    : Graphics::PhisicalItem(collider, { 5, 30 }),
       _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run) },
       _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_dead) },
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_walk) },

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SFML/System/Vector2.hpp"
+#include "eventhandler.h"
 #include "iupdatable.h"
 
 #include "contact/contactlistener.h"
@@ -33,7 +34,7 @@ namespace Game::Level
 class TileLayer;
 class ObjectLayer;
 
-class Controller : public IUpdatable
+class Controller : public IUpdatable, public EventHandler
 {
 public:
     explicit Controller(sf::RenderTarget *renderTarget, sf::View *view, EventHandler *parent);

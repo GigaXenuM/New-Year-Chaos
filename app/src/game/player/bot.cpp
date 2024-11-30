@@ -5,8 +5,8 @@
 #include "resources/resourcemanager.h"
 #include "util/geometryoperation.h"
 
-Bot::Bot(b2Body *collider, EventHandler *eventHandler)
-    : Graphics::PhisicalItem(collider, { 5, 30 }, eventHandler),
+Bot::Bot(b2Body *collider)
+    : Graphics::PhisicalItem(collider, { 5, 30 }),
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Viking_walk) },
       _pos{ boundingRect().getPosition() }
 {

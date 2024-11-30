@@ -1,22 +1,20 @@
 #pragma once
 
-#include "SFML/Graphics/RenderTarget.hpp"
+#include "eventhandler.h"
 #include "iupdatable.h"
+
+#include <SFML/Graphics/RenderTarget.hpp>
 
 namespace sf
 {
 class View;
 }
 
-class IView : public IUpdatable
+class IView : public IUpdatable, public EventHandler
 {
 public:
     IView(sf::RenderTarget *renderTarget, EventHandler *parent)
-        : IUpdatable{ parent }, _renderTarget{ renderTarget }
-    {
-    }
-
-    ~IView()
+        : EventHandler{ parent }, _renderTarget{ renderTarget }
     {
     }
 

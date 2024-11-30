@@ -6,7 +6,9 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
-HUDHealthBar::HUDHealthBar(const sf::Texture &iconTexture) : Graphics::AbstractItem(nullptr)
+#include <cassert>
+
+HUDHealthBar::HUDHealthBar(const sf::Texture &iconTexture)
 {
     _barIcon.setTexture(iconTexture);
     setup();

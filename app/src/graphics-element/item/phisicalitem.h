@@ -26,7 +26,7 @@ public:
         float jumpImpulse{ 0.f };
     };
 
-    PhisicalItem(b2Body *collider, const Context &context, EventHandler *parent);
+    PhisicalItem(b2Body *collider, const Context &context);
 
     void updateState(State state, bool isActive);
     bool isStateActive(State state) const;

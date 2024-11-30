@@ -9,7 +9,7 @@
 class Bot : public Graphics::PhisicalItem
 {
 public:
-    Bot(b2Body *collider, EventHandler *eventHandler);
+    Bot(b2Body *collider);
 
 protected:
     void update(float deltatime) override;

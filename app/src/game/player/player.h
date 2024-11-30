@@ -12,7 +12,7 @@ struct b2Body;
 class Player : public Graphics::PhisicalItem
 {
 public:
-    Player(b2Body *collider, EventHandler *eventHandler);
+    Player(b2Body *collider);
 
     sf::Vector2f getPosition() const;
 

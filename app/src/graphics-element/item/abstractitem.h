@@ -1,7 +1,6 @@
 #pragma once
 
 #include "drawable.h"
-#include "event/eventhandler.h"
 
 #include <SFML/System/Vector2.hpp>
 
@@ -18,7 +17,6 @@ namespace Graphics
 class AbstractItem : public Drawable
 {
 public:
-    explicit AbstractItem(EventHandler *parent);
     virtual ~AbstractItem() = default;
 
     virtual void setPosition(const sf::Vector2f &position)

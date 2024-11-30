@@ -2,15 +2,12 @@
 
 #include "box2d/b2_body.h"
 #include "util/geometryoperation.h"
-// #include <MacTypes.h>
-
-#include <iostream>
 
 namespace Graphics
 {
 
-PhisicalItem::PhisicalItem(b2Body *collider, const Context &context, EventHandler *parent)
-    : Drawable{ parent }, _collider{ collider }, _context{ context }
+PhisicalItem::PhisicalItem(b2Body *collider, const Context &context)
+    : _collider{ collider }, _context{ context }
 {
 }
 

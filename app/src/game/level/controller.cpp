@@ -27,7 +27,7 @@ namespace Game::Level
 {
 
 Controller::Controller(sf::RenderTarget *renderTarget, sf::View *view, EventHandler *parent)
-    : IUpdatable{ parent },
+    : EventHandler{ parent },
       _renderTarget{ renderTarget },
       _gameView{ view },
       _safeZoneSize{ view->getSize().x * 0.2f, view->getSize().y * 0.2f },
@@ -159,7 +159,7 @@ void Controller::initPlayer()
     b2Body *body{ _phisicalWorld->CreateBody(&bodyDefinition) };
     Util::createComplexFixture(body, playerShape, &fixtureDefinition);
 
-    gPlayer = new Player(body, nullptr);
+    gPlayer = new Player(body);
     _elements.push_back(std::unique_ptr<Player>(gPlayer));
     _contactListener->registerAction(ActionVariant::PlayerOnGround, [player = gPlayer]()
                                      { player->updateState(Player::State::OnGround, true); });
@@ -186,7 +186,7 @@ void Controller::initBot()
     b2Body *body{ _phisicalWorld->CreateBody(&bodyDefinition) };
     Util::createComplexFixture(body, playerShape, &fixtureDefinition);
 
-    _bot = new Bot{ body, nullptr };
+    _bot = new Bot{ body };
     _elements.push_back(std::unique_ptr<Bot>{ _bot });
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "eventhandler.h"
 #include "item/abstractitem.h"
 
 #include <SFML/Graphics/Rect.hpp>
@@ -13,10 +14,10 @@ template <typename T> class EnumFlag;
 namespace Graphics
 {
 
-class ILayoutItem : public AbstractItem
+class ILayoutItem : public AbstractItem, public EventHandler
 {
 public:
-    ILayoutItem(EventHandler *parent) : AbstractItem{ parent }
+    ILayoutItem(EventHandler *parent) : EventHandler{ parent }
     {
     }
 
