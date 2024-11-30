@@ -51,8 +51,9 @@ private:
     void initPlayer();
     void initBot();
 
-    void calculate(float deltatime);
     void render(float deltatime);
+    void updatePlayerHealth();
+    void calculate(float deltatime);
 
     void updateCameraPos();
 
@@ -67,7 +68,6 @@ private:
     std::unique_ptr<ContactListener> _contactListener;
 
     std::unique_ptr<b2World> _phisicalWorld;
-    Player *_player;
     Bot *_bot;
 
     Util::TimeAccumulator _timeAccumulator;

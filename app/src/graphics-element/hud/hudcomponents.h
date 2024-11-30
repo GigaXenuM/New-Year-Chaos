@@ -17,6 +17,7 @@ public:
     void update(float deltatime) override;
 
 private:
+    void updateBarValue();
     void updateBarPosition();
 
 private:

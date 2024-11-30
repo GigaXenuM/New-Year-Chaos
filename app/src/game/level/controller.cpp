@@ -52,21 +52,21 @@ void Controller::update(float deltatime)
 void Controller::keyPressEvent(KeyPressEvent *event)
 {
     if (event->key() == sf::Keyboard::D)
-        _player->updateState(Player::State::Right, true);
+        gPlayer->updateState(Player::State::Right, true);
     if (event->key() == sf::Keyboard::A)
-        _player->updateState(Player::State::Left, true);
+        gPlayer->updateState(Player::State::Left, true);
     if (event->key() == sf::Keyboard::Space)
-        _player->updateState(Player::State::Jump, true);
+        gPlayer->updateState(Player::State::Jump, true);
 }
 
 void Controller::keyReleaseEvent(KeyReleaseEvent *event)
 {
     if (event->key() == sf::Keyboard::D)
-        _player->updateState(Player::State::Right, false);
+        gPlayer->updateState(Player::State::Right, false);
     if (event->key() == sf::Keyboard::A)
-        _player->updateState(Player::State::Left, false);
+        gPlayer->updateState(Player::State::Left, false);
     if (event->key() == sf::Keyboard::Space)
-        _player->updateState(Player::State::Jump, false);
+        gPlayer->updateState(Player::State::Jump, false);
 }
 
 void Controller::loadLevel()
@@ -159,12 +159,11 @@ void Controller::initPlayer()
     b2Body *body{ _phisicalWorld->CreateBody(&bodyDefinition) };
     Util::createComplexFixture(body, playerShape, &fixtureDefinition);
 
-    _player = new Player{ body, nullptr };
-    _elements.push_back(std::unique_ptr<Player>{ _player });
-
-    _contactListener->registerAction(ActionVariant::PlayerOnGround, [player = _player]()
+    gPlayer = new Player(body, nullptr);
+    _elements.push_back(std::unique_ptr<Player>(gPlayer));
+    _contactListener->registerAction(ActionVariant::PlayerOnGround, [player = gPlayer]()
                                      { player->updateState(Player::State::OnGround, true); });
-    _contactListener->registerAction(ActionVariant::PlayerAboveGround, [player = _player]()
+    _contactListener->registerAction(ActionVariant::PlayerAboveGround, [player = gPlayer]()
                                      { player->updateState(Player::State::OnGround, false); });
 }
 
@@ -214,9 +213,13 @@ void Controller::render(float deltatime)
     _phisicalWorld->DebugDraw();
 }
 
+void Controller::updatePlayerHealth()
+{
+}
+
 void Controller::updateCameraPos()
 {
-    const sf::Vector2f playerPosition = _player->getPosition();
+    const sf::Vector2f playerPosition = gPlayer->getPosition();
 
     sf::Vector2f viewCenter{ _gameView->getCenter() };
     const sf::Vector2f safeZoneMin{ viewCenter.x - _halfSafeZone.x,

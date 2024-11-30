@@ -16,16 +16,27 @@ public:
 
     sf::Vector2f getPosition() const;
 
+    [[nodiscard]] bool isDead() const;
+    [[nodiscard]] float getFreezPoints() const;
+    [[nodiscard]] float getHealthPoints() const;
+
 protected:
     void update(float deltatime) override;
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
-    void updateAnimation(float deltatime);
     void updatePosition(float deltatime);
+    void updateAnimation(float deltatime);
+    void updateHealthPoint(float deltatime);
 
 private:
     const float _scale{ 0.15f };
+    const float _healthUpdateInterval{ 1.0f };
+
+    float _freezPoint{ 100.f };
+    float _healthPoint{ 100.f };
+
+    float _healthUpdateTimer{ 0.0f };
 
     sf::Sprite _sprite;
 
@@ -35,3 +46,5 @@ private:
     Animation _idleAnimation;
     Animation _jumpAnimation;
 };
+
+extern Player *gPlayer;

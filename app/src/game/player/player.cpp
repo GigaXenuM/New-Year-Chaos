@@ -7,6 +7,8 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
+Player *gPlayer = nullptr;
+
 Player::Player(b2Body *collider, EventHandler *eventHandler)
     : Graphics::PhisicalItem(collider, { 5, 30 }, eventHandler),
       _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run) },
@@ -23,10 +25,31 @@ sf::Vector2f Player::getPosition() const
     return _sprite.getPosition();
 }
 
+bool Player::isDead() const
+{
+    return _healthPoint == 0.f;
+}
+
+float Player::getFreezPoints() const
+{
+    return _freezPoint;
+}
+
+float Player::getHealthPoints() const
+{
+    return _healthPoint;
+}
+
 void Player::updateAnimation(float deltatime)
 {
-    // TODO: reset animation if keyboadrd action changed!
-    // _sprite.setOrigin(_sprite.getLocalBounds().width / 2.f, _sprite.getLocalBounds().height);
+    if (isDead())
+    {
+        if (!_deadAnimation.isFinished())
+            _deadAnimation.start(deltatime, _sprite, false);
+
+        return;
+    }
+
     const bool isMoved{ isStateActive(State::Right) || isStateActive(State::Left) };
     if (!isMoved)
     {
@@ -40,6 +63,20 @@ void Player::updateAnimation(float deltatime)
         _sprite.setScale({ _scale, _scale });
     else if (isStateActive(State::Left))
         _sprite.setScale({ -_scale, _scale });
+}
+
+void Player::updateHealthPoint(float deltatime)
+{
+    _healthUpdateTimer += deltatime;
+
+    if (_healthUpdateTimer >= _healthUpdateInterval)
+    {
+        _healthUpdateTimer = 0.0f; // reset timer
+        if (_freezPoint > 0.f)
+            _freezPoint -= 10.f;
+        else if (_healthPoint > 0)
+            _healthPoint -= 10.f;
+    }
 }
 
 void Player::updatePosition(float deltatime)
@@ -59,6 +96,7 @@ void Player::update(float deltatime)
 
     updatePosition(deltatime);
     updateAnimation(deltatime);
+    updateHealthPoint(deltatime);
 }
 
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const

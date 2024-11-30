@@ -1,5 +1,6 @@
 #include "hudcomponents.h"
 
+#include "player/player.h"
 #include "resources/resourcemanager.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -21,12 +22,19 @@ void HUDComponents::update(const float deltatime)
 {
     const std::vector<Graphics::AbstractItem *> hudItems{ _freezBar.get(), _healthBar.get() };
 
+    updateBarValue();
     updateBarPosition();
     for (const auto &hudItem : hudItems)
     {
         hudItem->update(deltatime);
         _renderTarget->draw(*hudItem);
     }
+}
+
+void HUDComponents::updateBarValue()
+{
+    _freezBar->setValue(gPlayer->getFreezPoints());
+    _healthBar->setValue(gPlayer->getHealthPoints());
 }
 
 void HUDComponents::updateBarPosition()
