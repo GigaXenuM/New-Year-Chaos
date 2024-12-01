@@ -43,6 +43,7 @@ void ResourseManager::loadAllTextures()
 
     // Bot
     loadTextures("bot/", TextureType::Viking_walk, "Viking");
+    loadTextures("bot/", TextureType::Viking_health_bar, "BotHealthBar");
 }
 
 void ResourseManager::loadfont(const std::string &filePath, const FontType type)

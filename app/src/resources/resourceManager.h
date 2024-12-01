@@ -32,7 +32,8 @@ enum class TextureType
     FreezBar_icon,
 
     // Bot
-    Viking_walk
+    Viking_walk,
+    Viking_health_bar
 };
 
 class ResourseManager
