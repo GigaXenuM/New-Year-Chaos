@@ -27,7 +27,7 @@ sf::Vector2f Player::getPosition() const
 
 bool Player::isDead() const
 {
-    return _healthPoint == 0.f;
+    return _healthPoint == 0.f && _deadAnimation.isFinished();
 }
 
 float Player::getFreezPoints() const
@@ -42,7 +42,7 @@ float Player::getHealthPoints() const
 
 void Player::updateAnimation(float deltatime)
 {
-    if (isDead())
+    if (_healthPoint == 0.f)
     {
         if (!_deadAnimation.isFinished())
             _deadAnimation.start(deltatime, _sprite, false);

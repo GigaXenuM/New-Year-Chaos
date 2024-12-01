@@ -16,6 +16,7 @@
 #include "menu/menu.h"
 
 #include "game/scene.h"
+#include "player/player.h"
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Window/Event.hpp>
@@ -27,6 +28,7 @@ MainWindow::MainWindow(unsigned int width, unsigned int height, const char *name
     : sf::RenderWindow{ sf::VideoMode({ width, height }), name },
       EventHandler{ nullptr },
       _menu{ std::make_unique<Menu::Menu>(this, this) },
+      _gameOverMenu{ std::make_unique<GameOverMenu>(this, this) },
       _scene{ std::make_unique<Game::Scene>(this, this) },
       _currentView{ _menu.get() },
       _latestMouseMoveEvent{ {}, {} }
@@ -49,6 +51,8 @@ int MainWindow::gameLoop()
             handleSfmlEvent(event);
 
         _currentView->update(deltatime);
+        if (gPlayer->isDead())
+            switchView(_gameOverMenu.get());
 
         display();
     }
@@ -127,6 +131,8 @@ void MainWindow::composeMenu()
 {
     _menu->registerAction(Menu::ActionVariant::Exit, [this]() { close(); });
     _menu->registerAction(Menu::ActionVariant::StartGame, [this]() { switchView(); });
+
+    _gameOverMenu->registerAction(Menu::ActionVariant::Exit, [this]() { close(); });
 }
 
 void MainWindow::switchView()

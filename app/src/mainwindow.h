@@ -5,6 +5,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
+#include <GameOverMenu.h>
 #include <memory>
 
 class IView;
@@ -40,6 +41,7 @@ private:
     sf::Clock _clock;
 
     std::unique_ptr<Menu::Menu> _menu;
+    std::unique_ptr<GameOverMenu> _gameOverMenu;
     std::unique_ptr<Game::Scene> _scene;
 
     IView *_currentView{ nullptr };

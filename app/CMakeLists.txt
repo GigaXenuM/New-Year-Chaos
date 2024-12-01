@@ -57,6 +57,9 @@ set(HEADER_FILES
 
     src/action/actionstorage.h
 
+    src/util/timeaccumulator.h
+    src/menu/gameovermenu.h
+
     src/util/enumflag.h
     src/util/geometryoperation.h
     src/util/debugdrawer.h
@@ -100,7 +103,11 @@ set(SOURCE_FILES
     src/event/mouseevents/mousereleaseevent.cpp
     src/event/mouseevents/mousescrollevent.cpp
 
+    src/util/geometryoperation.cpp
+    src/util/timeaccumulator.cpp
+
     src/menu/menu.cpp
+    src/menu/gameovermenu.cpp
 
     src/util/debugdrawer.cpp
 )
@@ -116,9 +123,7 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/app/src/event"
 )
 
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES}
-    src/util/geometryoperation.cpp
-    src/util/timeaccumulator.h src/util/timeaccumulator.cpp)
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-audio sfml-graphics tmxlite box2d)
 
