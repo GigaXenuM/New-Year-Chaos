@@ -8,6 +8,9 @@
 
 #include <cassert>
 
+namespace Game
+{
+
 HUDHealthBar::HUDHealthBar(const sf::Texture &iconTexture)
 {
     _barIcon.setTexture(iconTexture);
@@ -77,3 +80,5 @@ void HUDHealthBar::setValue(const float value)
     currentSize.x = (_healthBar.getGlobalBounds().width - 12) * (value / 100.f);
     _health.setSize(currentSize);
 }
+
+} // namespace Game

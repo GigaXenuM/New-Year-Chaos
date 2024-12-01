@@ -1,7 +1,7 @@
 #pragma once
 
 #include "animation/animation.h"
-#include "item/phisicalitem.h"
+#include "items/entity/physicalentity.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -9,7 +9,10 @@
 
 struct b2Body;
 
-class Player : public Graphics::PhisicalItem
+namespace Game
+{
+
+class Player : public PhysicalEntity
 {
 public:
     Player(b2Body *collider);
@@ -48,3 +51,5 @@ private:
 };
 
 extern Player *gPlayer;
+
+} // namespace Game

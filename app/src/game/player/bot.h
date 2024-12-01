@@ -2,11 +2,14 @@
 
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "animation/animation.h"
-#include "item/phisicalitem.h"
+#include "items/entity/physicalentity.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 
-class Bot : public Graphics::PhisicalItem
+namespace Game
+{
+
+class Bot : public PhysicalEntity
 {
 public:
     Bot(b2Body *collider);
@@ -37,3 +40,5 @@ private:
 
     Animation _walkAnimation;
 };
+
+} // namespace Game

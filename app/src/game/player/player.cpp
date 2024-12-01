@@ -7,10 +7,13 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
+namespace Game
+{
+
 Player *gPlayer = nullptr;
 
 Player::Player(b2Body *collider)
-    : Graphics::PhisicalItem(collider, { 5, 30 }),
+    : PhysicalEntity(collider, { 5, 30 }),
       _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run) },
       _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_dead) },
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_walk) },
@@ -92,7 +95,7 @@ void Player::updatePosition(float deltatime)
 
 void Player::update(float deltatime)
 {
-    Graphics::PhisicalItem::update(deltatime);
+    PhysicalEntity::update(deltatime);
 
     updatePosition(deltatime);
     updateAnimation(deltatime);
@@ -112,3 +115,5 @@ void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const
     border.setScale(_sprite.getScale());
     target.draw(border, states);
 }
+
+} // namespace Game

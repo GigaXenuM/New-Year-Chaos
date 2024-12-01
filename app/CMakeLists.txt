@@ -19,14 +19,15 @@ set(HEADER_FILES
     src/game/contact/contactlistener.h
     src/game/player/bot.h
     src/game/player/player.h
+    src/game/items/abstractphysicalitem.h
+    src/game/items/entity/physicalentity.h
+    src/game/hud/hudhealthbar.h
+    src/game/hud/hudcomponents.h
 
     src/visitor/ivisitor.h
     src/visitor/defaultvisitor.h
 
     src/resources/resourcemanager.h
-
-    src/graphics-element/hud/hudhealthbar.h
-    src/graphics-element/hud/hudcomponents.cpp
 
     src/graphics-element/item/drawable.h
     src/graphics-element/item/ilayoutitem.h
@@ -35,7 +36,6 @@ set(HEADER_FILES
     src/graphics-element/item/abstractitem.h
     src/graphics-element/button/textbutton.h
     src/graphics-element/layout/verticallayout.h
-    src/graphics-element/item/phisicalitem.h
 
     src/animation/animation.h
 
@@ -63,6 +63,7 @@ set(HEADER_FILES
     src/util/enumflag.h
     src/util/geometryoperation.h
     src/util/debugdrawer.h
+    src/util/timeaccumulator.h
 )
 
 set(SOURCE_FILES
@@ -79,19 +80,18 @@ set(SOURCE_FILES
     src/game/contact/contactlistener.cpp
     src/game/player/bot.cpp
     src/game/player/player.cpp
+    src/game/items/entity/physicalentity.cpp
+    src/game/hud/hudhealthbar.cpp
+    src/game/hud/hudcomponents.cpp
 
     src/visitor/defaultvisitor.cpp
 
     src/resources/resourcemanager.cpp
 
-    src/graphics-element/hud/hudhealthbar.cpp
-    src/graphics-element/hud/hudcomponents.cpp
-
     src/graphics-element/layout/layout.cpp
     src/graphics-element/button/textbutton.cpp
     src/graphics-element/item/abstractitem.cpp
     src/graphics-element/layout/verticallayout.cpp
-    src/graphics-element/item/phisicalitem.cpp
 
     src/animation/animation.cpp
 
@@ -110,6 +110,8 @@ set(SOURCE_FILES
     src/menu/gameovermenu.cpp
 
     src/util/debugdrawer.cpp
+    src/util/geometryoperation.cpp
+    src/util/timeaccumulator.cpp
 )
 
 include_directories(

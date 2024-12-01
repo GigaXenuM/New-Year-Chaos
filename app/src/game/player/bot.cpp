@@ -5,8 +5,11 @@
 #include "resources/resourcemanager.h"
 #include "util/geometryoperation.h"
 
+namespace Game
+{
+
 Bot::Bot(b2Body *collider)
-    : Graphics::PhisicalItem(collider, { 5, 30 }),
+    : PhysicalEntity(collider, { 5, 30 }),
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Viking_walk) },
       _pos{ boundingRect().getPosition() }
 {
@@ -22,7 +25,7 @@ Bot::Bot(b2Body *collider)
 
 void Bot::update(float deltatime)
 {
-    Graphics::PhisicalItem::update(deltatime);
+    PhysicalEntity::update(deltatime);
 
     updatePosition(deltatime);
     updateAnimation(deltatime);
@@ -107,3 +110,5 @@ void Bot::updatePosition(float deltatime)
 
     _sprite.setPosition(playerPos);
 }
+
+} // namespace Game
