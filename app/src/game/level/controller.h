@@ -45,6 +45,7 @@ public:
 protected:
     void keyPressEvent(KeyPressEvent *event) override;
     void keyReleaseEvent(KeyReleaseEvent *event) override;
+    void mousePressEvent(MousePressEvent *event) override;
 
 private:
     void loadLevel();
@@ -65,8 +66,6 @@ private:
     sf::Vector2f _halfSafeZone;
 
     std::unique_ptr<ObjectLayer> _objectLayer;
-
-    std::unique_ptr<ContactListener> _contactListener;
 
     std::unique_ptr<b2World> _phisicalWorld;
     Bot *_bot;

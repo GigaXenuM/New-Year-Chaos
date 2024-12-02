@@ -3,10 +3,10 @@
 #include "SFML/Audio/Music.hpp"
 #include "event/eventhandler.h"
 #include "event/mouseevents/mousemoveevent.h"
+#include "gameovermenu.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
-#include <GameOverMenu.h>
 #include <memory>
 
 class IView;

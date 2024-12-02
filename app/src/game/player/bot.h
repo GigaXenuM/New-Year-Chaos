@@ -12,7 +12,12 @@ namespace Game
 class Bot : public PhysicalEntity
 {
 public:
-    Bot(b2Body *collider);
+    Bot(b2World *world, sf::Shape *shape);
+
+    ItemType type() const override
+    {
+        return ItemType::Enemy;
+    }
 
 protected:
     void update(float deltatime) override;

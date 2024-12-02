@@ -1,11 +1,10 @@
 #include "gameovermenu.h"
+
+#include "button/textbutton.h"
 #include "layout/verticallayout.h"
+#include "resources/resourcemanager.h"
 
 #include <SFML/Graphics/Font.hpp>
-
-#include <resources/resourcemanager.h>
-
-#include <button/textbutton.h>
 
 GameOverMenu::GameOverMenu(sf::RenderTarget *renderTarget, EventHandler *parent)
     : IView{ renderTarget, parent },

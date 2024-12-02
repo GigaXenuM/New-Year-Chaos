@@ -3,12 +3,13 @@
 namespace Game
 {
 
-enum class UserData
+enum class ItemType
 {
     Terrain,
     TerrainObstacle,
     Player,
-    Bot,
+    Enemy,
+    SnowBall,
 };
 
-} // namespace Game
+}

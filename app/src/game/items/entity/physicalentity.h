@@ -2,26 +2,47 @@
 
 #include "items/abstractphysicalitem.h"
 
+#include "util/enumflag.h"
+
+#include <memory>
+
+struct b2Body;
+
 namespace Game
 {
 
-enum class PhysicalEntityState
-{
-    OnGround,
-    Left,
-    Right,
-    Jump,
-};
-
-class PhysicalEntity : public AbstractPhysicalItem<PhysicalEntityState>
+class PhysicalEntity : public AbstractPhysicalItem
 {
 public:
-    using State = PhysicalEntityState;
+    enum class State
+    {
+        OnGround,
+        Left,
+        Right,
+        Jump,
+    };
 
-    PhysicalEntity(b2Body *collider, const Context &context);
+    struct Context
+    {
+        float velocity{ 0.f };
+        float jumpImpulse{ 0.f };
+    };
+
+    explicit PhysicalEntity(b2Body *collider, const Context &context);
+    ~PhysicalEntity();
+
+    void updateState(State state, bool isActive);
+    bool isStateActive(State state) const;
+
+    void shoot(const sf::Vector2f &target);
 
 protected:
     void update(float deltatime) override;
+
+private:
+    const Context _context;
+    Util::EnumFlag<State> _state;
+    std::vector<b2Body *> _bullets;
 };
 
 } // namespace Game

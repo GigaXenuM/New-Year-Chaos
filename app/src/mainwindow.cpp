@@ -17,12 +17,11 @@
 
 #include "game/scene.h"
 #include "player/player.h"
+#include "resources/resourcemanager.h"
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
-
-#include <resources/resourcemanager.h>
 
 MainWindow::MainWindow(unsigned int width, unsigned int height, const char *name)
     : sf::RenderWindow{ sf::VideoMode({ width, height }), name },
@@ -52,7 +51,7 @@ int MainWindow::gameLoop()
             handleSfmlEvent(event);
 
         _currentView->update(deltatime);
-        if (gPlayer->isDead())
+        if (Game::gPlayer->isDead())
         {
             _backgroundMusic.stop();
             switchView(_gameOverMenu.get());

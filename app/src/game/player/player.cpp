@@ -7,13 +7,34 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
+#include <box2d/b2_world.h>
+
 namespace Game
 {
 
+namespace
+{
+b2Body *createCollider(b2World *world, sf::Shape *shape)
+{
+    b2FixtureDef fixtureDefinition;
+    fixtureDefinition.density = 1.0f;
+    fixtureDefinition.friction = 0.0f;
+
+    b2BodyDef bodyDefinition;
+    bodyDefinition.type = b2_dynamicBody;
+    bodyDefinition.fixedRotation = true;
+
+    b2Body *body{ world->CreateBody(&bodyDefinition) };
+    Util::createComplexFixture(body, shape, &fixtureDefinition);
+
+    return body;
+}
+} // namespace
+
 Player *gPlayer = nullptr;
 
-Player::Player(b2Body *collider)
-    : PhysicalEntity(collider, { 5, 30 }),
+Player::Player(b2World *world, sf::Shape *shape)
+    : PhysicalEntity(createCollider(world, shape), { 5, 30 }),
       _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run) },
       _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_dead) },
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_walk) },
@@ -30,7 +51,8 @@ sf::Vector2f Player::getPosition() const
 
 bool Player::isDead() const
 {
-    return _healthPoint == 0.f && _deadAnimation.isFinished();
+    // return _healthPoint == 0.f && _deadAnimation.isFinished();
+    return false;
 }
 
 float Player::getFreezPoints() const
@@ -84,12 +106,8 @@ void Player::updateHealthPoint(float deltatime)
 
 void Player::updatePosition(float deltatime)
 {
-    const sf::ConvexShape shape{ Util::convertBodyToSFMLShape(collider()) };
-    const sf::Vector2f playerPos{ Util::pointBy(shape.getLocalBounds(),
-                                                { Align::Bottom, Align::Left, Align::Right,
-                                                  Align::Top }) };
-    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(),
-                                    { Align::Bottom, Align::Left, Align::Right, Align::Top }));
+    const sf::Vector2f playerPos{ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE) };
+    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
     _sprite.setPosition(playerPos);
 }
 

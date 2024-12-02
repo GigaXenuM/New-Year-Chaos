@@ -2,6 +2,7 @@
 
 #include "geometry/alignment.h"
 #include "util/enumflag.h"
+#include "util/geometryoperation.h"
 
 #include <SFML/Graphics/Rect.hpp>
 
@@ -36,7 +37,7 @@ private:
     virtual void updateGeometry() = 0;
 
     Items _items;
-    Util::EnumFlag<Align> _alignment{ Align::Left, Align::Right, Align::Top, Align::Bottom };
+    Util::EnumFlag<Align> _alignment{ Util::ALIGN_CENTER_STATE };
     sf::FloatRect _rect{};
     float _spacing{ 0.f };
 };

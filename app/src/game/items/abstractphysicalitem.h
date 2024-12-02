@@ -2,73 +2,51 @@
 
 #include "item/drawable.h"
 
-#include "util/enumflag.h"
+#include "items/itemtype.h"
 #include "util/geometryoperation.h"
+
+#include <box2d/b2_fixture.h>
+
+#include <cstdint>
 
 struct b2Body;
 
 namespace Game
 {
 
-template <typename StateType> class AbstractPhysicalItem : public Graphics::Drawable
+class AbstractPhysicalItem : public Graphics::Drawable
 {
 public:
-    using BaseType = AbstractPhysicalItem<StateType>;
-
-    struct Context
-    {
-        float velocity{ 0.f };
-        float jumpImpulse{ 0.f };
-    };
-
-    AbstractPhysicalItem(b2Body *collider, const Context &context);
-    void updateState(StateType state, bool isActive);
-    bool isStateActive(StateType state) const;
+    explicit AbstractPhysicalItem(b2Body *collider);
     sf::FloatRect boundingRect() const;
+
+    virtual ItemType type() const = 0;
 
 protected:
     b2Body *collider();
-    const Context &context() const;
 
 private:
     b2Body *_collider{ nullptr };
-    const Context _context;
-    Util::EnumFlag<StateType> _state;
 };
 
-template <typename StateType>
-AbstractPhysicalItem<StateType>::AbstractPhysicalItem(b2Body *collider, const Context &context)
-    : _collider{ collider }, _context{ context }
+inline AbstractPhysicalItem::AbstractPhysicalItem(b2Body *collider) : _collider{ collider }
 {
+    _collider->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
+    for (b2Fixture *fixture{ _collider->GetFixtureList() }; fixture != nullptr;
+         fixture = fixture->GetNext())
+    {
+        fixture->GetUserData().pointer = _collider->GetUserData().pointer;
+    }
 }
 
-template <typename StateType>
-void AbstractPhysicalItem<StateType>::updateState(StateType state, bool isActive)
-{
-    isActive ? _state.set(state) : _state.unset(state);
-}
-
-template <typename StateType>
-bool AbstractPhysicalItem<StateType>::isStateActive(StateType state) const
-{
-    return _state.test(state);
-}
-
-template <typename StateType> sf::FloatRect AbstractPhysicalItem<StateType>::boundingRect() const
+inline sf::FloatRect AbstractPhysicalItem::boundingRect() const
 {
     return Util::convertBodyToSFMLShape(_collider).getGlobalBounds();
 }
 
-template <typename StateType> b2Body *AbstractPhysicalItem<StateType>::collider()
+inline b2Body *AbstractPhysicalItem::collider()
 {
     return _collider;
-}
-
-template <typename StateType>
-const typename AbstractPhysicalItem<StateType>::Context &
-AbstractPhysicalItem<StateType>::context() const
-{
-    return _context;
 }
 
 } // namespace Game

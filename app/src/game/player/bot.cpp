@@ -1,15 +1,37 @@
 #include "bot.h"
 
-#include "SFML/Graphics/ConvexShape.hpp"
-#include "SFML/Graphics/RenderTarget.hpp"
 #include "resources/resourcemanager.h"
 #include "util/geometryoperation.h"
+
+#include <SFML/Graphics/ConvexShape.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+
+#include <box2d/b2_world.h>
 
 namespace Game
 {
 
-Bot::Bot(b2Body *collider)
-    : PhysicalEntity(collider, { 5, 30 }),
+namespace
+{
+b2Body *createCollider(b2World *world, sf::Shape *shape)
+{
+    b2FixtureDef fixtureDefinition;
+    fixtureDefinition.density = 1.0f;
+    fixtureDefinition.friction = 0.0f;
+
+    b2BodyDef bodyDefinition;
+    bodyDefinition.type = b2_dynamicBody;
+    bodyDefinition.fixedRotation = true;
+
+    b2Body *body{ world->CreateBody(&bodyDefinition) };
+    Util::createComplexFixture(body, shape, &fixtureDefinition);
+
+    return body;
+}
+} // namespace
+
+Bot::Bot(b2World *world, sf::Shape *shape)
+    : PhysicalEntity(createCollider(world, shape), { 5, 30 }),
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Viking_walk) },
       _pos{ boundingRect().getPosition() }
 {
@@ -87,12 +109,9 @@ void Bot::updatePosition(float deltatime)
 
     const sf::ConvexShape shape{ Util::convertBodyToSFMLShape(collider()) };
 
-    const sf::Vector2f playerPos{ Util::pointBy(shape.getLocalBounds(),
-                                                { Align::Bottom, Align::Left, Align::Right,
-                                                  Align::Top }) };
+    const sf::Vector2f playerPos{ Util::pointBy(shape.getLocalBounds(), Util::ALIGN_CENTER_STATE) };
 
-    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(),
-                                    { Align::Bottom, Align::Left, Align::Right, Align::Top }));
+    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
 
     isLeftEnd = playerPos.x <= _pos.x - _moveLimit;
     isRightEnd = playerPos.x >= _pos.x + _moveLimit;
