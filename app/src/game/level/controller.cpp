@@ -1,5 +1,6 @@
 #include "controller.h"
 
+#include "items/colliderfactory.h"
 #include "keyevents/keypressevent.h"
 #include "keyevents/keyreleaseevent.h"
 #include "mouseevents/mousepressevent.h"
@@ -148,28 +149,14 @@ void Controller::initPhisicalWorld()
     _phisicalWorld->SetContactListener(ContactListener::instance());
     debugDraw->SetFlags(b2Draw::e_shapeBit);
 
-    b2BodyDef boundingBoxDef;
-    boundingBoxDef.type = b2_staticBody;
-
-    b2FixtureDef fixtureDefinition;
-    fixtureDefinition.density = 1.0f;
-    fixtureDefinition.friction = 0.3f;
-    fixtureDefinition.restitution = 0.1f;
-
     std::vector<sf::Shape *> terrainShapes{ _objectLayer->objects("terrain") };
-
-    b2Body *terrainBody{ _phisicalWorld->CreateBody(&boundingBoxDef) };
-    for (const sf::Shape *shape : terrainShapes)
-        Util::createComplexFixture(terrainBody, shape, &fixtureDefinition);
-
+    b2Body *terrainBody{ ColliderFactory::create<ItemType::Terrain>(_phisicalWorld.get(),
+                                                                    terrainShapes) };
     auto *terrainItem{ new StaticElement{ terrainBody, ItemType::Terrain } };
 
     std::vector<sf::Shape *> terrainObstacleShapes{ _objectLayer->objects("terrain_obstacle") };
-
-    b2Body *terrainObstacleBody{ _phisicalWorld->CreateBody(&boundingBoxDef) };
-    for (const sf::Shape *shape : terrainObstacleShapes)
-        Util::createComplexFixture(terrainObstacleBody, shape, &fixtureDefinition);
-
+    b2Body *terrainObstacleBody{ ColliderFactory::create<ItemType::TerrainObstacle>(
+        _phisicalWorld.get(), terrainObstacleShapes) };
     auto *terrainObstackleItem{ new StaticElement{ terrainObstacleBody,
                                                    ItemType::TerrainObstacle } };
 

@@ -126,7 +126,9 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/app/src/event"
 )
 
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES}
+    src/game/items/bullet/snowball.h src/game/items/bullet/snowball.cpp
+    src/game/items/colliderfactory.h src/game/items/colliderfactory.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-audio sfml-graphics tmxlite box2d)
 

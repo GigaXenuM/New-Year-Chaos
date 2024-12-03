@@ -1,5 +1,7 @@
 #include "physicalentity.h"
 
+#include "items/bullet/snowball.h"
+
 #include <SFML/Graphics/RectangleShape.hpp>
 
 #include <box2d/b2_body.h>
@@ -28,24 +30,13 @@ PhysicalEntity::~PhysicalEntity() = default;
 
 void PhysicalEntity::shoot(const sf::Vector2f &target)
 {
-    // sf::RectangleShape bulletShape{ { 10, 10 } };
-    // bulletShape.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE)
-    //                         + sf::Vector2f{ boundingRect().getSize().x, 0.f }
-    //                         + sf::Vector2f{ 20.f, 0.f });
+    sf::RectangleShape bulletShape{ { 10, 10 } };
+    bulletShape.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE)
+                            + sf::Vector2f{ boundingRect().getSize().x, 0.f }
+                            + sf::Vector2f{ 20.f, 0.f });
 
-    // b2FixtureDef fixtureDefinition;
-    // fixtureDefinition.density = 1.0f;
-    // fixtureDefinition.friction = 0.0f;
-
-    // b2BodyDef bodyDefinition;
-    // bodyDefinition.type = b2_dynamicBody;
-    // bodyDefinition.fixedRotation = true;
-    // // bodyDefinition.userData.pointer = static_cast<uintptr_t>(UserData::Bullet);
-
-    // b2Body *bulletBody{ collider()->GetWorld()->CreateBody(&bodyDefinition) };
-    // Util::createComplexFixture(bulletBody, &bulletShape, &fixtureDefinition);
-
-    // _bullets.push_back(bulletBody);
+    _bullets.push_back(std::unique_ptr<PhysicalBullet>(
+        new SnowBall(collider()->GetWorld(), &bulletShape, SnowBall::Context{ 0.f, target })));
 }
 
 void PhysicalEntity::update(float deltatime)
@@ -75,6 +66,19 @@ void PhysicalEntity::update(float deltatime)
         b2Vec2 jumpImpulse(0.0f, -collider()->GetMass() * _context.jumpImpulse);
         collider()->ApplyLinearImpulseToCenter(jumpImpulse, true);
     }
+
+    for (std::unique_ptr<PhysicalBullet> &bullet : _bullets)
+    {
+        bullet->update(deltatime);
+        if (bullet->isStateActive(PhysicalBullet::State::Collide))
+        {
+            bullet->destroyCollider();
+            bullet.reset();
+        }
+    }
+    _bullets.erase(std::remove_if(_bullets.begin(), _bullets.end(),
+                                  [](auto &bullet) { return bullet == nullptr; }),
+                   _bullets.end());
 }
 
 } // namespace Game

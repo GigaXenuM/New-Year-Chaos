@@ -1,5 +1,6 @@
 #include "contactlistener.h"
 
+#include "items/bullet/snowball.h"
 #include "player/player.h"
 
 namespace Game
@@ -50,6 +51,15 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
         auto *player{ dynamic_cast<Player *>(data.itemTypeToItem.at(ItemType::Player)) };
         assert(player != nullptr);
         player->updateState(Player::State::OnGround, contacted);
+    }
+
+    if (data.types.test(ItemType::SnowBall))
+    {
+        auto *snowBall{ dynamic_cast<PhysicalBullet *>(
+            data.itemTypeToItem.at(ItemType::SnowBall)) };
+        assert(snowBall != nullptr);
+        if (contact)
+            snowBall->updateState(PhysicalBullet::State::Collide, true);
     }
 }
 

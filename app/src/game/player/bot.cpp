@@ -1,5 +1,6 @@
 #include "bot.h"
 
+#include "items/colliderfactory.h"
 #include "resources/resourcemanager.h"
 #include "util/geometryoperation.h"
 
@@ -11,27 +12,8 @@
 namespace Game
 {
 
-namespace
-{
-b2Body *createCollider(b2World *world, sf::Shape *shape)
-{
-    b2FixtureDef fixtureDefinition;
-    fixtureDefinition.density = 1.0f;
-    fixtureDefinition.friction = 0.0f;
-
-    b2BodyDef bodyDefinition;
-    bodyDefinition.type = b2_dynamicBody;
-    bodyDefinition.fixedRotation = true;
-
-    b2Body *body{ world->CreateBody(&bodyDefinition) };
-    Util::createComplexFixture(body, shape, &fixtureDefinition);
-
-    return body;
-}
-} // namespace
-
 Bot::Bot(b2World *world, sf::Shape *shape)
-    : PhysicalEntity(createCollider(world, shape), { 5, 30 }),
+    : PhysicalEntity(ColliderFactory::create<ItemType::Enemy>(world, { shape }), { 5, 30 }),
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Viking_walk) },
       _pos{ boundingRect().getPosition() }
 {

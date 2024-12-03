@@ -1,5 +1,6 @@
 #include "player.h"
 
+#include "items/colliderfactory.h"
 #include "resources/resourcemanager.h"
 #include "util/geometryoperation.h"
 
@@ -12,29 +13,10 @@
 namespace Game
 {
 
-namespace
-{
-b2Body *createCollider(b2World *world, sf::Shape *shape)
-{
-    b2FixtureDef fixtureDefinition;
-    fixtureDefinition.density = 1.0f;
-    fixtureDefinition.friction = 0.0f;
-
-    b2BodyDef bodyDefinition;
-    bodyDefinition.type = b2_dynamicBody;
-    bodyDefinition.fixedRotation = true;
-
-    b2Body *body{ world->CreateBody(&bodyDefinition) };
-    Util::createComplexFixture(body, shape, &fixtureDefinition);
-
-    return body;
-}
-} // namespace
-
 Player *gPlayer = nullptr;
 
 Player::Player(b2World *world, sf::Shape *shape)
-    : PhysicalEntity(createCollider(world, shape), { 5, 30 }),
+    : PhysicalEntity(ColliderFactory::create<ItemType::Player>(world, { shape }), { 5, 30 }),
       _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run) },
       _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_dead) },
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_walk) },

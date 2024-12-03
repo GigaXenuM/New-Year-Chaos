@@ -11,6 +11,8 @@ struct b2Body;
 namespace Game
 {
 
+class PhysicalBullet;
+
 class PhysicalEntity : public AbstractPhysicalItem
 {
 public:
@@ -42,7 +44,7 @@ protected:
 private:
     const Context _context;
     Util::EnumFlag<State> _state;
-    std::vector<b2Body *> _bullets;
+    std::vector<std::unique_ptr<PhysicalBullet>> _bullets;
 };
 
 } // namespace Game
