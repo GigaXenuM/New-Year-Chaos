@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "resources/resourceManager.h"
+#include "resources/resourcemanager.h"
 
 int main()
 {

@@ -6,7 +6,12 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
-HUDHealthBar::HUDHealthBar(const sf::Texture &iconTexture) : Graphics::AbstractItem(nullptr)
+#include <cassert>
+
+namespace Game
+{
+
+HUDHealthBar::HUDHealthBar(const sf::Texture &iconTexture)
 {
     _barIcon.setTexture(iconTexture);
     setup();
@@ -75,3 +80,5 @@ void HUDHealthBar::setValue(const float value)
     currentSize.x = (_healthBar.getGlobalBounds().width - 12) * (value / 100.f);
     _health.setSize(currentSize);
 }
+
+} // namespace Game

@@ -6,6 +6,9 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
+namespace Game
+{
+
 HUDComponents::HUDComponents(sf::RenderTarget *renderTarget, sf::View *view)
     : _gameView{ view },
       _renderTarget{ renderTarget },
@@ -50,3 +53,5 @@ void HUDComponents::updateBarPosition()
         { bottomLeft.x + 2,
           bottomLeft.y - (_freezBar->getSprite()->getGlobalBounds().height * 1.5f) });
 }
+
+} // namespace Game

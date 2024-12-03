@@ -22,6 +22,10 @@ class ConvexShape;
 
 namespace Util
 {
+
+constexpr Util::EnumFlag<Align> ALIGN_CENTER_STATE{ Align::Left, Align::Bottom, Align::Right,
+                                                    Align::Top };
+
 template <typename T> sf::Vector2<T> pointBy(const sf::Rect<T> &rect, Util::EnumFlag<Align> origin)
 {
     T halfWidth{ rect.width / T{ 2 } };

@@ -1,5 +1,6 @@
 #include "player.h"
 
+#include "items/colliderfactory.h"
 #include "resources/resourcemanager.h"
 #include "util/geometryoperation.h"
 
@@ -7,10 +8,15 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
+#include <box2d/b2_world.h>
+
+namespace Game
+{
+
 Player *gPlayer = nullptr;
 
-Player::Player(b2Body *collider, EventHandler *eventHandler)
-    : Graphics::PhisicalItem(collider, { 5, 30 }, eventHandler),
+Player::Player(b2World *world, sf::Shape *shape)
+    : PhysicalEntity(ColliderFactory::create<ItemType::Player>(world, { shape }), { 5, 30 }),
       _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run) },
       _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_dead) },
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_walk) },
@@ -27,7 +33,8 @@ sf::Vector2f Player::getPosition() const
 
 bool Player::isDead() const
 {
-    return _healthPoint == 0.f && _deadAnimation.isFinished();
+    // return _healthPoint == 0.f && _deadAnimation.isFinished();
+    return false;
 }
 
 float Player::getFreezPoints() const
@@ -81,18 +88,14 @@ void Player::updateHealthPoint(float deltatime)
 
 void Player::updatePosition(float deltatime)
 {
-    const sf::ConvexShape shape{ Util::convertBodyToSFMLShape(collider()) };
-    const sf::Vector2f playerPos{ Util::pointBy(shape.getLocalBounds(),
-                                                { Align::Bottom, Align::Left, Align::Right,
-                                                  Align::Top }) };
-    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(),
-                                    { Align::Bottom, Align::Left, Align::Right, Align::Top }));
+    const sf::Vector2f playerPos{ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE) };
+    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
     _sprite.setPosition(playerPos);
 }
 
 void Player::update(float deltatime)
 {
-    Graphics::PhisicalItem::update(deltatime);
+    PhysicalEntity::update(deltatime);
 
     updatePosition(deltatime);
     updateAnimation(deltatime);
@@ -112,3 +115,5 @@ void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const
     border.setScale(_sprite.getScale());
     target.draw(border, states);
 }
+
+} // namespace Game

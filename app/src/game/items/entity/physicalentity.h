@@ -1,15 +1,19 @@
 #pragma once
 
-#include "item/drawable.h"
+#include "items/abstractphysicalitem.h"
 
 #include "util/enumflag.h"
 
+#include <memory>
+
 struct b2Body;
 
-namespace Graphics
+namespace Game
 {
 
-class PhisicalItem : public Drawable
+class PhysicalBullet;
+
+class PhysicalEntity : public AbstractPhysicalItem
 {
 public:
     enum class State
@@ -26,22 +30,21 @@ public:
         float jumpImpulse{ 0.f };
     };
 
-    PhisicalItem(b2Body *collider, const Context &context, EventHandler *parent);
+    explicit PhysicalEntity(b2Body *collider, const Context &context);
+    ~PhysicalEntity();
 
     void updateState(State state, bool isActive);
     bool isStateActive(State state) const;
 
-    sf::FloatRect boundingRect() const;
+    void shoot(const sf::Vector2f &target);
 
 protected:
     void update(float deltatime) override;
 
-    const b2Body *collider();
-
 private:
-    b2Body *_collider{ nullptr };
     const Context _context;
     Util::EnumFlag<State> _state;
+    std::vector<std::unique_ptr<PhysicalBullet>> _bullets;
 };
 
-} // namespace Graphics
+} // namespace Game

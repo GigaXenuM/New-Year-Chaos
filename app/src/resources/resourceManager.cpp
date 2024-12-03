@@ -1,6 +1,7 @@
 #include "resourcemanager.h"
-#include "SFML/Graphics/Font.hpp"
-#include "SFML/Graphics/Texture.hpp"
+
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 #include <filesystem>
 #include <iostream>

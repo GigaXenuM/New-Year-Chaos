@@ -1,7 +1,9 @@
 #include "controller.h"
 
+#include "items/colliderfactory.h"
 #include "keyevents/keypressevent.h"
 #include "keyevents/keyreleaseevent.h"
+#include "mouseevents/mousepressevent.h"
 
 #include "item/drawable.h"
 #include "object-layer/objectlayer.h"
@@ -18,21 +20,46 @@
 
 namespace
 {
+
 constexpr float TIME_STEP = 1.0f / 60.0f;
 constexpr int VELOCITY_ITERATIONS = 8;
 constexpr int POSITION_ITERATIONS = 3;
+
 } // namespace
 
-namespace Game::Level
+namespace Game
+{
+
+class StaticElement : public AbstractPhysicalItem
+{
+public:
+    explicit StaticElement(b2Body *collider, ItemType type)
+        : AbstractPhysicalItem{ collider }, _type{ type }
+    {
+    }
+
+    ItemType type() const
+    {
+        return _type;
+    }
+
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const
+    {
+    }
+
+private:
+    ItemType _type;
+};
+
+namespace Level
 {
 
 Controller::Controller(sf::RenderTarget *renderTarget, sf::View *view, EventHandler *parent)
-    : IUpdatable{ parent },
+    : EventHandler{ parent },
       _renderTarget{ renderTarget },
       _gameView{ view },
       _safeZoneSize{ view->getSize().x * 0.2f, view->getSize().y * 0.2f },
       _halfSafeZone{ _safeZoneSize / 2.f },
-      _contactListener{ std::make_unique<ContactListener>() },
       _phisicalWorld{ std::make_unique<b2World>(b2Vec2(0.f, 4.8f)) }
 {
     loadLevel();
@@ -69,10 +96,15 @@ void Controller::keyReleaseEvent(KeyReleaseEvent *event)
         gPlayer->updateState(Player::State::Jump, false);
 }
 
+void Controller::mousePressEvent(MousePressEvent *event)
+{
+    if (event->button() == Mouse::Button::Left)
+        gPlayer->shoot(event->position());
+}
+
 void Controller::loadLevel()
 {
     _elements.clear();
-    _contactListener->clear();
 
     tmx::Map map;
     map.load("level/terrain.tmx");
@@ -114,79 +146,41 @@ void Controller::initPhisicalWorld()
     Util::DebugDrawer *debugDraw(new Util::DebugDrawer{ _renderTarget });
     _phisicalWorld->SetAllowSleeping(true);
     _phisicalWorld->SetDebugDraw(debugDraw);
-    _phisicalWorld->SetContactListener(_contactListener.get());
+    _phisicalWorld->SetContactListener(ContactListener::instance());
     debugDraw->SetFlags(b2Draw::e_shapeBit);
 
-    b2BodyDef boundingBoxDef;
-    boundingBoxDef.type = b2_staticBody;
-
-    b2FixtureDef fixtureDefinition;
-    fixtureDefinition.density = 1.0f;
-    fixtureDefinition.friction = 0.3f;
-    fixtureDefinition.restitution = 0.1f;
-
     std::vector<sf::Shape *> terrainShapes{ _objectLayer->objects("terrain") };
-
-    boundingBoxDef.userData.pointer = static_cast<uintptr_t>(UserData::Terrain);
-    b2Body *terrainBody{ _phisicalWorld->CreateBody(&boundingBoxDef) };
-    for (const sf::Shape *shape : terrainShapes)
-        Util::createComplexFixture(terrainBody, shape, &fixtureDefinition);
+    b2Body *terrainBody{ ColliderFactory::create<ItemType::Terrain>(_phisicalWorld.get(),
+                                                                    terrainShapes) };
+    auto *terrainItem{ new StaticElement{ terrainBody, ItemType::Terrain } };
 
     std::vector<sf::Shape *> terrainObstacleShapes{ _objectLayer->objects("terrain_obstacle") };
+    b2Body *terrainObstacleBody{ ColliderFactory::create<ItemType::TerrainObstacle>(
+        _phisicalWorld.get(), terrainObstacleShapes) };
+    auto *terrainObstackleItem{ new StaticElement{ terrainObstacleBody,
+                                                   ItemType::TerrainObstacle } };
 
-    boundingBoxDef.userData.pointer = static_cast<uintptr_t>(UserData::TerrainObstacle);
-    b2Body *terrainObstacleBody{ _phisicalWorld->CreateBody(&boundingBoxDef) };
-    for (const sf::Shape *shape : terrainObstacleShapes)
-        Util::createComplexFixture(terrainObstacleBody, shape, &fixtureDefinition);
+    _elements.push_back(std::unique_ptr<Graphics::Drawable>{ terrainItem });
+    _elements.push_back(std::unique_ptr<Graphics::Drawable>{ terrainObstackleItem });
 }
 
 void Controller::initPlayer()
 {
     const auto &playerContainer{ _objectLayer->objects("player") };
-    assert(playerContainer.size() == 1 && "");
-
+    assert(playerContainer.size() == 1);
     sf::Shape *playerShape{ _objectLayer->objects("player").front() };
 
-    b2FixtureDef fixtureDefinition;
-    fixtureDefinition.density = 1.0f;
-    fixtureDefinition.friction = 0.0f;
-
-    b2BodyDef bodyDefinition;
-    bodyDefinition.type = b2_dynamicBody;
-    bodyDefinition.fixedRotation = true;
-    bodyDefinition.userData.pointer = static_cast<uintptr_t>(UserData::Player);
-
-    b2Body *body{ _phisicalWorld->CreateBody(&bodyDefinition) };
-    Util::createComplexFixture(body, playerShape, &fixtureDefinition);
-
-    gPlayer = new Player(body, nullptr);
+    gPlayer = new Player(_phisicalWorld.get(), playerShape);
     _elements.push_back(std::unique_ptr<Player>(gPlayer));
-    _contactListener->registerAction(ActionVariant::PlayerOnGround, [player = gPlayer]()
-                                     { player->updateState(Player::State::OnGround, true); });
-    _contactListener->registerAction(ActionVariant::PlayerAboveGround, [player = gPlayer]()
-                                     { player->updateState(Player::State::OnGround, false); });
 }
 
 void Controller::initBot()
 {
     const auto &playerContainer{ _objectLayer->objects("viking_enemy") };
-    assert(playerContainer.size() == 1 && "");
-
+    assert(playerContainer.size() == 1);
     sf::Shape *playerShape{ _objectLayer->objects("viking_enemy").front() };
 
-    b2FixtureDef fixtureDefinition;
-    fixtureDefinition.density = 1.0f;
-    fixtureDefinition.friction = 0.0f;
-
-    b2BodyDef bodyDefinition;
-    bodyDefinition.type = b2_dynamicBody;
-    bodyDefinition.fixedRotation = true;
-    bodyDefinition.userData.pointer = static_cast<uintptr_t>(UserData::Bot);
-
-    b2Body *body{ _phisicalWorld->CreateBody(&bodyDefinition) };
-    Util::createComplexFixture(body, playerShape, &fixtureDefinition);
-
-    _bot = new Bot{ body, nullptr };
+    _bot = new Bot{ _phisicalWorld.get(), playerShape };
     _elements.push_back(std::unique_ptr<Bot>{ _bot });
 }
 
@@ -239,4 +233,5 @@ void Controller::updateCameraPos()
     _gameView->setCenter(viewCenter);
 }
 
-} // namespace Game::Level
+} // namespace Level
+} // namespace Game

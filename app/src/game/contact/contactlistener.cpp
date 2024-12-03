@@ -1,48 +1,65 @@
 #include "contactlistener.h"
 
-#include <iostream>
+#include "items/bullet/snowball.h"
+#include "player/player.h"
 
 namespace Game
 {
 
 void ContactListener::BeginContact(b2Contact *contact)
 {
-    handleContact(contact,
-                  { toUserData(contact->GetFixtureA()->GetUserData()),
-                    toUserData(contact->GetFixtureB()->GetUserData()) },
-                  true);
+    handleContact(contact, true);
 }
 
 void ContactListener::EndContact(b2Contact *contact)
 {
-    handleContact(contact,
-                  { toUserData(contact->GetFixtureA()->GetUserData()),
-                    toUserData(contact->GetFixtureB()->GetUserData()) },
-                  false);
+    handleContact(contact, false);
 }
 
-UserData ContactListener::toUserData(const b2FixtureUserData &rawData)
+ContactListener *ContactListener::instance()
 {
-    return static_cast<UserData>(rawData.pointer);
+    static auto instance{ std::unique_ptr<ContactListener>{ new ContactListener } };
+    return instance.get();
 }
 
-void ContactListener::handleContact(b2Contact *contact, Util::EnumFlag<UserData> data,
-                                    bool contacted)
+UserData ContactListener::toUserData(b2Contact *contact)
 {
-    if (data.test(UserData::Terrain) && data.test(UserData::Player))
+    UserData data;
+    const auto items = {
+        reinterpret_cast<AbstractPhysicalItem *>(contact->GetFixtureA()->GetUserData().pointer),
+        reinterpret_cast<AbstractPhysicalItem *>(contact->GetFixtureB()->GetUserData().pointer)
+    };
+
+    for (auto *item : items)
     {
-        b2WorldManifold worldManifold;
-        contact->GetWorldManifold(&worldManifold);
-        const b2Vec2 normal{ worldManifold.normal };
+        assert(item != nullptr && "ContactListener: The user data is not valid.");
 
-        if (std::fabs(normal.x) > 0.99f && std::fabs(normal.y) < 0.6f)
-        {
-            executeActions(ActionVariant::PlayerAboveGround);
-            return;
-        }
+        const ItemType type{ item->type() };
+        data.itemTypeToItem[type] = item;
+        data.types.set(type);
+    }
 
-        executeActions(contacted ? ActionVariant::PlayerOnGround
-                                 : ActionVariant::PlayerAboveGround);
+    return data;
+}
+
+void ContactListener::handleContact(b2Contact *contact, bool contacted)
+{
+    const UserData data{ toUserData(contact) };
+
+    if (data.types.test(ItemType::Terrain) && data.types.test(ItemType::Player))
+    {
+        auto *player{ dynamic_cast<Player *>(data.itemTypeToItem.at(ItemType::Player)) };
+        assert(player != nullptr);
+        player->updateState(Player::State::OnGround, contacted);
+    }
+
+    if (data.types.test(ItemType::SnowBall))
+    {
+        auto *snowBall{ dynamic_cast<PhysicalBullet *>(
+            data.itemTypeToItem.at(ItemType::SnowBall)) };
+        assert(snowBall != nullptr);
+        if (contact)
+            snowBall->updateState(PhysicalBullet::State::Collide, true);
     }
 }
 

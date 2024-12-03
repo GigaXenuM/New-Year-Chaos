@@ -9,6 +9,9 @@ namespace sf
 class View;
 }
 
+namespace Game
+{
+
 class HUDComponents : public IUpdatable
 {
 public:
@@ -27,3 +30,5 @@ private:
     std::unique_ptr<HUDHealthBar> _freezBar;
     std::unique_ptr<HUDHealthBar> _healthBar;
 };
+
+} // namespace Game

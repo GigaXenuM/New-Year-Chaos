@@ -45,7 +45,7 @@ void VerticalLayout::updateGeometry()
 void VerticalLayout::alignCenter()
 {
     const auto rect{ this->rect() };
-    _nextItemPos = Util::pointBy(rect, { Align::Bottom, Align::Left, Align::Right, Align::Top });
+    _nextItemPos = Util::pointBy(rect, Util::ALIGN_CENTER_STATE);
     _nextItemPos.y -= contentSize().y / 2;
 }
 

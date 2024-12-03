@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SFML/System/Vector2.hpp"
+#include "eventhandler.h"
 #include "iupdatable.h"
 
 #include "contact/contactlistener.h"
@@ -33,7 +34,7 @@ namespace Game::Level
 class TileLayer;
 class ObjectLayer;
 
-class Controller : public IUpdatable
+class Controller : public IUpdatable, public EventHandler
 {
 public:
     explicit Controller(sf::RenderTarget *renderTarget, sf::View *view, EventHandler *parent);
@@ -44,6 +45,7 @@ public:
 protected:
     void keyPressEvent(KeyPressEvent *event) override;
     void keyReleaseEvent(KeyReleaseEvent *event) override;
+    void mousePressEvent(MousePressEvent *event) override;
 
 private:
     void loadLevel();
@@ -64,8 +66,6 @@ private:
     sf::Vector2f _halfSafeZone;
 
     std::unique_ptr<ObjectLayer> _objectLayer;
-
-    std::unique_ptr<ContactListener> _contactListener;
 
     std::unique_ptr<b2World> _phisicalWorld;
     Bot *_bot;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "animation/animation.h"
-#include "item/phisicalitem.h"
+#include "items/entity/physicalentity.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -9,16 +9,24 @@
 
 struct b2Body;
 
-class Player : public Graphics::PhisicalItem
+namespace Game
+{
+
+class Player : public PhysicalEntity
 {
 public:
-    Player(b2Body *collider, EventHandler *eventHandler);
+    Player(b2World *world, sf::Shape *shape);
 
     sf::Vector2f getPosition() const;
 
     [[nodiscard]] bool isDead() const;
     [[nodiscard]] float getFreezPoints() const;
     [[nodiscard]] float getHealthPoints() const;
+
+    ItemType type() const override
+    {
+        return ItemType::Player;
+    }
 
 protected:
     void update(float deltatime) override;
@@ -48,3 +56,5 @@ private:
 };
 
 extern Player *gPlayer;
+
+} // namespace Game

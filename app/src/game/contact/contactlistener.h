@@ -1,25 +1,35 @@
-#include "action/actionstorage.h"
-#include <box2d/b2_contact.h>
-
-#include "actionvariant.h"
-#include "userdata.h"
+#include "items/abstractphysicalitem.h"
+#include "items/itemtype.h"
 #include "util/enumflag.h"
 
+#include <box2d/b2_contact.h>
 #include <box2d/b2_world_callbacks.h>
+
+#include <unordered_map>
 
 #pragma once
 namespace Game
 {
 
-class ContactListener : public b2ContactListener, public Action::ActionStorage<ActionVariant>
+struct UserData
+{
+    std::unordered_map<Game::ItemType, AbstractPhysicalItem *> itemTypeToItem;
+    Util::EnumFlag<ItemType> types;
+};
+
+class ContactListener : public b2ContactListener
 {
 public:
     void BeginContact(b2Contact *contact) override;
     void EndContact(b2Contact *contact) override;
 
+    static ContactListener *instance();
+
 private:
-    UserData toUserData(const b2FixtureUserData &rawData);
-    void handleContact(b2Contact *contact, Util::EnumFlag<UserData> data, bool contacted);
+    ContactListener() = default;
+
+    UserData toUserData(b2Contact *contact);
+    void handleContact(b2Contact *contact, bool contacted);
 };
 
 } // namespace Game

@@ -4,7 +4,6 @@ namespace Game::Level
 {
 
 TileLayer::TileLayer(const tmx::Map &map, const tmx::TileLayer &layer)
-    : Graphics::Drawable{ nullptr }
 {
     const auto tileSize = map.getTileSize();
     _chunkSize.x = std::floor(_chunkSize.x / tileSize.x) * tileSize.x;

@@ -4,6 +4,9 @@
 #include "SFML/Graphics/Sprite.hpp"
 #include <item/abstractitem.h>
 
+namespace Game
+{
+
 class HUDHealthBar : public Graphics::AbstractItem
 {
 public:
@@ -30,5 +33,7 @@ private:
     sf::Sprite _healthBar;
     sf::RectangleShape _health;
 
-    std::pair<float, float> _iconScaleFactors{ 0.02, 0.02 };
+    std::pair<float, float> _iconScaleFactors{ 0.02f, 0.02f };
 };
+
+} // namespace Game
