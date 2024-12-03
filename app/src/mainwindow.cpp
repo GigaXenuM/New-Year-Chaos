@@ -33,6 +33,7 @@ MainWindow::MainWindow(unsigned int width, unsigned int height, const char *name
       _currentView{ _menu.get() },
       _latestMouseMoveEvent{ {}, {} }
 {
+    initBackgroundMusic();
     composeMenu();
 }
 
@@ -52,7 +53,10 @@ int MainWindow::gameLoop()
 
         _currentView->update(deltatime);
         if (gPlayer->isDead())
+        {
+            _backgroundMusic.stop();
             switchView(_gameOverMenu.get());
+        }
 
         display();
     }
@@ -135,6 +139,14 @@ void MainWindow::composeMenu()
     _gameOverMenu->registerAction(Menu::ActionVariant::Exit, [this]() { close(); });
 }
 
+void MainWindow::initBackgroundMusic()
+{
+    _backgroundMusic.openFromFile(
+        ResourseManager::getInstance()->getSoundPath(SoundType::Background_music).string());
+    _backgroundMusic.setLoop(true);
+    _backgroundMusic.setVolume(10);
+}
+
 void MainWindow::switchView()
 {
     static bool showMenu{ true };
@@ -142,6 +154,10 @@ void MainWindow::switchView()
 
     IView *view{ showMenu ? dynamic_cast<IView *>(_menu.get())
                           : dynamic_cast<IView *>(_scene.get()) };
+    if (!showMenu)
+    {
+        _backgroundMusic.play();
+    }
     switchView(view);
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SFML/Audio/Music.hpp"
 #include "event/eventhandler.h"
 #include "event/mouseevents/mousemoveevent.h"
 
@@ -34,11 +35,13 @@ private:
     void handleSfmlEvent(const sf::Event &event);
 
     void composeMenu();
+    void initBackgroundMusic();
 
     void switchView();
     void switchView(IView *view);
 
     sf::Clock _clock;
+    sf::Music _backgroundMusic;
 
     std::unique_ptr<Menu::Menu> _menu;
     std::unique_ptr<GameOverMenu> _gameOverMenu;

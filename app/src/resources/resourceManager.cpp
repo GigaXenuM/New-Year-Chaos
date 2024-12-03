@@ -18,12 +18,18 @@ ResourseManager *ResourseManager::getInstance()
 void ResourseManager::loadResourses()
 {
     loadAllFonst();
+    loadAllSounds();
     loadAllTextures();
 }
 
 void ResourseManager::loadAllFonst()
 {
     loadFonts("fonts/", FontType::Arial, "arial");
+}
+
+void ResourseManager::loadAllSounds()
+{
+    loadSounds("sounds/", SoundType::Background_music, "Background_music");
 }
 
 void ResourseManager::loadAllTextures()
@@ -44,6 +50,25 @@ void ResourseManager::loadAllTextures()
     // Bot
     loadTextures("bot/", TextureType::Viking_walk, "Viking");
     loadTextures("bot/", TextureType::Viking_health_bar, "BotHealthBar");
+}
+
+void ResourseManager::loadSounds(const std::filesystem::path &path, const SoundType type,
+                                 const std::string &fileNamePart)
+{
+    for (const auto &entry : std::filesystem::directory_iterator(path))
+    {
+        if (entry.is_regular_file() && entry.path().extension() == ".mp3")
+        {
+            if (entry.path().filename().string().find(fileNamePart) == 0)
+                loadSound(entry.path().string(), type);
+        }
+    }
+}
+
+void ResourseManager::loadSound(const std::filesystem::path &filePath, const SoundType type)
+{
+    _sounds[type] = std::move(filePath);
+    std::cout << "Loaded sound path: " << filePath << std::endl;
 }
 
 void ResourseManager::loadfont(const std::string &filePath, const FontType type)
@@ -130,6 +155,16 @@ sf::Font &ResourseManager::getFont(const FontType type)
     if (it == _fonts.end())
     {
         throw std::runtime_error("Font not loaded: requested FontType does not exist");
+    }
+    return it->second;
+}
+
+std::filesystem::path &ResourseManager::getSoundPath(const SoundType type)
+{
+    auto it = _sounds.find(type);
+    if (it == _sounds.end())
+    {
+        throw std::runtime_error("Music path not loaded: requested SoundType does not exist");
     }
     return it->second;
 }
