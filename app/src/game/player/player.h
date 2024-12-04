@@ -18,6 +18,8 @@ public:
     Player(b2World *world, sf::Shape *shape);
 
     void health();
+    void addHealthItem();
+
     [[nodiscard]] bool isDead() const;
     [[nodiscard]] float getFreezPoints() const;
     [[nodiscard]] float getHealthPoints() const;
@@ -51,6 +53,8 @@ private:
     bool _needHealth{ false };
 
     sf::Sprite _sprite;
+
+    size_t _countOfHealthItem{ 2 };
 
     Animation _runAnimation;
     Animation _deadAnimation;

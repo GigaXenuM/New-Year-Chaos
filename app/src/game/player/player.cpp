@@ -28,7 +28,16 @@ Player::Player(b2World *world, sf::Shape *shape)
 
 void Player::health()
 {
+    if (_countOfHealthItem <= 0)
+        return;
+
     _needHealth = true;
+    --_countOfHealthItem;
+}
+
+void Player::addHealthItem()
+{
+    _countOfHealthItem++;
 }
 
 sf::Vector2f Player::getPosition() const
