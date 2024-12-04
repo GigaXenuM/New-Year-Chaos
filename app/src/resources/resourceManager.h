@@ -39,7 +39,10 @@ enum class TextureType
 
     // Bot
     Viking_walk,
-    Viking_health_bar
+    Viking_health_bar,
+
+    // SnowBall
+    SnowBall,
 };
 
 class ResourseManager

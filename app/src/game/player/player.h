@@ -25,10 +25,7 @@ public:
     [[nodiscard]] float getHealthPoints() const;
     [[nodiscard]] sf::Vector2f getPosition() const;
 
-    ItemType type() const override
-    {
-        return ItemType::Player;
-    }
+    void damage(float power) override;
 
 protected:
     void update(float deltatime) override;

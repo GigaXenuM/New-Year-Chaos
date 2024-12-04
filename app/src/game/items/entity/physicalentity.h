@@ -19,6 +19,7 @@ public:
     enum class State
     {
         OnGround,
+        PrepareGroundDetach,
         Left,
         Right,
         Jump,
@@ -33,18 +34,26 @@ public:
     explicit PhysicalEntity(b2Body *collider, const Context &context);
     ~PhysicalEntity();
 
+    ItemType type() const override
+    {
+        return ItemType::Entity;
+    }
+
     void updateState(State state, bool isActive);
     bool isStateActive(State state) const;
 
     void shoot(const sf::Vector2f &target);
 
+    virtual void damage(float power) = 0;
+
 protected:
     void update(float deltatime) override;
+
+    std::vector<std::unique_ptr<PhysicalBullet>> _bullets;
 
 private:
     const Context _context;
     Util::EnumFlag<State> _state;
-    std::vector<std::unique_ptr<PhysicalBullet>> _bullets;
 };
 
 } // namespace Game

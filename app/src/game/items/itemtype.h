@@ -7,9 +7,8 @@ enum class ItemType
 {
     Terrain,
     TerrainObstacle,
-    Player,
-    Enemy,
-    SnowBall,
+    Entity,
+    Bullet,
 };
 
 }

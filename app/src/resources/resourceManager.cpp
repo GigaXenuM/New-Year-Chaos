@@ -52,6 +52,9 @@ void ResourseManager::loadAllTextures()
     // Bot
     loadTextures("bot/", TextureType::Viking_walk, "Viking");
     loadTextures("bot/", TextureType::Viking_health_bar, "BotHealthBar");
+
+    // SnowBall
+    loadTextures("snowball/", TextureType::SnowBall, "snowball");
 }
 
 void ResourseManager::loadSounds(const std::filesystem::path &path, const SoundType type,

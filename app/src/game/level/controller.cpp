@@ -60,7 +60,7 @@ Controller::Controller(sf::RenderTarget *renderTarget, sf::View *view, EventHand
       _gameView{ view },
       _safeZoneSize{ view->getSize().x * 0.2f, view->getSize().y * 0.2f },
       _halfSafeZone{ _safeZoneSize / 2.f },
-      _phisicalWorld{ std::make_unique<b2World>(b2Vec2(0.f, 4.8f)) }
+      _phisicalWorld{ std::make_unique<b2World>(b2Vec2(0.f, 3.8f)) }
 {
     loadLevel();
     initPhisicalWorld();

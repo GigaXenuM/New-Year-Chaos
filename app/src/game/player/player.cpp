@@ -1,5 +1,6 @@
 #include "player.h"
 
+#include "items/bullet/physicalbullet.h"
 #include "items/colliderfactory.h"
 #include "resources/resourcemanager.h"
 #include "util/geometryoperation.h"
@@ -16,7 +17,7 @@ namespace Game
 Player *gPlayer = nullptr;
 
 Player::Player(b2World *world, sf::Shape *shape)
-    : PhysicalEntity(ColliderFactory::create<ItemType::Player>(world, { shape }), { 5, 30 }),
+    : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 30 }),
       _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run) },
       _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_dead) },
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_walk) },
@@ -45,6 +46,10 @@ sf::Vector2f Player::getPosition() const
     return _sprite.getPosition();
 }
 
+void Player::damage(float power)
+{
+}
+
 bool Player::isDead() const
 {
     // return _healthPoint == 0.f && _deadAnimation.isFinished();
@@ -63,13 +68,13 @@ float Player::getHealthPoints() const
 
 void Player::updateAnimation(float deltatime)
 {
-    if (_healthPoint == 0.f)
-    {
-        if (!_deadAnimation.isFinished())
-            _deadAnimation.start(deltatime, _sprite, false);
+    // if (_healthPoint == 0.f)
+    // {
+    //     if (!_deadAnimation.isFinished())
+    //         _deadAnimation.start(deltatime, _sprite, false);
 
-        return;
-    }
+    //     return;
+    // }
 
     const bool isMoved{ isStateActive(State::Right) || isStateActive(State::Left) };
     if (!isMoved)
@@ -147,10 +152,13 @@ void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(_sprite, states);
 
+    for (const auto &bullet : _bullets)
+        target.draw(*bullet, states);
+
     sf::RectangleShape border(_sprite.getLocalBounds().getSize());
     border.setPosition(_sprite.getPosition());
-    border.setOutlineColor(sf::Color::Green);
-    border.setOutlineThickness(3);
+    border.setOutlineColor(isStateActive(State::OnGround) ? sf::Color::Green : sf::Color::Red);
+    border.setOutlineThickness(10);
     border.setFillColor(sf::Color::Transparent);
     border.setOrigin(_sprite.getOrigin());
     border.setScale(_sprite.getScale());
