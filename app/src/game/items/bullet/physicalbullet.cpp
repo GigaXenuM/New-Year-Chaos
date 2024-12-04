@@ -3,8 +3,10 @@
 namespace Game
 {
 
-PhysicalBullet::PhysicalBullet(b2Body *collider, const Context &context)
+PhysicalBullet::PhysicalBullet(b2Body *collider, const AbstractPhysicalItem *shooter,
+                               const Context &context)
     : AbstractPhysicalItem{ collider },
+      _shooter{ shooter },
       _context{ context },
       _startPosition{ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE) }
 {
@@ -22,14 +24,22 @@ bool PhysicalBullet::isStateActive(State state) const
 
 void PhysicalBullet::update(float deltatime)
 {
-    const b2Vec2 startPos{ _startPosition.x, _startPosition.y };
-    const b2Vec2 targetPos{ _context.target.x, _context.target.y };
-    b2Vec2 direction = targetPos - startPos;
+}
 
-    direction.Normalize();
-    direction *= 10.f;
+void PhysicalBullet::impulse()
+{
+    sf::Vector2f direction = _context.target - _startPosition;
 
-    collider()->ApplyLinearImpulseToCenter(direction, true);
+    b2Vec2 impulse{ direction.x, direction.y };
+    impulse.Normalize();
+    impulse *= _context.impulse;
+
+    collider()->ApplyLinearImpulseToCenter(impulse, true);
+}
+
+const AbstractPhysicalItem *PhysicalBullet::shooter() const
+{
+    return _shooter;
 }
 
 } // namespace Game

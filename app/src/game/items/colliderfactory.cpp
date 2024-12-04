@@ -23,6 +23,14 @@ b2FixtureDef dencityFixDef()
 
     return fixtureDef;
 }
+b2FixtureDef bulletFixDef()
+{
+    b2FixtureDef fixtureDef;
+    fixtureDef.density = 0.01f;
+    fixtureDef.friction = 0.0f;
+
+    return fixtureDef;
+}
 
 b2BodyDef staticBodyDef()
 {
@@ -41,17 +49,13 @@ b2BodyDef dynamicBodyDef()
 }
 } // namespace
 
-template <> b2FixtureDef fixtureDefinition<ItemType::Enemy>()
+template <> b2FixtureDef fixtureDefinition<ItemType::Entity>()
 {
     return dencityFixDef();
 }
-template <> b2FixtureDef fixtureDefinition<ItemType::Player>()
+template <> b2FixtureDef fixtureDefinition<ItemType::Bullet>()
 {
-    return dencityFixDef();
-}
-template <> b2FixtureDef fixtureDefinition<ItemType::SnowBall>()
-{
-    return dencityFixDef();
+    return bulletFixDef();
 }
 template <> b2FixtureDef fixtureDefinition<ItemType::Terrain>()
 {
@@ -62,15 +66,11 @@ template <> b2FixtureDef fixtureDefinition<ItemType::TerrainObstacle>()
     return frictionDencityFixDef();
 }
 
-template <> b2BodyDef bodyDefinition<ItemType::Enemy>()
+template <> b2BodyDef bodyDefinition<ItemType::Entity>()
 {
     return dynamicBodyDef();
 }
-template <> b2BodyDef bodyDefinition<ItemType::Player>()
-{
-    return dynamicBodyDef();
-}
-template <> b2BodyDef bodyDefinition<ItemType::SnowBall>()
+template <> b2BodyDef bodyDefinition<ItemType::Bullet>()
 {
     return dynamicBodyDef();
 }

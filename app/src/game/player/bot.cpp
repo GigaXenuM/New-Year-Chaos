@@ -13,7 +13,7 @@ namespace Game
 {
 
 Bot::Bot(b2World *world, sf::Shape *shape)
-    : PhysicalEntity(ColliderFactory::create<ItemType::Enemy>(world, { shape }), { 5, 30 }),
+    : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 30 }),
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Viking_walk) },
       _pos{ boundingRect().getPosition() }
 {
@@ -25,6 +25,12 @@ Bot::Bot(b2World *world, sf::Shape *shape)
 
     initHealthValueRect();
     updateState(State::Right, true);
+}
+
+void Bot::damage(float power)
+{
+    _healthPoint -= power;
+    setValue(_healthPoint);
 }
 
 void Bot::update(float deltatime)
@@ -82,6 +88,15 @@ void Bot::updateHealthValueRectPos()
         = { _healthBar.getPosition().x,
             _healthBar.getPosition().y - _health.getGlobalBounds().height * 0.1f };
     _health.setPosition(yPos);
+}
+
+void Bot::setValue(const float value)
+{
+    if (value > 100 || value < 0)
+        assert(false && "HUDHealthBar::setValue the value cannot exceed 100 and be less than 0");
+    sf::Vector2f currentSize = _health.getSize();
+    currentSize.x = (_healthBar.getGlobalBounds().width) * (value / 100.f);
+    _health.setSize(currentSize);
 }
 
 void Bot::updatePosition(float deltatime)

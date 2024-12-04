@@ -1,3 +1,5 @@
+#pragma once
+
 #include "items/abstractphysicalitem.h"
 #include "items/itemtype.h"
 #include "util/enumflag.h"
@@ -7,13 +9,15 @@
 
 #include <unordered_map>
 
-#pragma once
+struct b2Fixture;
+
 namespace Game
 {
 
 struct UserData
 {
     std::unordered_map<Game::ItemType, AbstractPhysicalItem *> itemTypeToItem;
+    std::unordered_map<Game::ItemType, b2Fixture *> itemTypeToFixture;
     Util::EnumFlag<ItemType> types;
 };
 
@@ -22,6 +26,7 @@ class ContactListener : public b2ContactListener
 public:
     void BeginContact(b2Contact *contact) override;
     void EndContact(b2Contact *contact) override;
+    void PreSolve(b2Contact *contact, const b2Manifold *oldManifold) override;
 
     static ContactListener *instance();
 

@@ -1,6 +1,6 @@
 #include "contactlistener.h"
 
-#include "items/bullet/snowball.h"
+#include "items/bullet/physicalbullet.h"
 #include "player/player.h"
 
 namespace Game
@@ -16,6 +16,26 @@ void ContactListener::EndContact(b2Contact *contact)
     handleContact(contact, false);
 }
 
+void ContactListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifold)
+{
+    const UserData data{ toUserData(contact) };
+
+    if (data.types.test(ItemType::Bullet))
+    {
+        auto *snowBall{ dynamic_cast<PhysicalBullet *>(data.itemTypeToItem.at(ItemType::Bullet)) };
+        assert(snowBall != nullptr);
+        if (contact)
+        {
+            const bool shooterCollided{
+                std::any_of(data.itemTypeToItem.cbegin(), data.itemTypeToItem.cend(),
+                            [snowBall](auto &value) { return snowBall->shooter() == value.second; })
+            };
+            if (shooterCollided)
+                contact->SetEnabled(false);
+        }
+    }
+}
+
 ContactListener *ContactListener::instance()
 {
     static auto instance{ std::unique_ptr<ContactListener>{ new ContactListener } };
@@ -25,17 +45,20 @@ ContactListener *ContactListener::instance()
 UserData ContactListener::toUserData(b2Contact *contact)
 {
     UserData data;
-    const auto items = {
-        reinterpret_cast<AbstractPhysicalItem *>(contact->GetFixtureA()->GetUserData().pointer),
-        reinterpret_cast<AbstractPhysicalItem *>(contact->GetFixtureB()->GetUserData().pointer)
-    };
+    const auto items = { std::pair{ reinterpret_cast<AbstractPhysicalItem *>(
+                                        contact->GetFixtureA()->GetUserData().pointer),
+                                    contact->GetFixtureA() },
+                         std::pair{ reinterpret_cast<AbstractPhysicalItem *>(
+                                        contact->GetFixtureB()->GetUserData().pointer),
+                                    contact->GetFixtureB() } };
 
-    for (auto *item : items)
+    for (auto &[item, fixture] : items)
     {
         assert(item != nullptr && "ContactListener: The user data is not valid.");
 
         const ItemType type{ item->type() };
         data.itemTypeToItem[type] = item;
+        data.itemTypeToFixture[type] = fixture;
         data.types.set(type);
     }
 
@@ -46,20 +69,38 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
 {
     const UserData data{ toUserData(contact) };
 
-    if (data.types.test(ItemType::Terrain) && data.types.test(ItemType::Player))
+    if (data.types.test(ItemType::Terrain) && data.types.test(ItemType::Entity))
     {
-        auto *player{ dynamic_cast<Player *>(data.itemTypeToItem.at(ItemType::Player)) };
-        assert(player != nullptr);
-        player->updateState(Player::State::OnGround, contacted);
+        auto *entity{ dynamic_cast<PhysicalEntity *>(data.itemTypeToItem.at(ItemType::Entity)) };
+        assert(entity != nullptr);
+        entity->updateState(contacted ? PhysicalEntity::State::OnGround
+                                      : PhysicalEntity::State::PrepareGroundDetach,
+                            true);
     }
 
-    if (data.types.test(ItemType::SnowBall))
+    if (data.types.test(ItemType::Bullet))
     {
-        auto *snowBall{ dynamic_cast<PhysicalBullet *>(
-            data.itemTypeToItem.at(ItemType::SnowBall)) };
-        assert(snowBall != nullptr);
+        auto *bullet{ dynamic_cast<PhysicalBullet *>(data.itemTypeToItem.at(ItemType::Bullet)) };
+        assert(bullet != nullptr);
         if (contact)
-            snowBall->updateState(PhysicalBullet::State::Collide, true);
+        {
+            const bool shooterCollided{
+                std::any_of(data.itemTypeToItem.cbegin(), data.itemTypeToItem.cend(),
+                            [bullet](auto &value) { return bullet->shooter() == value.second; })
+            };
+            if (!shooterCollided)
+            {
+                bullet->updateState(PhysicalBullet::State::Collide, true);
+
+                if (data.types.test(ItemType::Entity))
+                {
+                    auto *entity{ dynamic_cast<PhysicalEntity *>(
+                        data.itemTypeToItem.at(ItemType::Entity)) };
+                    assert(entity != nullptr);
+                    entity->damage(bullet->power());
+                }
+            }
+        }
     }
 }
 

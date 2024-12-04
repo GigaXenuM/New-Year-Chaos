@@ -2,7 +2,9 @@
 
 #include "SFML/Graphics/Color.hpp"
 #include "SFML/Graphics/Shape.hpp"
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/ConvexShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 #include <box2d/b2_draw.h>
 #include <box2d/b2_fixture.h>
@@ -40,16 +42,61 @@ void createComplexFixture(b2Body *body, const sf::Shape *shape, b2FixtureDef *bo
     using Polygon = std::vector<Point>;
     using Polygons = std::vector<Polygon>;
 
+    // Handle CircleShape
+    if (const auto *circle = dynamic_cast<const sf::CircleShape *>(shape))
+    {
+        b2CircleShape circleShape;
+        circleShape.m_radius = circle->getRadius();
+
+        // Transform the circle's position
+        const sf::Transform transform = circle->getTransform();
+        const sf::Vector2f transformedCenter = transform.transformPoint(circle->getOrigin());
+        circleShape.m_p.Set(transformedCenter.x, transformedCenter.y);
+
+        bodyDefinition->shape = &circleShape;
+        b2Fixture *fixture = body->CreateFixture(bodyDefinition);
+        fixture->GetUserData().pointer = body->GetUserData().pointer;
+        return;
+    }
+
+    // Handle RectangleShape
+    if (const auto *rectangle = dynamic_cast<const sf::RectangleShape *>(shape))
+    {
+        b2PolygonShape rectangleShape;
+
+        // Get rectangle's dimensions
+        const sf::Vector2f size = rectangle->getSize();
+        const sf::Transform transform = rectangle->getTransform();
+
+        // Transform rectangle corners to world coordinates
+        b2Vec2 vertices[4];
+        vertices[0]
+            = b2Vec2(transform.transformPoint(0.f, 0.f).x, transform.transformPoint(0.f, 0.f).y);
+        vertices[1] = b2Vec2(transform.transformPoint(size.x, 0.f).x,
+                             transform.transformPoint(size.x, 0.f).y);
+        vertices[2] = b2Vec2(transform.transformPoint(size.x, size.y).x,
+                             transform.transformPoint(size.x, size.y).y);
+        vertices[3] = b2Vec2(transform.transformPoint(0.f, size.y).x,
+                             transform.transformPoint(0.f, size.y).y);
+
+        rectangleShape.Set(vertices, 4);
+        bodyDefinition->shape = &rectangleShape;
+        b2Fixture *fixture = body->CreateFixture(bodyDefinition);
+        fixture->GetUserData().pointer = body->GetUserData().pointer;
+        return;
+    }
+
+    // Handle general polygon shapes (e.g., ConvexShape)
     Polygons polygons;
     Polygon polygon;
 
     // Convert vertices to Earcut-compatible format
-    const size_t pointCount{ shape->getPointCount() };
+    const size_t pointCount = shape->getPointCount();
     polygon.reserve(pointCount);
-    const sf::Transform transform{ shape->getTransform() };
-    for (size_t i{ 0 }; i < pointCount; ++i)
+    const sf::Transform transform = shape->getTransform();
+    for (size_t i = 0; i < pointCount; ++i)
     {
-        const sf::Vector2f point{ transform.transformPoint(shape->getPoint(i)) };
+        const sf::Vector2f point = transform.transformPoint(shape->getPoint(i));
         polygon.push_back({ point.x, point.y });
     }
     polygons.push_back(polygon);
@@ -71,7 +118,7 @@ void createComplexFixture(b2Body *body, const sf::Shape *shape, b2FixtureDef *bo
         triangleShape.Set(triangleVertices, 3);
 
         bodyDefinition->shape = &triangleShape;
-        b2Fixture *fixture{ body->CreateFixture(bodyDefinition) };
+        b2Fixture *fixture = body->CreateFixture(bodyDefinition);
         fixture->GetUserData().pointer = body->GetUserData().pointer;
     }
 }

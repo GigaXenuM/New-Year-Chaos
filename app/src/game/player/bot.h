@@ -14,10 +14,7 @@ class Bot : public PhysicalEntity
 public:
     Bot(b2World *world, sf::Shape *shape);
 
-    ItemType type() const override
-    {
-        return ItemType::Enemy;
-    }
+    void damage(float power) override;
 
 protected:
     void update(float deltatime) override;
@@ -30,6 +27,8 @@ private:
 
     void initHealthValueRect();
     void updateHealthValueRectPos();
+
+    void setValue(const float value);
 
     const float _scale{ 0.40f };
     const float _scaleHealthBar{ 0.17f };
