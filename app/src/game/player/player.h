@@ -17,11 +17,11 @@ class Player : public PhysicalEntity
 public:
     Player(b2World *world, sf::Shape *shape);
 
-    sf::Vector2f getPosition() const;
-
+    void health();
     [[nodiscard]] bool isDead() const;
     [[nodiscard]] float getFreezPoints() const;
     [[nodiscard]] float getHealthPoints() const;
+    [[nodiscard]] sf::Vector2f getPosition() const;
 
     ItemType type() const override
     {
@@ -37,6 +37,8 @@ private:
     void updateAnimation(float deltatime);
     void updateHealthPoint(float deltatime);
 
+    void tryToRestoreHealthPoint(float deltatime);
+
 private:
     const float _scale{ 0.15f };
     const float _healthUpdateInterval{ 1.0f };
@@ -45,6 +47,8 @@ private:
     float _healthPoint{ 100.f };
 
     float _healthUpdateTimer{ 0.0f };
+
+    bool _needHealth{ false };
 
     sf::Sprite _sprite;
 

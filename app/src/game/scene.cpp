@@ -1,11 +1,13 @@
 #include "scene.h"
 
+#include "keyevents/keypressevent.h"
 #include "level/controller.h"
 
 #include "event/mouseevents/mousescrollevent.h"
 #include "mouseevents/mousemoveevent.h"
 #include "mouseevents/mousepressevent.h"
 #include "mouseevents/mousereleaseevent.h"
+#include "player/player.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
@@ -63,5 +65,11 @@ void Scene::mouseScrollEvent(MouseScrollEvent *event)
     _scaling *= delta;
 
     _view->setSize(_viewSize * _scaling);
+}
+
+void Scene::keyPressEvent(KeyPressEvent *event)
+{
+    if (event->key() == sf::Keyboard::E)
+        gPlayer->health();
 }
 } // namespace Game

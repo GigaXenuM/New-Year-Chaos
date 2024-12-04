@@ -26,6 +26,11 @@ Player::Player(b2World *world, sf::Shape *shape)
     _sprite.setScale({ _scale, _scale });
 }
 
+void Player::health()
+{
+    _needHealth = true;
+}
+
 sf::Vector2f Player::getPosition() const
 {
     return _sprite.getPosition();
@@ -76,13 +81,40 @@ void Player::updateHealthPoint(float deltatime)
 {
     _healthUpdateTimer += deltatime;
 
+    tryToRestoreHealthPoint(deltatime);
+
     if (_healthUpdateTimer >= _healthUpdateInterval)
     {
         _healthUpdateTimer = 0.0f; // reset timer
         if (_freezPoint > 0.f)
-            _freezPoint -= 10.f;
+            _freezPoint -= 1.f;
         else if (_healthPoint > 0)
-            _healthPoint -= 10.f;
+            _healthPoint -= 1.f;
+    }
+}
+
+void Player::tryToRestoreHealthPoint(float deltatime)
+{
+    if (!_needHealth)
+        return;
+
+    _needHealth = false;
+
+    const float restorationPoints = 25.f;
+
+    if (_healthPoint < 100.f)
+    {
+        if ((100.f - _healthPoint) < restorationPoints)
+            _healthPoint += (100.f - _healthPoint);
+        else
+            _healthPoint += restorationPoints;
+    }
+    else if (_freezPoint < 100.f)
+    {
+        if ((100.f - _freezPoint) < restorationPoints)
+            _freezPoint += (100.f - _freezPoint);
+        else
+            _freezPoint += restorationPoints;
     }
 }
 

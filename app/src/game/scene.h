@@ -48,6 +48,8 @@ protected:
     void mouseMoveEvent(MouseMoveEvent *event) override;
     void mouseScrollEvent(MouseScrollEvent *event) override;
 
+    void keyPressEvent(KeyPressEvent *event) override;
+
 private:
     sf::RenderTarget *_renderTarget{ nullptr };
     float _scaling{ 1.0f };
