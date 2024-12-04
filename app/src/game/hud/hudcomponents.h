@@ -2,6 +2,8 @@
 
 #include "hud/hudhealthbar.h"
 
+#include "teaicon.h"
+
 #include <memory>
 
 namespace sf
@@ -27,6 +29,7 @@ private:
     sf::View *_gameView{ nullptr };
     sf::RenderTarget *_renderTarget{ nullptr };
 
+    std::unique_ptr<TeaIcon> _teaIcon;
     std::unique_ptr<HUDHealthBar> _freezBar;
     std::unique_ptr<HUDHealthBar> _healthBar;
 };

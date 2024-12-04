@@ -39,6 +39,10 @@ set(HEADER_FILES
 
     src/animation/animation.h
 
+    src/game/items/bullet/snowball.h
+    src/game/items/colliderfactory.h
+    src/game/hud/teaicon.h
+
     src/event/event.h
     src/event/eventhandler.h
     src/event/keyevents/keyboard.h
@@ -84,6 +88,9 @@ set(SOURCE_FILES
     src/game/items/bullet/physicalbullet.cpp
     src/game/hud/hudhealthbar.cpp
     src/game/hud/hudcomponents.cpp
+    src/game/hud/teaicon.cpp
+
+    src/game/items/colliderfactory.cpp
 
     src/visitor/defaultvisitor.cpp
 
@@ -103,6 +110,8 @@ set(SOURCE_FILES
     src/event/mouseevents/mousemoveevent.cpp
     src/event/mouseevents/mousereleaseevent.cpp
     src/event/mouseevents/mousescrollevent.cpp
+
+    src/game/items/bullet/snowball.cpp
 
     src/util/geometryoperation.cpp
     src/util/timeaccumulator.cpp
@@ -126,9 +135,7 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/app/src/event"
 )
 
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES}
-    src/game/items/bullet/snowball.h src/game/items/bullet/snowball.cpp
-    src/game/items/colliderfactory.h src/game/items/colliderfactory.cpp)
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-audio sfml-graphics tmxlite box2d)
 

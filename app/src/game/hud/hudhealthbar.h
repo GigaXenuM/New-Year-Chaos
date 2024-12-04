@@ -19,6 +19,7 @@ public:
     void setValue(const float value);
 
     [[nodiscard]] const sf::Sprite *getSprite() const;
+    [[nodiscard]] const sf::Sprite *getIconSprite() const;
 
 protected:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;

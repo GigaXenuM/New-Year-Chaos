@@ -11,6 +11,7 @@ namespace Game
 
 HUDComponents::HUDComponents(sf::RenderTarget *renderTarget, sf::View *view)
     : _gameView{ view },
+      _teaIcon{ std::make_unique<TeaIcon>() },
       _renderTarget{ renderTarget },
       _freezBar{ std::make_unique<HUDHealthBar>(
           ResourseManager::getInstance()->getTextures(TextureType::FreezBar_icon)[0]) },
@@ -23,7 +24,8 @@ HUDComponents::HUDComponents(sf::RenderTarget *renderTarget, sf::View *view)
 
 void HUDComponents::update(const float deltatime)
 {
-    const std::vector<Graphics::AbstractItem *> hudItems{ _freezBar.get(), _healthBar.get() };
+    const std::vector<Graphics::AbstractItem *> hudItems{ _freezBar.get(), _healthBar.get(),
+                                                          _teaIcon.get() };
 
     updateBarValue();
     updateBarPosition();
@@ -52,6 +54,10 @@ void HUDComponents::updateBarPosition()
     _healthBar->setPosition(
         { bottomLeft.x + 2,
           bottomLeft.y - (_freezBar->getSprite()->getGlobalBounds().height * 1.5f) });
-}
 
+    _teaIcon->setPosition({ _healthBar->getIconSprite()->getPosition().x
+                                - _teaIcon->getSprite()->getGlobalBounds().width * 0.2f,
+                            _healthBar->getIconSprite()->getPosition().y
+                                - _teaIcon->getSprite()->getGlobalBounds().height });
+}
 } // namespace Game

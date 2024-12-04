@@ -32,6 +32,7 @@ enum class TextureType
     Player_slide,
 
     // HUD
+    Tea,
     Health_bar,
     HeartBar_icon,
     FreezBar_icon,

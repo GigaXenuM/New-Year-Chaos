@@ -22,6 +22,11 @@ const sf::Sprite *HUDHealthBar::getSprite() const
     return &_healthBar;
 }
 
+const sf::Sprite *HUDHealthBar::getIconSprite() const
+{
+    return &_barIcon;
+}
+
 void HUDHealthBar::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(_healthBar, states);

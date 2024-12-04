@@ -44,6 +44,7 @@ void ResourseManager::loadAllTextures()
     loadTextures("player/png/", TextureType::Player_slide, "Slide");
 
     // HUD
+    loadTextures("hud/", TextureType::Tea, "Tea");
     loadTextures("hud/", TextureType::Health_bar, "Health");
     loadTextures("hud/", TextureType::HeartBar_icon, "Heart");
     loadTextures("hud/", TextureType::FreezBar_icon, "Ice");
