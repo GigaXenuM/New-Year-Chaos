@@ -54,8 +54,8 @@ private:
     void initBot();
 
     void render(float deltatime);
-    void updatePlayerHealth();
-    void calculate(float deltatime);
+    void updatePhysics(float deltatime);
+    void updateGraphics(float deltatime);
 
     void updateCameraPos();
 

@@ -34,6 +34,8 @@ MainWindow::MainWindow(unsigned int width, unsigned int height, const char *name
 {
     initBackgroundMusic();
     composeMenu();
+
+    grabContext(_currentView);
 }
 
 MainWindow::~MainWindow()

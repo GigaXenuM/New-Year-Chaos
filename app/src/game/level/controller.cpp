@@ -72,7 +72,8 @@ Controller::~Controller() = default;
 
 void Controller::update(float deltatime)
 {
-    calculate(deltatime);
+    updatePhysics(deltatime);
+    updateGraphics(deltatime);
     render(deltatime);
 }
 
@@ -184,7 +185,7 @@ void Controller::initBot()
     _elements.push_back(std::unique_ptr<Bot>{ _bot });
 }
 
-void Controller::calculate(float deltatime)
+void Controller::updatePhysics(float deltatime)
 {
     _timeAccumulator.update(deltatime);
 
@@ -193,8 +194,18 @@ void Controller::calculate(float deltatime)
         _phisicalWorld->Step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 
         for (const auto &item : _elements)
-            item->update(deltatime);
+        {
+            auto *physicalItem{ dynamic_cast<AbstractPhysicalItem *>(item.get()) };
+            if (physicalItem != nullptr)
+                physicalItem->updatePhysics();
+        }
     }
+}
+
+void Controller::updateGraphics(float deltatime)
+{
+    for (const auto &item : _elements)
+        item->update(deltatime);
 
     updateCameraPos();
 }
@@ -205,10 +216,6 @@ void Controller::render(float deltatime)
         _renderTarget->draw(*item);
 
     _phisicalWorld->DebugDraw();
-}
-
-void Controller::updatePlayerHealth()
-{
 }
 
 void Controller::updateCameraPos()

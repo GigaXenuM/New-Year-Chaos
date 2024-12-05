@@ -30,7 +30,6 @@ public:
     void updateState(State state, bool isActive);
     bool isStateActive(State state) const;
 
-    void update(float deltatime) override;
     void impulse();
 
     const AbstractPhysicalItem *shooter() const;

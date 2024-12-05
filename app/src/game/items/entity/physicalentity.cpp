@@ -17,33 +17,8 @@ PhysicalEntity::PhysicalEntity(b2Body *collider, const Context &context)
 {
 }
 
-void PhysicalEntity::updateState(State state, bool isActive)
+void PhysicalEntity::updatePhysics()
 {
-    isActive ? _state.set(state) : _state.unset(state);
-}
-
-bool PhysicalEntity::isStateActive(State state) const
-{
-    return _state.test(state);
-}
-
-PhysicalEntity::~PhysicalEntity() = default;
-
-void PhysicalEntity::shoot(const sf::Vector2f &target)
-{
-    sf::RectangleShape bulletShape{ { 10, 10 } };
-    bulletShape.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
-
-    auto *bullet{ new SnowBall{ collider()->GetWorld(), &bulletShape, this,
-                                SnowBall::Context{ 50.f, target } } };
-    bullet->impulse();
-    _bullets.push_back(std::unique_ptr<PhysicalBullet>(bullet));
-}
-
-void PhysicalEntity::update(float deltatime)
-{
-    AbstractPhysicalItem::update(deltatime);
-
     b2Vec2 velocity{ collider()->GetLinearVelocity() };
 
     velocity.x = 0.0f;
@@ -73,6 +48,37 @@ void PhysicalEntity::update(float deltatime)
             updateState(State::OnGround, false);
         }
     }
+
+    for (std::unique_ptr<PhysicalBullet> &bullet : _bullets)
+        bullet->updatePhysics();
+}
+
+void PhysicalEntity::updateState(State state, bool isActive)
+{
+    isActive ? _state.set(state) : _state.unset(state);
+}
+
+bool PhysicalEntity::isStateActive(State state) const
+{
+    return _state.test(state);
+}
+
+PhysicalEntity::~PhysicalEntity() = default;
+
+void PhysicalEntity::shoot(const sf::Vector2f &target)
+{
+    sf::RectangleShape bulletShape{ { 10, 10 } };
+    bulletShape.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
+
+    auto *bullet{ new SnowBall{ collider()->GetWorld(), &bulletShape, this,
+                                SnowBall::Context{ 50.f, target } } };
+    bullet->impulse();
+    _bullets.push_back(std::unique_ptr<PhysicalBullet>(bullet));
+}
+
+void PhysicalEntity::update(float deltatime)
+{
+    AbstractPhysicalItem::update(deltatime);
 
     for (std::unique_ptr<PhysicalBullet> &bullet : _bullets)
     {
