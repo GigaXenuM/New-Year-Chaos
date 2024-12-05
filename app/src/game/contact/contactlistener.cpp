@@ -78,7 +78,7 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
                             true);
     }
 
-    if (data.types.test(ItemType::Bullet))
+    if (data.types.test(ItemType::Bullet) && contacted)
     {
         auto *bullet{ dynamic_cast<PhysicalBullet *>(data.itemTypeToItem.at(ItemType::Bullet)) };
         assert(bullet != nullptr);

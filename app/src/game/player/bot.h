@@ -21,20 +21,18 @@ protected:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
+    void setupSprites();
+
     void updatePosition(float deltatime);
     void updateAnimation(float deltatime);
-    void updateHealthBarPos(float deltatime);
-
-    void initHealthValueRect();
-    void updateHealthValueRectPos();
-
-    void setValue(const float value);
+    void setValue(const float value = 25.f);
 
     const float _scale{ 0.40f };
     const float _scaleHealthBar{ 0.17f };
     const float _moveLimit{ 100.f };
 
     float _healthPoint{ 100.f };
+    sf::Vector2f _healthSize{};
 
     sf::Sprite _sprite;
     sf::Sprite _healthBar;
