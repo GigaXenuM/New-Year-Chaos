@@ -22,10 +22,6 @@ bool PhysicalBullet::isStateActive(State state) const
     return _state.test(state);
 }
 
-void PhysicalBullet::update(float deltatime)
-{
-}
-
 void PhysicalBullet::impulse()
 {
     sf::Vector2f direction = _context.target - _startPosition;

@@ -38,6 +38,7 @@ public:
     {
         return ItemType::Entity;
     }
+    void updatePhysics() override;
 
     void updateState(State state, bool isActive);
     bool isStateActive(State state) const;
