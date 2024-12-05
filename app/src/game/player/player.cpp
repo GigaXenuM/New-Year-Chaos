@@ -50,6 +50,11 @@ void Player::damage(float power)
 {
 }
 
+size_t Player::getHealthCount() const
+{
+    return _countOfHealthItem;
+}
+
 bool Player::isDead() const
 {
     // return _healthPoint == 0.f && _deadAnimation.isFinished();

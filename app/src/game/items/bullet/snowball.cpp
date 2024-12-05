@@ -6,7 +6,8 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
-#include <cmath>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 namespace Game
 {

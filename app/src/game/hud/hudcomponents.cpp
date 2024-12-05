@@ -38,6 +38,7 @@ void HUDComponents::update(const float deltatime)
 
 void HUDComponents::updateBarValue()
 {
+    _teaIcon->updateCountHealthItems();
     _freezBar->setValue(gPlayer->getFreezPoints());
     _healthBar->setValue(gPlayer->getHealthPoints());
 }

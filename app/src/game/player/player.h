@@ -21,6 +21,7 @@ public:
     void addHealthItem();
 
     [[nodiscard]] bool isDead() const;
+    [[nodiscard]] size_t getHealthCount() const;
     [[nodiscard]] float getFreezPoints() const;
     [[nodiscard]] float getHealthPoints() const;
     [[nodiscard]] sf::Vector2f getPosition() const;
