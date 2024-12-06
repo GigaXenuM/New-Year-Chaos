@@ -48,6 +48,25 @@ sf::Vector2f Player::getPosition() const
 
 void Player::damage(float power)
 {
+    power *= 5;
+    if (isStateActive(State::Dead))
+        return;
+
+    if (_freezPoint > 0.f)
+    {
+        _freezPoint -= power;
+        if (_freezPoint <= 0.f)
+            _freezPoint = 0.f;
+    }
+    else if (_healthPoint > 0)
+    {
+        _healthPoint -= power;
+        if (_healthPoint <= 0.f)
+        {
+            _healthPoint = 0.f;
+            updateState(State::Dead, true);
+        }
+    }
 }
 
 size_t Player::getHealthCount() const
@@ -57,8 +76,7 @@ size_t Player::getHealthCount() const
 
 bool Player::isDead() const
 {
-    // return _healthPoint == 0.f && _deadAnimation.isFinished();
-    return false;
+    return isStateActive(State::Dead) && _deadAnimation.isFinished();
 }
 
 float Player::getFreezPoints() const
@@ -73,13 +91,13 @@ float Player::getHealthPoints() const
 
 void Player::updateAnimation(float deltatime)
 {
-    // if (_healthPoint == 0.f)
-    // {
-    //     if (!_deadAnimation.isFinished())
-    //         _deadAnimation.start(deltatime, _sprite, false);
+    if (isStateActive(State::Dead))
+    {
+        if (!_deadAnimation.isFinished())
+            _deadAnimation.start(deltatime, _sprite, false);
 
-    //     return;
-    // }
+        return;
+    }
 
     const bool isMoved{ isStateActive(State::Right) || isStateActive(State::Left) };
     if (!isMoved)
@@ -98,21 +116,14 @@ void Player::updateAnimation(float deltatime)
 
 void Player::updateHealthPoint(float deltatime)
 {
-    _healthUpdateTimer += deltatime;
+    tryToRestoreHealthPoint();
+    damage(deltatime);
 
-    tryToRestoreHealthPoint(deltatime);
-
-    if (_healthUpdateTimer >= _healthUpdateInterval)
-    {
-        _healthUpdateTimer = 0.0f; // reset timer
-        if (_freezPoint > 0.f)
-            _freezPoint -= 1.f;
-        else if (_healthPoint > 0)
-            _healthPoint -= 1.f;
-    }
+    if (isDead())
+        updateState(State::RemoveMe, true);
 }
 
-void Player::tryToRestoreHealthPoint(float deltatime)
+void Player::tryToRestoreHealthPoint()
 {
     if (!_needHealth)
         return;
