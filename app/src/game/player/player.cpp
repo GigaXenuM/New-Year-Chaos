@@ -135,7 +135,7 @@ void Player::updateHealthPoint(float deltatime)
 
 void Player::tryToRestoreHealthPoint()
 {
-    if (!_needHealth)
+    if (!_needHealth || _deadAnimation.isPlaying())
         return;
 
     _needHealth = false;
