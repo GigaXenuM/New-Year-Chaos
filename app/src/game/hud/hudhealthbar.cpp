@@ -79,8 +79,6 @@ void HUDHealthBar::setColor(const sf::Color &color)
 
 void HUDHealthBar::setValue(const float value)
 {
-    if (value > 100 || value < 0)
-        assert(false && "HUDHealthBar::setValue the value cannot exceed 100 and be less than 0");
     sf::Vector2f currentSize = _health.getSize();
     currentSize.x = (_healthBar.getGlobalBounds().width - 12) * (value / 100.f);
     _health.setSize(currentSize);

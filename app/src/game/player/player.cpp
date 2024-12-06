@@ -99,6 +99,16 @@ void Player::updateAnimation(float deltatime)
         return;
     }
 
+    if (isStateActive(State::Run))
+    {
+        _runAnimation.start(deltatime, _sprite);
+        if (isStateActive(State::Right))
+            _sprite.setScale({ _scale, _scale });
+        else if (isStateActive(State::Left))
+            _sprite.setScale({ -_scale, _scale });
+        return;
+    }
+
     const bool isMoved{ isStateActive(State::Right) || isStateActive(State::Left) };
     if (!isMoved)
     {

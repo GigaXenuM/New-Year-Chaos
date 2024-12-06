@@ -84,6 +84,8 @@ void Controller::keyPressEvent(KeyPressEvent *event)
         gPlayer->updateState(Player::State::Right, true);
     if (event->key() == sf::Keyboard::A)
         gPlayer->updateState(Player::State::Left, true);
+    if (event->key() == sf::Keyboard::LShift)
+        gPlayer->updateState(Player::State::Run, true);
     if (event->key() == sf::Keyboard::Space)
         gPlayer->updateState(Player::State::Jump, true);
 }
@@ -94,6 +96,8 @@ void Controller::keyReleaseEvent(KeyReleaseEvent *event)
         gPlayer->updateState(Player::State::Right, false);
     if (event->key() == sf::Keyboard::A)
         gPlayer->updateState(Player::State::Left, false);
+    if (event->key() == sf::Keyboard::LShift)
+        gPlayer->updateState(Player::State::Run, false);
     if (event->key() == sf::Keyboard::Space)
         gPlayer->updateState(Player::State::Jump, false);
 }

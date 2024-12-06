@@ -22,6 +22,7 @@ public:
         PrepareGroundDetach,
         Left,
         Right,
+        Run,
         Jump,
         Dead,
         RemoveMe,

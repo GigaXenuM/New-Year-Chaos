@@ -22,10 +22,16 @@ void PhysicalEntity::updatePhysics()
     b2Vec2 velocity{ collider()->GetLinearVelocity() };
 
     velocity.x = 0.0f;
+
+    float runVelocity = _context.velocity;
+
+    if (isStateActive(State::Run))
+        runVelocity *= 2;
+
     if (isStateActive(State::Left))
-        velocity.x -= _context.velocity;
+        velocity.x -= runVelocity;
     if (isStateActive(State::Right))
-        velocity.x += _context.velocity;
+        velocity.x +=runVelocity;
 
     const bool onGround{ isStateActive(State::OnGround) };
     const bool needJumping{ isStateActive(State::Jump) && onGround };
@@ -34,7 +40,8 @@ void PhysicalEntity::updatePhysics()
         velocity.y = 0.0f;
 
     if (velocity.x != 0.0f && velocity.y != 0.0f && onGround)
-        velocity.x *= _context.velocity / velocity.Length();
+        velocity.x *= runVelocity / velocity.Length();
+
     collider()->SetLinearVelocity(velocity);
 
     if (needJumping)
