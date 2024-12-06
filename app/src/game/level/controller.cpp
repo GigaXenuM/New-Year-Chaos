@@ -75,6 +75,7 @@ void Controller::update(float deltatime)
     updatePhysics(deltatime);
     updateGraphics(deltatime);
     render(deltatime);
+    removeDeadItems();
 }
 
 void Controller::keyPressEvent(KeyPressEvent *event)
@@ -238,6 +239,25 @@ void Controller::updateCameraPos()
         viewCenter.y = playerPosition.y - _halfSafeZone.y;
 
     _gameView->setCenter(viewCenter);
+}
+
+void Controller::removeDeadItems()
+{
+    for (auto &item : _elements)
+    {
+        if (auto abstractPhysicalItem{ dynamic_cast<PhysicalEntity *>(item.get()) })
+        {
+            if (abstractPhysicalItem->isStateActive(Game::Player::State::RemoveMe))
+            {
+                abstractPhysicalItem->destroyCollider();
+                item.reset();
+            }
+        }
+    }
+
+    _elements.erase(std::remove_if(_elements.begin(), _elements.end(),
+                                  [](auto &bullet) { return bullet == nullptr; }),
+                   _elements.end());
 }
 
 } // namespace Level

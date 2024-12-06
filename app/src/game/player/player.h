@@ -20,7 +20,6 @@ public:
     void health();
     void addHealthItem();
 
-    [[nodiscard]] bool isDead() const;
     [[nodiscard]] size_t getHealthCount() const;
     [[nodiscard]] float getFreezPoints() const;
     [[nodiscard]] float getHealthPoints() const;
@@ -33,11 +32,12 @@ protected:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
+    [[nodiscard]] bool isDead() const;
     void updatePosition(float deltatime);
     void updateAnimation(float deltatime);
     void updateHealthPoint(float deltatime);
 
-    void tryToRestoreHealthPoint(float deltatime);
+    void tryToRestoreHealthPoint();
 
 private:
     const float _scale{ 0.15f };

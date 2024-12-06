@@ -58,6 +58,8 @@ private:
     void updateGraphics(float deltatime);
 
     void updateCameraPos();
+    void removeDeadItems();
+
 
     sf::RenderTarget *_renderTarget{ nullptr };
     sf::View *_gameView{ nullptr };

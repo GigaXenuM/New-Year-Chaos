@@ -23,6 +23,8 @@ public:
         Left,
         Right,
         Jump,
+        Dead,
+        RemoveMe,
     };
 
     struct Context

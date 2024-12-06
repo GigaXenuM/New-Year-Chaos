@@ -22,7 +22,18 @@ Bot::Bot(b2World *world, sf::Shape *shape)
 
 void Bot::damage(float power)
 {
+    if (isStateActive(State::Dead))
+        return;
+
     _healthPoint -= power;
+
+    if (_healthPoint <= 0.f)
+    {
+        _healthPoint = 0.f;
+        updateState(State::Dead, true);
+        updateState(State::RemoveMe, true);
+
+    }
     setValue(_healthPoint);
 }
 
@@ -108,7 +119,7 @@ void Bot::updatePosition(float deltatime)
     _healthBar.setPosition(healthBarPos);
 
     _healthBar.setOrigin(Util::pointBy(_healthBar.getLocalBounds(), Align::Left));
-    _health.setPosition({_healthBar.getPosition().x + 6, _healthBar.getPosition().y - 3});
+    _health.setPosition({ _healthBar.getPosition().x + 6, _healthBar.getPosition().y - 3 });
 }
 
 } // namespace Game

@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 
+#include "controller.h"
 #include "layout/verticallayout.h"
 
 #include "graphics-element/button/textbutton.h"
@@ -53,7 +54,7 @@ int MainWindow::gameLoop()
             handleSfmlEvent(event);
 
         _currentView->update(deltatime);
-        if (Game::gPlayer->isDead())
+        if (Game::gPlayer->isStateActive(Game::Player::State::RemoveMe))
         {
             _backgroundMusic.stop();
             switchView(_gameOverMenu.get());
