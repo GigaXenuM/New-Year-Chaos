@@ -43,6 +43,7 @@ enum class TextureType
 
     // SnowBall
     SnowBall,
+    SnowBallGun,
 };
 
 class ResourseManager

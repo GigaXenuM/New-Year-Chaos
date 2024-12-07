@@ -10,8 +10,7 @@ struct b2Body;
 
 namespace Game
 {
-
-class PhysicalBullet;
+class IWeapon;
 
 class PhysicalEntity : public AbstractPhysicalItem
 {
@@ -50,13 +49,15 @@ public:
 
     virtual void damage(float power) = 0;
 
+    IWeapon *const weapon() const;
+
 protected:
     void update(float deltatime) override;
 
-    std::vector<std::unique_ptr<PhysicalBullet>> _bullets;
-
 private:
     const Context _context;
+    std::unique_ptr<IWeapon> _weapon;
+
     Util::EnumFlag<State> _state;
 };
 

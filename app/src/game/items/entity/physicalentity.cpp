@@ -1,6 +1,6 @@
 #include "physicalentity.h"
 
-#include "items/bullet/snowball.h"
+#include "weapon/snowballgun.h"
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Clock.hpp>
@@ -13,7 +13,9 @@ namespace Game
 {
 
 PhysicalEntity::PhysicalEntity(b2Body *collider, const Context &context)
-    : AbstractPhysicalItem{ collider }, _context{ context }
+    : AbstractPhysicalItem{ collider },
+      _context{ context },
+      _weapon{ std::make_unique<SnowBallGun>(this, collider->GetWorld()) }
 {
 }
 
@@ -31,7 +33,7 @@ void PhysicalEntity::updatePhysics()
     if (isStateActive(State::Left))
         velocity.x -= runVelocity;
     if (isStateActive(State::Right))
-        velocity.x +=runVelocity;
+        velocity.x += runVelocity;
 
     const bool onGround{ isStateActive(State::OnGround) };
     const bool needJumping{ isStateActive(State::Jump) && onGround };
@@ -55,9 +57,6 @@ void PhysicalEntity::updatePhysics()
             updateState(State::OnGround, false);
         }
     }
-
-    for (std::unique_ptr<PhysicalBullet> &bullet : _bullets)
-        bullet->updatePhysics();
 }
 
 void PhysicalEntity::updateState(State state, bool isActive)
@@ -74,31 +73,19 @@ PhysicalEntity::~PhysicalEntity() = default;
 
 void PhysicalEntity::shoot(const sf::Vector2f &target)
 {
-    sf::RectangleShape bulletShape{ { 10, 10 } };
-    bulletShape.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
-
-    auto *bullet{ new SnowBall{ collider()->GetWorld(), &bulletShape, this,
-                                SnowBall::Context{ 50.f, target } } };
-    bullet->impulse();
-    _bullets.push_back(std::unique_ptr<PhysicalBullet>(bullet));
+    _weapon->shoot(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE), target);
 }
 
 void PhysicalEntity::update(float deltatime)
 {
     AbstractPhysicalItem::update(deltatime);
 
-    for (std::unique_ptr<PhysicalBullet> &bullet : _bullets)
-    {
-        bullet->update(deltatime);
-        if (bullet->isStateActive(PhysicalBullet::State::Collide))
-        {
-            bullet->destroyCollider();
-            bullet.reset();
-        }
-    }
-    _bullets.erase(std::remove_if(_bullets.begin(), _bullets.end(),
-                                  [](auto &bullet) { return bullet == nullptr; }),
-                   _bullets.end());
+    _weapon->update(deltatime);
+}
+
+IWeapon *const PhysicalEntity::weapon() const
+{
+    return _weapon.get();
 }
 
 } // namespace Game

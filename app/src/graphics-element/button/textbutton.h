@@ -26,7 +26,6 @@ public:
 
     sf::FloatRect globalRect() const override;
     sf::FloatRect localRect() const override;
-    sf::Vector2f center() const override;
 
     void setTextColor(sf::Color color);
     void setBackgroundColor(sf::Color color);
@@ -38,6 +37,7 @@ protected:
     void mouseReleaseEvent(MouseReleaseEvent *event) override;
 
 private:
+    sf::Vector2f center() const;
     void setup();
     void updateGeometry();
 
