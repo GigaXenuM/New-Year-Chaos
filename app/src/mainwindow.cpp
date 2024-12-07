@@ -54,7 +54,7 @@ int MainWindow::gameLoop()
             handleSfmlEvent(event);
 
         _currentView->update(deltatime);
-        if (Game::gPlayer->isStateActive(Game::Player::State::RemoveMe))
+        if (Game::gPlayer->isDead())
         {
             _backgroundMusic.stop();
             switchView(_gameOverMenu.get());

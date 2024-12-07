@@ -129,9 +129,6 @@ void Player::updateHealthPoint(float deltatime)
 {
     tryToRestoreHealthPoint();
     damage(deltatime);
-
-    if (isDead())
-        updateState(State::RemoveMe, true);
 }
 
 void Player::tryToRestoreHealthPoint()

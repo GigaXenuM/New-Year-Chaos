@@ -26,13 +26,13 @@ public:
     [[nodiscard]] sf::Vector2f getPosition() const;
 
     void damage(float power) override;
+    [[nodiscard]] bool isDead() const;
 
 protected:
     void update(float deltatime) override;
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
-    [[nodiscard]] bool isDead() const;
     void updatePosition(float deltatime);
     void updateAnimation(float deltatime);
     void updateHealthPoint(float deltatime);
