@@ -53,8 +53,10 @@ void ResourseManager::loadAllTextures()
     loadTextures("bot/", TextureType::Viking_walk, "Viking");
     loadTextures("bot/", TextureType::Viking_health_bar, "BotHealthBar");
 
-    // SnowBall
+    // bullets
     loadTextures("snowball/", TextureType::SnowBall, "snowball");
+    loadTextures("bot/", TextureType::Axe, "Axe");
+
     loadTextures("snowball/", TextureType::SnowBallGun, "SnowBallGun");
 }
 

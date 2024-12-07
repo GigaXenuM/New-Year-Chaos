@@ -41,8 +41,11 @@ enum class TextureType
     Viking_walk,
     Viking_health_bar,
 
-    // SnowBall
+    // bullets
+    Axe,
     SnowBall,
+
+
     SnowBallGun,
 };
 
