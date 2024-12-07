@@ -4,7 +4,7 @@
 #include "items/colliderfactory.h"
 #include "resources/resourcemanager.h"
 #include "util/geometryoperation.h"
-#include "weapon/iweapon.h"
+#include "weapon/IWeapon.h"
 #include "weapon/snowballgun.h"
 
 #include <SFML/Graphics/ConvexShape.hpp>

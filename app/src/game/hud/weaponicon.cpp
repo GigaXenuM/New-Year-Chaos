@@ -2,7 +2,7 @@
 
 #include "player/player.h"
 #include "resources/resourcemanager.h"
-#include "weapon/iweapon.h"
+#include "weapon/IWeapon.h"
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>

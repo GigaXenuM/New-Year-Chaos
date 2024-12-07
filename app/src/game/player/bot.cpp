@@ -8,6 +8,7 @@
 
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <iostream>
 
 #include <box2d/b2_world.h>
 

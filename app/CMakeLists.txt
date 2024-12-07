@@ -23,7 +23,7 @@ set(HEADER_FILES
     src/game/hud/hudhealthbar.h
     src/game/hud/hudcomponents.h
     src/game/items/itemtype.h
-    src/game/weapon/iweapon.h
+        src/game/weapon/iweapon.h
     src/game/weapon/snowballgun.h
     src/game/weapon/axegun.h
 
@@ -59,6 +59,7 @@ set(HEADER_FILES
     src/event/mouseevents/mousescrollevent.h
     src/event/mouseevents/mouse.h
 
+    src/game/weapon/iweapon.cpp
     src/geometry/alignment.h
 
     src/menu/menu.h
