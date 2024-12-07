@@ -23,6 +23,8 @@ set(HEADER_FILES
     src/game/hud/hudhealthbar.h
     src/game/hud/hudcomponents.h
     src/game/items/itemtype.h
+    src/game/weapon/iweapon.h
+    src/game/weapon/snowballgun.h
 
     src/visitor/ivisitor.h
     src/visitor/defaultvisitor.h
@@ -89,6 +91,7 @@ set(SOURCE_FILES
     src/game/hud/hudhealthbar.cpp
     src/game/hud/hudcomponents.cpp
     src/game/hud/teaicon.cpp
+    src/game/weapon/snowballgun.cpp
 
     src/game/items/colliderfactory.cpp
 
@@ -135,7 +138,8 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/app/src/event"
 )
 
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES}
+    src/game/hud/weaponicon.h src/game/hud/weaponicon.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-audio sfml-graphics tmxlite box2d)
 

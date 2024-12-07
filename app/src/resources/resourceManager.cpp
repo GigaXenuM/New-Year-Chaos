@@ -55,6 +55,7 @@ void ResourseManager::loadAllTextures()
 
     // SnowBall
     loadTextures("snowball/", TextureType::SnowBall, "snowball");
+    loadTextures("snowball/", TextureType::SnowBallGun, "SnowBallGun");
 }
 
 void ResourseManager::loadSounds(const std::filesystem::path &path, const SoundType type,

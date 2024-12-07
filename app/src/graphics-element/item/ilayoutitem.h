@@ -21,8 +21,6 @@ public:
     {
     }
 
-    virtual sf::Vector2f center() const = 0;
-
     virtual void setOrigin(const Util::EnumFlag<Align> &origin) = 0;
 };
 

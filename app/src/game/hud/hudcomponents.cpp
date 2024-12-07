@@ -11,8 +11,9 @@ namespace Game
 
 HUDComponents::HUDComponents(sf::RenderTarget *renderTarget, sf::View *view)
     : _gameView{ view },
-      _teaIcon{ std::make_unique<TeaIcon>() },
       _renderTarget{ renderTarget },
+      _teaIcon{ std::make_unique<TeaIcon>() },
+      _weaponIcon{ std::make_shared<WeaponIcon>(sf::Vector2f{ 50.f, 50.f }) },
       _freezBar{ std::make_unique<HUDHealthBar>(
           ResourseManager::getInstance()->getTextures(TextureType::FreezBar_icon)[0]) },
       _healthBar{ std::make_unique<HUDHealthBar>(
@@ -25,7 +26,7 @@ HUDComponents::HUDComponents(sf::RenderTarget *renderTarget, sf::View *view)
 void HUDComponents::update(const float deltatime)
 {
     const std::vector<Graphics::AbstractItem *> hudItems{ _freezBar.get(), _healthBar.get(),
-                                                          _teaIcon.get() };
+                                                          _teaIcon.get(), _weaponIcon.get() };
 
     updateBarValue();
     updateBarPosition();
@@ -60,5 +61,10 @@ void HUDComponents::updateBarPosition()
                                 - _teaIcon->getSprite()->getGlobalBounds().width * 0.2f,
                             _healthBar->getIconSprite()->getPosition().y
                                 - _teaIcon->getSprite()->getGlobalBounds().height });
+
+    _weaponIcon->setPosition(
+        { Util::pointBy(_teaIcon->getSprite()->getGlobalBounds(), Util::ALIGN_CENTER_STATE).x,
+          Util::pointBy(_teaIcon->getSprite()->getGlobalBounds(), Align::Top).y
+              - (_weaponIcon->globalRect().height / 2) });
 }
 } // namespace Game
