@@ -25,6 +25,7 @@ set(HEADER_FILES
     src/game/items/itemtype.h
     src/game/weapon/iweapon.h
     src/game/weapon/snowballgun.h
+    src/game/weapon/axegun.h
 
     src/visitor/ivisitor.h
     src/visitor/defaultvisitor.h
@@ -42,6 +43,8 @@ set(HEADER_FILES
     src/animation/animation.h
 
     src/game/items/bullet/snowball.h
+    src/game/items/bullet/AxeBullet.h
+
     src/game/items/colliderfactory.h
     src/game/hud/teaicon.h
 
@@ -92,6 +95,7 @@ set(SOURCE_FILES
     src/game/hud/hudcomponents.cpp
     src/game/hud/teaicon.cpp
     src/game/weapon/snowballgun.cpp
+    src/game/weapon/axegun.cpp
 
     src/game/items/colliderfactory.cpp
 
@@ -115,6 +119,7 @@ set(SOURCE_FILES
     src/event/mouseevents/mousescrollevent.cpp
 
     src/game/items/bullet/snowball.cpp
+    src/game/items/bullet/AxeBullet.cpp
 
     src/util/geometryoperation.cpp
     src/util/timeaccumulator.cpp

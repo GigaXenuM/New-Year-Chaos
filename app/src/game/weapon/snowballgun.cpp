@@ -10,8 +10,7 @@ namespace Game
 {
 
 SnowBallGun::SnowBallGun(PhysicalEntity *owner, b2World *world)
-    : _owner{ owner },
-      _world{ world },
+    : IWeapon(owner, world),
       _icon{ ResourseManager::getInstance()->getTextures(TextureType::SnowBallGun).front() }
 {
 }
@@ -62,9 +61,9 @@ const std::vector<std::unique_ptr<PhysicalBullet>> &SnowBallGun::bullets() const
     return _snowballs;
 }
 
-const sf::Texture &SnowBallGun::icon() const
+const sf::Texture *SnowBallGun::icon() const
 {
-    return _icon;
+    return &_icon;
 }
 
 void SnowBallGun::updateReloading(float deltatime)

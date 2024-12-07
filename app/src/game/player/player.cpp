@@ -5,6 +5,7 @@
 #include "resources/resourcemanager.h"
 #include "util/geometryoperation.h"
 #include "weapon/iweapon.h"
+#include "weapon/snowballgun.h"
 
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -18,7 +19,8 @@ namespace Game
 Player *gPlayer = nullptr;
 
 Player::Player(b2World *world, sf::Shape *shape)
-    : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 30 }),
+    : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 30 },
+                     std::make_unique<SnowBallGun>(this, world)),
       _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run) },
       _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_dead) },
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_walk) },
@@ -49,7 +51,6 @@ sf::Vector2f Player::getPosition() const
 
 void Player::damage(float power)
 {
-    power *= 5;
     if (isStateActive(State::Dead))
         return;
 

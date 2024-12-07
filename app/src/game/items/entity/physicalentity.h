@@ -33,7 +33,8 @@ public:
         float jumpImpulse{ 0.f };
     };
 
-    explicit PhysicalEntity(b2Body *collider, const Context &context);
+    explicit PhysicalEntity(b2Body *collider, const Context &context,
+                            std::unique_ptr<IWeapon> weapon);
     ~PhysicalEntity();
 
     ItemType type() const override

@@ -12,10 +12,9 @@
 namespace Game
 {
 
-PhysicalEntity::PhysicalEntity(b2Body *collider, const Context &context)
-    : AbstractPhysicalItem{ collider },
-      _context{ context },
-      _weapon{ std::make_unique<SnowBallGun>(this, collider->GetWorld()) }
+PhysicalEntity::PhysicalEntity(b2Body *collider, const Context &context,
+                               std::unique_ptr<IWeapon> weapon)
+    : AbstractPhysicalItem{ collider }, _context{ context }, _weapon{ std::move(weapon) }
 {
 }
 
