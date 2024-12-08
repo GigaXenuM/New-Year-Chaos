@@ -22,8 +22,9 @@ set(HEADER_FILES
     src/game/items/bullet/physicalbullet.h
     src/game/hud/hudhealthbar.h
     src/game/hud/hudcomponents.h
+    src/game/hud/weaponicon.h
     src/game/items/itemtype.h
-        src/game/weapon/iweapon.h
+    src/game/weapon/iweapon.h
     src/game/weapon/snowballgun.h
     src/game/weapon/axegun.h
 
@@ -43,7 +44,7 @@ set(HEADER_FILES
     src/animation/animation.h
 
     src/game/items/bullet/snowball.h
-    src/game/items/bullet/AxeBullet.h
+    src/game/items/bullet/axebullet.h
 
     src/game/items/colliderfactory.h
     src/game/hud/teaicon.h
@@ -95,6 +96,7 @@ set(SOURCE_FILES
     src/game/hud/hudhealthbar.cpp
     src/game/hud/hudcomponents.cpp
     src/game/hud/teaicon.cpp
+    src/game/hud/weaponicon.cpp
     src/game/weapon/snowballgun.cpp
     src/game/weapon/axegun.cpp
 
@@ -120,7 +122,7 @@ set(SOURCE_FILES
     src/event/mouseevents/mousescrollevent.cpp
 
     src/game/items/bullet/snowball.cpp
-    src/game/items/bullet/AxeBullet.cpp
+    src/game/items/bullet/axebullet.cpp
 
     src/util/geometryoperation.cpp
     src/util/timeaccumulator.cpp
@@ -144,8 +146,7 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/app/src/event"
 )
 
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES}
-    src/game/hud/weaponicon.h src/game/hud/weaponicon.cpp)
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-audio sfml-graphics tmxlite box2d)
 

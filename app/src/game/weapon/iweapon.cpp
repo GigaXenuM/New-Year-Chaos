@@ -1,4 +1,7 @@
-#include "IWeapon.h"
+#include "iweapon.h"
+
+#include "items/bullet/physicalbullet.h"
+#include "items/entity/physicalentity.h"
 
 namespace Game
 {
@@ -7,10 +10,12 @@ IWeapon::IWeapon(PhysicalEntity *owner, b2World *world) : _world{ world }, _owne
 {
 }
 
+IWeapon::~IWeapon() = default;
+
 void IWeapon::update(float deltatime)
 {
     updateReloading(deltatime);
-    for (std::unique_ptr<PhysicalBullet> &snowball : _bollets)
+    for (std::unique_ptr<PhysicalBullet> &snowball : _bullets)
     {
         snowball->update(deltatime);
         if (snowball->isStateActive(PhysicalBullet::State::Collide))
@@ -20,14 +25,14 @@ void IWeapon::update(float deltatime)
         }
     }
 
-    _bollets.erase(std::remove_if(_bollets.begin(), _bollets.end(),
+    _bullets.erase(std::remove_if(_bullets.begin(), _bullets.end(),
                                   [](auto &bullet) { return bullet == nullptr; }),
-                   _bollets.end());
+                   _bullets.end());
 }
 
 const std::vector<std::unique_ptr<PhysicalBullet>> &IWeapon::bullets() const
 {
-    return _bollets;
+    return _bullets;
 }
 
 void IWeapon::updateReloading(float deltatime)

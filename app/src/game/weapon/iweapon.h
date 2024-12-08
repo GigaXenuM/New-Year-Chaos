@@ -2,8 +2,7 @@
 
 #include "iupdatable.h"
 
-#include "items/bullet/physicalbullet.h"
-#include "items/entity/physicalentity.h"
+#include "util/enumflag.h"
 
 #include <SFML/System/Vector2.hpp>
 
@@ -11,8 +10,18 @@
 #include <optional>
 #include <vector>
 
+struct b2World;
+
+namespace sf
+{
+class Texture;
+}
+
 namespace Game
 {
+
+class PhysicalBullet;
+class PhysicalEntity;
 
 enum class State
 {
@@ -23,7 +32,7 @@ class IWeapon : public IUpdatable
 {
 public:
     IWeapon(PhysicalEntity *owner, b2World *world);
-    ~IWeapon() = default;
+    virtual ~IWeapon();
 
     void update(float deltatime) override;
     virtual const sf::Texture *icon() const = 0;
@@ -42,7 +51,7 @@ protected:
     float _reloading{ 3.f };
     float _reloadTimer{ _reloading };
 
-    std::vector<std::unique_ptr<PhysicalBullet>> _bollets;
+    std::vector<std::unique_ptr<PhysicalBullet>> _bullets;
 };
 
 } // namespace Game

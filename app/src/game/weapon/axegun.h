@@ -1,8 +1,6 @@
 #pragma once
 
-#include "IWeapon.h"
-
-#include <vector>
+#include "iweapon.h"
 
 #include "items/entity/physicalentity.h"
 

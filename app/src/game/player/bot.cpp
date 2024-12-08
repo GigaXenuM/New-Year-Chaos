@@ -1,10 +1,13 @@
 #include "bot.h"
 
-#include "items/colliderfactory.h"
 #include "player.h"
+
+#include "items/bullet/physicalbullet.h"
+#include "items/colliderfactory.h"
+#include "weapon/snowballgun.h"
+
 #include "resources/resourcemanager.h"
 #include "util/geometryoperation.h"
-#include "weapon/snowballgun.h"
 
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -54,10 +57,8 @@ void Bot::update(float deltatime)
 
 void Bot::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    for (const auto &bullet : weapon()->bullets())
-    {
+    for (const std::unique_ptr<PhysicalBullet> &bullet : weapon()->bullets())
         target.draw(*bullet, states);
-    }
 
     target.draw(_sprite, states);
     target.draw(_healthBar, states);

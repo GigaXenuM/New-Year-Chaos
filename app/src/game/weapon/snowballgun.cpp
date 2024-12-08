@@ -27,7 +27,7 @@ void SnowBallGun::shoot(const sf::Vector2f &startPos, const sf::Vector2f &target
 
     auto *bullet{ new SnowBall{ _world, &bulletShape, _owner, SnowBall::Context{ 50.f, target } } };
     bullet->impulse();
-    _bollets.push_back(std::unique_ptr<SnowBall>(bullet));
+    _bullets.push_back(std::unique_ptr<SnowBall>(bullet));
 }
 
 std::optional<float> SnowBallGun::reload() const
