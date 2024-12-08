@@ -260,8 +260,8 @@ void Controller::removeDeadItems()
     }
 
     _elements.erase(std::remove_if(_elements.begin(), _elements.end(),
-                                  [](auto &bullet) { return bullet == nullptr; }),
-                   _elements.end());
+                                   [](auto &bullet) { return bullet == nullptr; }),
+                    _elements.end());
 }
 
 } // namespace Level
