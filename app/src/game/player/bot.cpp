@@ -1,11 +1,14 @@
 #include "bot.h"
 
 #include "items/colliderfactory.h"
+#include "player.h"
 #include "resources/resourcemanager.h"
 #include "util/geometryoperation.h"
+#include "weapon/axegun.h"
 
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <iostream>
 
 #include <box2d/b2_world.h>
 
@@ -13,9 +16,10 @@ namespace Game
 {
 
 Bot::Bot(b2World *world, sf::Shape *shape)
-    : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 30 }),
-      _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Viking_walk) },
-      _pos{ boundingRect().getPosition() }
+    : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 30 },
+                     std::make_unique<AxeGun>(this, world)),
+      _pos{ boundingRect().getPosition() },
+      _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Viking_walk) }
 {
     setupSprites();
 }
@@ -32,7 +36,6 @@ void Bot::damage(float power)
         _healthPoint = 0.f;
         updateState(State::Dead, true);
         updateState(State::RemoveMe, true);
-
     }
     setValue(_healthPoint);
 }
@@ -41,12 +44,19 @@ void Bot::update(float deltatime)
 {
     PhysicalEntity::update(deltatime);
 
-    updatePosition(deltatime);
+    walkingScript();
+    shootingScript();
+
     updateAnimation(deltatime);
 }
 
 void Bot::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
+    for (const auto &bullet : weapon()->bullets())
+    {
+        target.draw(*bullet, states);
+    }
+
     target.draw(_sprite, states);
     target.draw(_healthBar, states);
     target.draw(_health, states);
@@ -89,7 +99,7 @@ void Bot::setValue(const float value)
     });
 }
 
-void Bot::updatePosition(float deltatime)
+void Bot::walkingScript()
 {
     const auto healthBarSpriteHeight = _healthBar.getGlobalBounds().height;
     const sf::ConvexShape shape{ Util::convertBodyToSFMLShape(collider()) };
@@ -120,6 +130,20 @@ void Bot::updatePosition(float deltatime)
 
     _healthBar.setOrigin(Util::pointBy(_healthBar.getLocalBounds(), Align::Left));
     _health.setPosition({ _healthBar.getPosition().x + 6, _healthBar.getPosition().y - 3 });
+
+    if (gPlayer->getPosition().x >= _pos.x - (_moveLimit * 5)
+        && gPlayer->getPosition().x <= _pos.x + (_moveLimit * 5))
+        _isAvailableToShoot = true;
+    else
+        _isAvailableToShoot = false;
+}
+
+void Bot::shootingScript()
+{
+    if (!_isAvailableToShoot)
+        return;
+
+    shoot(gPlayer->getPosition());
 }
 
 } // namespace Game

@@ -2,7 +2,7 @@
 
 #include "player/player.h"
 #include "resources/resourcemanager.h"
-#include "weapon/iweapon.h"
+#include "weapon/IWeapon.h"
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -44,7 +44,7 @@ void WeaponIcon::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     const IWeapon *weapon{ gPlayer->weapon() };
 
-    _icon.setTexture(weapon->icon());
+    _icon.setTexture(*weapon->icon());
     const sf::Vector2f currentSize{ _icon.getLocalBounds().getSize() };
     const sf::Vector2f scaling{ _size.x / currentSize.x, _size.y / currentSize.y };
     _icon.setScale(scaling);
