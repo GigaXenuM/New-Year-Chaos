@@ -6,6 +6,8 @@
 #include "items/colliderfactory.h"
 #include "resources/resourceManager.h"
 
+#include <corecrt_math_defines.h>
+
 namespace Game
 {
 
@@ -15,11 +17,13 @@ AxeBullet::AxeBullet(b2World *world, sf::Shape *shape, const AbstractPhysicalIte
                       context }
 {
     _sprite.setTexture(ResourseManager::getInstance()->getTextures(TextureType::Axe)[0]);
+    _sprite.setScale(0.2,0.2);
 }
 
 void AxeBullet::update(float deltatime)
 {
     PhysicalBullet::update(deltatime);
+    updatePosition(deltatime);
 }
 
 float AxeBullet::power() const
@@ -39,5 +43,17 @@ void AxeBullet::draw(sf::RenderTarget &target, sf::RenderStates states) const
     border.setOrigin(_sprite.getOrigin());
     border.setScale(_sprite.getScale());
     target.draw(border, states);
+}
+
+void AxeBullet::updatePosition(float deltatime)
+{
+    const sf::Vector2f playerPos{ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE) };
+    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
+    _sprite.setPosition(playerPos);
+
+    b2Vec2 velocity = collider()->GetLinearVelocity();
+    float angle = std::atan2(velocity.y, velocity.x);
+    float angleInDegrees = angle * (180.0f / M_PI);
+    _sprite.setRotation(angleInDegrees);
 }
 } // namespace Game

@@ -52,6 +52,11 @@ void Bot::update(float deltatime)
 
 void Bot::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
+    for (const auto &bullet : weapon()->bullets())
+    {
+        target.draw(*bullet, states);
+    }
+
     target.draw(_sprite, states);
     target.draw(_healthBar, states);
     target.draw(_health, states);

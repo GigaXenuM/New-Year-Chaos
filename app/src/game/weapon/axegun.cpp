@@ -10,6 +10,7 @@ namespace Game
 {
 AxeGun::AxeGun(PhysicalEntity *owner, b2World *world) : IWeapon(owner, world)
 {
+    _reloading = 1.f;
 }
 
 void AxeGun::shoot(const sf::Vector2f &startPos, const sf::Vector2f &target)
@@ -26,8 +27,6 @@ void AxeGun::shoot(const sf::Vector2f &startPos, const sf::Vector2f &target)
                                  AxeBullet::Context{ 50.f, target } } };
     bullet->impulse();
     _bollets.push_back(std::unique_ptr<AxeBullet>(bullet));
-
-    std::cout << "_AXES SIZE = " << _bollets.size() << std::endl;
 }
 
 std::optional<float> AxeGun::reload() const

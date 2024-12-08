@@ -20,6 +20,9 @@ PhysicalEntity::PhysicalEntity(b2Body *collider, const Context &context,
 
 void PhysicalEntity::updatePhysics()
 {
+    if (isStateActive(State::Dead))
+        return;
+
     b2Vec2 velocity{ collider()->GetLinearVelocity() };
 
     velocity.x = 0.0f;

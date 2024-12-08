@@ -18,6 +18,7 @@ public:
 
 protected:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+    void updatePosition(float deltatime);
 
 private:
     const float _scale{ 0.10f };

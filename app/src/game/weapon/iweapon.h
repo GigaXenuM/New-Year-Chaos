@@ -39,7 +39,7 @@ protected:
     PhysicalEntity *_owner{ nullptr };
     Util::EnumFlag<State> _state;
 
-    const float _reloading{ 3.f };
+    float _reloading{ 3.f };
     float _reloadTimer{ _reloading };
 
     std::vector<std::unique_ptr<PhysicalBullet>> _bollets;
