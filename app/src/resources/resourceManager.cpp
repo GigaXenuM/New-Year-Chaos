@@ -58,6 +58,24 @@ void ResourseManager::loadAllTextures()
     loadTextures("bot/", TextureType::Axe, "Axe");
 
     loadTextures("snowball/", TextureType::SnowBallGun, "SnowBallGun");
+
+    loadTextures("snowman_1/Hurt/", TextureType::Snowman_1_hurt, "Hurt");
+    loadTextures("snowman_1/Idle/", TextureType::Snowman_1_idle, "Idle");
+    loadTextures("snowman_1/Dying/", TextureType::Snowman_1_dead, "Dying");
+    loadTextures("snowman_1/Walking/", TextureType::Snowman_1_walk, "Walking");
+    loadTextures("snowman_1/Throwing/", TextureType::Snowman_1_throw, "Throwing");
+
+    loadTextures("snowman_2/Hurt/", TextureType::Snowman_2_hurt, "Hurt");
+    loadTextures("snowman_2/Idle/", TextureType::Snowman_2_idle, "Idle");
+    loadTextures("snowman_2/Dying/", TextureType::Snowman_2_dead, "Dying");
+    loadTextures("snowman_2/Walking/", TextureType::Snowman_2_walk, "Walking");
+    loadTextures("snowman_2/Throwing/", TextureType::Snowman_2_throw, "Throwing");
+
+    loadTextures("snowman_3/Hurt/", TextureType::Snowman_3_hurt, "Hurt");
+    loadTextures("snowman_3/Idle/", TextureType::Snowman_3_idle, "Idle");
+    loadTextures("snowman_3/Dying/", TextureType::Snowman_3_dead, "Dying");
+    loadTextures("snowman_3/Walking/", TextureType::Snowman_3_walk, "Walking");
+    loadTextures("snowman_3/Throwing/", TextureType::Snowman_3_throw, "Throwing");
 }
 
 void ResourseManager::loadSounds(const std::filesystem::path &path, const SoundType type,

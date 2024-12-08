@@ -41,10 +41,27 @@ enum class TextureType
     Viking_walk,
     Viking_health_bar,
 
+    Snowman_1_idle,
+    Snowman_1_hurt,
+    Snowman_1_dead,
+    Snowman_1_walk,
+    Snowman_1_throw,
+
+    Snowman_2_idle,
+    Snowman_2_hurt,
+    Snowman_2_dead,
+    Snowman_2_walk,
+    Snowman_2_throw,
+
+    Snowman_3_idle,
+    Snowman_3_hurt,
+    Snowman_3_dead,
+    Snowman_3_walk,
+    Snowman_3_throw,
+
     // bullets
     Axe,
     SnowBall,
-
 
     SnowBallGun,
 };
