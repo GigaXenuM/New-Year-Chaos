@@ -19,7 +19,7 @@ namespace Game
 Player *gPlayer = nullptr;
 
 Player::Player(b2World *world, sf::Shape *shape)
-    : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 30 },
+    : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 45 },
                      std::make_unique<SnowBallGun>(this, world)),
       _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run) },
       _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_dead) },

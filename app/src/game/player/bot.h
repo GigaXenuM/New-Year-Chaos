@@ -24,14 +24,14 @@ private:
     void setupSprites();
 
     void walkingScript();
-    void shootingScript();
+    void shootingScript(float deltatime);
 
     void updateAnimation(float deltatime);
     void setValue(const float value = 25.f);
 
     bool _isAvailableToShoot{ false };
 
-    const float _scale{ 0.40f };
+    const float _scale{ 0.30f };
     const float _scaleHealthBar{ 0.17f };
     const float _moveLimit{ 100.f };
 
@@ -45,6 +45,9 @@ private:
     sf::Vector2f _pos{};
 
     Animation _walkAnimation;
+    Animation _deadAnimation;
+    Animation _hurtAnimation;
+    Animation _throwAnimation;
 };
 
 } // namespace Game

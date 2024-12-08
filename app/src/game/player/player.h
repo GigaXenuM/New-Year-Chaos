@@ -40,7 +40,7 @@ private:
     void tryToRestoreHealthPoint();
 
 private:
-    const float _scale{ 0.15f };
+    const float _scale{ 0.25f };
     const float _healthUpdateInterval{ 1.0f };
 
     float _freezPoint{ 100.f };

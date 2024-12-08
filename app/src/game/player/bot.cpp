@@ -4,11 +4,10 @@
 #include "player.h"
 #include "resources/resourcemanager.h"
 #include "util/geometryoperation.h"
-#include "weapon/axegun.h"
+#include "weapon/snowballgun.h"
 
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
-#include <iostream>
 
 #include <box2d/b2_world.h>
 
@@ -17,9 +16,12 @@ namespace Game
 
 Bot::Bot(b2World *world, sf::Shape *shape)
     : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 30 },
-                     std::make_unique<AxeGun>(this, world)),
+                     std::make_unique<SnowBallGun>(this, world)),
       _pos{ boundingRect().getPosition() },
-      _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Viking_walk) }
+      _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_1_walk) },
+      _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_1_dead) },
+      _hurtAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_1_hurt) },
+      _throwAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_1_throw) }
 {
     setupSprites();
 }
@@ -45,7 +47,7 @@ void Bot::update(float deltatime)
     PhysicalEntity::update(deltatime);
 
     walkingScript();
-    shootingScript();
+    shootingScript(deltatime);
 
     updateAnimation(deltatime);
 }
@@ -81,12 +83,16 @@ void Bot::setupSprites()
 
 void Bot::updateAnimation(float deltatime)
 {
-    if (isStateActive(State::Right))
-        _sprite.setScale({ _scale, _scale });
-    else if (isStateActive(State::Left))
-        _sprite.setScale({ -_scale, _scale });
-
-    _walkAnimation.start(deltatime, _sprite);
+    const bool isMoved{ isStateActive(State::Right) || isStateActive(State::Left) };
+    if (isMoved)
+    {
+        if (isStateActive(State::Right))
+            _sprite.setScale({ _scale, _scale });
+        else if (isStateActive(State::Left))
+            _sprite.setScale({ -_scale, _scale });
+        _walkAnimation.start(deltatime, _sprite);
+        return;
+    }
 }
 
 void Bot::setValue(const float value)
@@ -104,7 +110,8 @@ void Bot::walkingScript()
     const auto healthBarSpriteHeight = _healthBar.getGlobalBounds().height;
     const sf::ConvexShape shape{ Util::convertBodyToSFMLShape(collider()) };
     const sf::Vector2f playerPos{ Util::pointBy(shape.getLocalBounds(), Util::ALIGN_CENTER_STATE) };
-    const sf::Vector2f healthBarPos = { playerPos.x, playerPos.y - healthBarSpriteHeight * 4 };
+    const sf::Vector2f healthBarPos = { playerPos.x - _healthBar.getGlobalBounds().width / 2,
+                                        playerPos.y - (healthBarSpriteHeight * 4) };
     const sf::Vector2f healthPos = { playerPos.x, playerPos.y - healthBarSpriteHeight * 4 };
 
     const bool isRightEnd{ playerPos.x >= _pos.x + _moveLimit };
@@ -126,10 +133,10 @@ void Bot::walkingScript()
     _sprite.setPosition(playerPos);
 
     _healthBar.setOrigin(Util::pointBy(_healthBar.getLocalBounds(), Util::ALIGN_CENTER_STATE));
-    _healthBar.setPosition(healthBarPos);
+    _healthBar.setPosition({ healthBarPos.x, healthBarPos.y - 15 });
 
     _healthBar.setOrigin(Util::pointBy(_healthBar.getLocalBounds(), Align::Left));
-    _health.setPosition({ _healthBar.getPosition().x + 6, _healthBar.getPosition().y - 3 });
+    _health.setPosition({ _healthBar.getPosition().x + 6, _healthBar.getPosition().y - 4 });
 
     if (gPlayer->getPosition().x >= _pos.x - (_moveLimit * 5)
         && gPlayer->getPosition().x <= _pos.x + (_moveLimit * 5))
@@ -138,7 +145,7 @@ void Bot::walkingScript()
         _isAvailableToShoot = false;
 }
 
-void Bot::shootingScript()
+void Bot::shootingScript(float deltatime)
 {
     if (!_isAvailableToShoot)
         return;

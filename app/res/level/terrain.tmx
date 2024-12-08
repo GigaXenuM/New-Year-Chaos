@@ -77,8 +77,8 @@
   <object id="1" type="terrain" x="0" y="1792">
    <polygon points="0,0 128,0 158.497,0.849541 287.558,127.647 477.754,127.647 739.273,-128.212 1309.86,-127.08 1408.36,-28.5855 1408,256 1664,256 1664,0 1888.37,-1.41469 2016.3,-128.212 2336.69,-128.212 2590.29,124.25 3424.66,125.383 3553.72,-0.282577 3840,0 3840,256 4096,256 4096,0 4574.89,-0.282577 4703.95,-127.08 4831.88,-128.212 4958.68,-256.141 5120,-256 5120,512 0,512"/>
   </object>
-  <object id="2" type="player" x="320.664" y="1825.02" width="35" height="70"/>
-  <object id="3" type="viking_enemy" x="2940.17" y="1836.61" width="57.33" height="61.33"/>
+  <object id="2" type="player" x="319.664" y="1802.02" width="59.5" height="110"/>
+  <object id="3" type="viking_enemy" x="2942.67" y="1788.11" width="60" height="110"/>
   <object id="6" type="terrain_obstacle" x="0" y="1280" width="128" height="512"/>
   <object id="8" type="terrain_obstacle" x="4992" y="1280" width="128" height="256"/>
   <object id="9" type="terrain_obstacle" x="0" y="1280">
