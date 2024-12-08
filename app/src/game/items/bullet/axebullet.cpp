@@ -1,12 +1,13 @@
-#include "AxeBullet.h"
+#include "axebullet.h"
 
-#include "SFML/Graphics/RectangleShape.hpp"
-#include "SFML/Graphics/RenderTarget.hpp"
-#include "SFML/Graphics/Texture.hpp"
 #include "items/colliderfactory.h"
-#include "resources/resourceManager.h"
+#include "resources/resourcemanager.h"
 
-#include <corecrt_math_defines.h>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Texture.hpp>
+
+#include <cmath>
 
 namespace Game
 {
@@ -17,7 +18,7 @@ AxeBullet::AxeBullet(b2World *world, sf::Shape *shape, const AbstractPhysicalIte
                       context }
 {
     _sprite.setTexture(ResourseManager::getInstance()->getTextures(TextureType::Axe)[0]);
-    _sprite.setScale(0.2,0.2);
+    _sprite.setScale(0.2, 0.2);
 }
 
 void AxeBullet::update(float deltatime)

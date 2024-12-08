@@ -1,10 +1,7 @@
 #include "axegun.h"
 
 #include "SFML/Graphics/RectangleShape.hpp"
-#include "items/bullet/AxeBullet.h"
-
-#include <iostream>
-#include <ostream>
+#include "items/bullet/axebullet.h"
 
 namespace Game
 {
@@ -26,7 +23,7 @@ void AxeGun::shoot(const sf::Vector2f &startPos, const sf::Vector2f &target)
     auto *bullet{ new AxeBullet{ _world, &bulletShape, _owner,
                                  AxeBullet::Context{ 50.f, target } } };
     bullet->impulse();
-    _bollets.push_back(std::unique_ptr<AxeBullet>(bullet));
+    _bullets.push_back(std::unique_ptr<AxeBullet>(bullet));
 }
 
 std::optional<float> AxeGun::reload() const

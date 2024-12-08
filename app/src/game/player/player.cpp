@@ -4,7 +4,7 @@
 #include "items/colliderfactory.h"
 #include "resources/resourcemanager.h"
 #include "util/geometryoperation.h"
-#include "weapon/IWeapon.h"
+#include "weapon/iweapon.h"
 #include "weapon/snowballgun.h"
 
 #include <SFML/Graphics/ConvexShape.hpp>
@@ -177,7 +177,7 @@ void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(_sprite, states);
 
-    for (const auto &bullet : weapon()->bullets())
+    for (const std::unique_ptr<PhysicalBullet> &bullet : weapon()->bullets())
         target.draw(*bullet, states);
 
     sf::RectangleShape border(_sprite.getLocalBounds().getSize());

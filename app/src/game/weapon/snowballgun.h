@@ -1,6 +1,6 @@
 #pragma once
 
-#include "weapon/IWeapon.h"
+#include "weapon/iweapon.h"
 
 #include <SFML/Graphics/Texture.hpp>
 

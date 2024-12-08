@@ -2,7 +2,7 @@
 #include "SFML/Graphics/RenderTarget.hpp"
 #include "SFML/Graphics/Texture.hpp"
 #include "player/player.h"
-#include "resources/resourceManager.h"
+#include "resources/resourcemanager.h"
 
 namespace Game
 {
