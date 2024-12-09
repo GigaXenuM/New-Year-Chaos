@@ -45,7 +45,7 @@ void GameOverMenu::init()
     auto exitButton{ std::make_shared<Graphics::TextButton>("Exit", font,
                                                             sf::Vector2f{ 180.0f, 50.0f }, this) };
 
-    startButton->onClick([this]() { executeActions(Menu::ActionVariant::StartGame); });
+    startButton->onClick([this]() { executeActions(Menu::ActionVariant::RestartGame); });
     exitButton->onClick([this]() { executeActions(Menu::ActionVariant::Exit); });
 
     _layout->addItem(startButton);

@@ -139,6 +139,12 @@ void MainWindow::composeMenu()
     _menu->registerAction(Menu::ActionVariant::StartGame, [this]() { switchView(); });
 
     _gameOverMenu->registerAction(Menu::ActionVariant::Exit, [this]() { close(); });
+    _gameOverMenu->registerAction(Menu::ActionVariant::RestartGame,
+                                  [this]()
+                                  {
+                                      _scene = std::make_unique<Game::Scene>(this, this);
+                                      switchView(_scene.get());
+                                  });
 }
 
 void MainWindow::initBackgroundMusic()
@@ -156,15 +162,13 @@ void MainWindow::switchView()
 
     IView *view{ showMenu ? dynamic_cast<IView *>(_menu.get())
                           : dynamic_cast<IView *>(_scene.get()) };
-    if (!showMenu)
-    {
-        _backgroundMusic.play();
-    }
     switchView(view);
 }
 
 void MainWindow::switchView(IView *view)
 {
+    if (auto currView = reinterpret_cast<GameOverMenu *>(&view))
+        _backgroundMusic.play();
     grabContext(view);
     _currentView = view;
 }
