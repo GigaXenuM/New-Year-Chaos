@@ -40,7 +40,6 @@ void Bot::damage(float power)
     {
         _healthPoint = 0.f;
         updateState(State::Dead, true);
-        updateState(State::RemoveMe, true);
     }
     setValue(_healthPoint);
 }
@@ -48,6 +47,9 @@ void Bot::damage(float power)
 void Bot::update(float deltatime)
 {
     PhysicalEntity::update(deltatime);
+
+    if (isStateActive(State::Dead) && _deadAnimation.isFinished())
+        updateState(State::RemoveMe, true);
 
     walkingScript();
     shootingScript(deltatime);
@@ -84,6 +86,11 @@ void Bot::setupSprites()
 
 void Bot::updateAnimation(float deltatime)
 {
+    if (isStateActive(State::Dead))
+    {
+        _deadAnimation.start(deltatime, _sprite, false);
+        return;
+    }
     const bool isMoved{ isStateActive(State::Right) || isStateActive(State::Left) };
     if (isMoved)
     {
