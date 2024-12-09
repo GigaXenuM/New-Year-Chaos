@@ -12,6 +12,8 @@ class TeaIcon : public Graphics::AbstractItem
 public:
     TeaIcon();
 
+    sf::FloatRect globalRect() const override;
+
     void updateCountHealthItems();
 
     void setPosition(const sf::Vector2f pos);

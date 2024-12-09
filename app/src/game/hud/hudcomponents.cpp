@@ -57,10 +57,10 @@ void HUDComponents::updateBarPosition()
         { bottomLeft.x + 2,
           bottomLeft.y - (_freezBar->getSprite()->getGlobalBounds().height * 1.5f) });
 
-    _teaIcon->setPosition({ _healthBar->getIconSprite()->getPosition().x
-                                - _teaIcon->getSprite()->getGlobalBounds().width * 0.2f,
-                            _healthBar->getIconSprite()->getPosition().y
-                                - _teaIcon->getSprite()->getGlobalBounds().height });
+    _teaIcon->setPosition(
+        { Util::pointBy(_healthBar->getIconSprite()->getGlobalBounds(), Util::ALIGN_CENTER_STATE).x,
+          Util::pointBy(_healthBar->getIconSprite()->getGlobalBounds(), Align::Top).y
+              - (_teaIcon->globalRect().height / 2) });
 
     _weaponIcon->setPosition(
         { Util::pointBy(_teaIcon->getSprite()->getGlobalBounds(), Util::ALIGN_CENTER_STATE).x,

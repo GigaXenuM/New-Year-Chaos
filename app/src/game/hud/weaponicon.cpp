@@ -15,6 +15,7 @@ namespace Game
 WeaponIcon::WeaponIcon(const sf::Vector2f &size)
     : _text{ "", ResourseManager::getInstance()->getFont(FontType::Arial) }, _size{ size }
 {
+    _text.setFillColor(sf::Color{ 250, 90, 109 });
 }
 
 void WeaponIcon::setPosition(const sf::Vector2f pos)
@@ -57,15 +58,6 @@ void WeaponIcon::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
     target.draw(_icon, states);
     target.draw(_text, states);
-
-    sf::RectangleShape border(_icon.getLocalBounds().getSize());
-    border.setPosition(_icon.getPosition());
-    border.setOutlineColor(sf::Color::Red);
-    border.setOutlineThickness(10);
-    border.setFillColor(sf::Color::Transparent);
-    border.setOrigin(_icon.getOrigin());
-    border.setScale(_icon.getScale());
-    target.draw(border, states);
 }
 
 } // namespace Game

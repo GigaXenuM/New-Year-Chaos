@@ -20,6 +20,10 @@ void ContactListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifold
 {
     const UserData data{ toUserData(contact) };
 
+    if (data.types.test(ItemType::Loot))
+    {
+        contact->SetEnabled(false);
+    }
     if (data.types.test(ItemType::Bullet))
     {
         auto *snowBall{ dynamic_cast<PhysicalBullet *>(data.itemTypeToItem.at(ItemType::Bullet)) };
@@ -88,7 +92,8 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
                 std::any_of(data.itemTypeToItem.cbegin(), data.itemTypeToItem.cend(),
                             [bullet](auto &value) { return bullet->shooter() == value.second; })
             };
-            if (!shooterCollided)
+            const bool lootCollided{ data.itemTypeToItem.contains(ItemType::Loot) };
+            if (!shooterCollided && !lootCollided)
             {
                 bullet->updateState(PhysicalBullet::State::Collide, true);
 
