@@ -29,7 +29,7 @@ public:
     void destroyCollider();
 
 protected:
-    b2Body *collider();
+    b2Body *collider() const;
 
 private:
     b2Body *_collider{ nullptr };
@@ -54,7 +54,7 @@ inline sf::FloatRect AbstractPhysicalItem::boundingRect() const
     return Util::convertBodyToSFMLShape(_collider).getGlobalBounds();
 }
 
-inline b2Body *AbstractPhysicalItem::collider()
+inline b2Body *AbstractPhysicalItem::collider() const
 {
     return _collider;
 }

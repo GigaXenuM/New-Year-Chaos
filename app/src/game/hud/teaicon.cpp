@@ -10,7 +10,7 @@ namespace Game
 TeaIcon::TeaIcon()
 {
     _teaIcon.setTexture(ResourseManager::getInstance()->getTextures(TextureType::Tea)[0]);
-    _teaIcon.setScale(0.03, 0.03);
+    _teaIcon.setScale(0.48, 0.48);
     _text.setFont(ResourseManager::getInstance()->getFont(FontType::Arial));
     _text.setCharacterSize(30);
     _text.setFillColor(sf::Color::Red);

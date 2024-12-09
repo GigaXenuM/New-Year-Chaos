@@ -1,14 +1,13 @@
 #pragma once
 
-#include "SFML/System/Vector2.hpp"
 #include "eventhandler.h"
 #include "iupdatable.h"
 
-#include "contact/contactlistener.h"
-#include "player/bot.h"
 #include "util/timeaccumulator.h"
 
 #include <box2d/b2_body.h>
+
+#include <SFML/System/Vector2.hpp>
 
 #include <memory>
 #include <vector>
@@ -28,7 +27,10 @@ namespace Graphics
 class Drawable;
 } // namespace Graphics
 
-namespace Game::Level
+namespace Game
+{
+class Bot;
+namespace Level
 {
 
 class TileLayer;
@@ -53,6 +55,8 @@ private:
     void initPlayer();
     void initBot();
 
+    void initLoot();
+
     void render(float deltatime);
     void updatePhysics(float deltatime);
     void updateGraphics(float deltatime);
@@ -60,6 +64,7 @@ private:
     void updateCameraPos();
     void removeDeadItems();
 
+    void executeAvailableActions();
 
     sf::RenderTarget *_renderTarget{ nullptr };
     sf::View *_gameView{ nullptr };
@@ -70,11 +75,11 @@ private:
     std::unique_ptr<ObjectLayer> _objectLayer;
 
     std::unique_ptr<b2World> _phisicalWorld;
-    Bot *_bot;
 
     Util::TimeAccumulator _timeAccumulator;
 
     std::vector<std::unique_ptr<Graphics::Drawable>> _elements;
 };
 
-} // namespace Game::Level
+} // namespace Level
+} // namespace Game

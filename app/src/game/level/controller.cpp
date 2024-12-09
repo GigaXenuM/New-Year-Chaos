@@ -1,16 +1,23 @@
 #include "controller.h"
 
+#include "action/iaction.h"
+#include "action/iactionhandler.h"
 #include "items/colliderfactory.h"
+
+#include "items/loot/tealoot.h"
 #include "keyevents/keypressevent.h"
 #include "keyevents/keyreleaseevent.h"
 #include "mouseevents/mousepressevent.h"
 
+#include "contact/contactlistener.h"
 #include "item/drawable.h"
 #include "object-layer/objectlayer.h"
 #include "player/player.h"
 #include "tile-layer/tilelayer.h"
 #include "util/debugdrawer.h"
 #include "util/geometryoperation.h"
+
+#include "player/bot.h"
 
 #include <box2d/b2_math.h>
 #include <box2d/b2_world.h>
@@ -64,8 +71,10 @@ Controller::Controller(sf::RenderTarget *renderTarget, sf::View *view, EventHand
 {
     loadLevel();
     initPhisicalWorld();
-    initPlayer();
     initBot();
+    initLoot();
+
+    initPlayer();
 }
 
 Controller::~Controller() = default;
@@ -100,6 +109,10 @@ void Controller::keyReleaseEvent(KeyReleaseEvent *event)
         gPlayer->updateState(Player::State::Run, false);
     if (event->key() == sf::Keyboard::Space)
         gPlayer->updateState(Player::State::Jump, false);
+    if (event->key() == sf::Keyboard::E)
+        executeAvailableActions();
+    if (event->key() == sf::Keyboard::Q)
+        gPlayer->health();
 }
 
 void Controller::mousePressEvent(MousePressEvent *event)
@@ -174,7 +187,7 @@ void Controller::initPlayer()
 {
     const auto &playerContainer{ _objectLayer->objects("player") };
     assert(playerContainer.size() == 1);
-    sf::Shape *playerShape{ _objectLayer->objects("player").front() };
+    sf::Shape *playerShape{ playerContainer.front() };
 
     gPlayer = new Player(_phisicalWorld.get(), playerShape);
     _elements.push_back(std::unique_ptr<Player>(gPlayer));
@@ -182,12 +195,24 @@ void Controller::initPlayer()
 
 void Controller::initBot()
 {
-    const auto &playerContainer{ _objectLayer->objects("viking_enemy") };
-    assert(playerContainer.size() == 1);
-    sf::Shape *playerShape{ _objectLayer->objects("viking_enemy").front() };
+    const auto &itemContainer{ _objectLayer->objects("snowman_1") };
 
-    _bot = new Bot{ _phisicalWorld.get(), playerShape };
-    _elements.push_back(std::unique_ptr<Bot>{ _bot });
+    for (auto *shape : itemContainer)
+    {
+        auto *bot = new Bot{ _phisicalWorld.get(), shape };
+        _elements.push_back(std::unique_ptr<Bot>{ bot });
+    }
+}
+
+void Controller::initLoot()
+{
+    const auto &itemContainer{ _objectLayer->objects("tea") };
+
+    for (auto *shape : itemContainer)
+    {
+        auto *bot = new TeaLoot{ _phisicalWorld.get(), shape };
+        _elements.push_back(std::unique_ptr<TeaLoot>{ bot });
+    }
 }
 
 void Controller::updatePhysics(float deltatime)
@@ -262,6 +287,30 @@ void Controller::removeDeadItems()
     _elements.erase(std::remove_if(_elements.begin(), _elements.end(),
                                    [](auto &bullet) { return bullet == nullptr; }),
                     _elements.end());
+}
+
+void Controller::executeAvailableActions()
+{
+    std::vector<IAction *> actions;
+    std::vector<IActionHandler *> actionHandlers;
+    actions.reserve(_elements.size());
+    actionHandlers.reserve(_elements.size());
+
+    for (auto &item : _elements)
+    {
+        auto *action{ dynamic_cast<IAction *>(item.get()) };
+        if (action != nullptr)
+            actions.push_back(action);
+        auto *actionHandler{ dynamic_cast<IActionHandler *>(item.get()) };
+        if (actionHandler != nullptr)
+            actionHandlers.push_back(actionHandler);
+    }
+
+    for (auto *actionHandler : actionHandlers)
+    {
+        actionHandler->visitActions(actions);
+        actionHandler->executeAvailableAction();
+    }
 }
 
 } // namespace Level

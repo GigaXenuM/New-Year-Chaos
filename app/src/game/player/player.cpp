@@ -1,5 +1,6 @@
 #include "player.h"
 
+#include "action/iaction.h"
 #include "items/bullet/physicalbullet.h"
 #include "items/colliderfactory.h"
 #include "resources/resourcemanager.h"
@@ -80,6 +81,30 @@ size_t Player::getHealthCount() const
 bool Player::isDead() const
 {
     return isStateActive(State::Dead) && _deadAnimation.isFinished();
+}
+
+void Player::visitActions(const std::vector<IAction *> &actions)
+{
+    _availableAction = nullptr;
+
+    constexpr float threshold{ 200.f };
+    float smallestDistance{ threshold };
+    for (auto *action : actions)
+    {
+        const float currentDistance{ Util::distance(
+            Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE) - action->position()) };
+        if (currentDistance < threshold && currentDistance < smallestDistance)
+        {
+            smallestDistance = currentDistance;
+            _availableAction = action;
+        }
+    }
+}
+
+void Player::executeAvailableAction()
+{
+    if (_availableAction != nullptr)
+        _availableAction->execute();
 }
 
 float Player::getFreezPoints() const

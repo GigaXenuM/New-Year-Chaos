@@ -9,6 +9,7 @@ enum class ItemType
     TerrainObstacle,
     Entity,
     Bullet,
+    Loot,
 };
 
 }

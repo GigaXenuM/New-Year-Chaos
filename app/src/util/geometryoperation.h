@@ -54,4 +54,9 @@ void createComplexFixture(b2Body *body, const sf::Shape *sfShape, b2FixtureDef *
 
 sf::ConvexShape convertBodyToSFMLShape(const b2Body *body);
 
+template <typename T> float distance(const sf::Vector2<T> &vec2)
+{
+    return sqrt(vec2.x * vec2.x + vec2.y * vec2.y);
+}
+
 } // namespace Util

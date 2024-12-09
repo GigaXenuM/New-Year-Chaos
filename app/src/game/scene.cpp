@@ -67,9 +67,4 @@ void Scene::mouseScrollEvent(MouseScrollEvent *event)
     _view->setSize(_viewSize * _scaling);
 }
 
-void Scene::keyPressEvent(KeyPressEvent *event)
-{
-    if (event->key() == sf::Keyboard::E)
-        gPlayer->health();
-}
 } // namespace Game

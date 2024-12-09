@@ -7,7 +7,6 @@
 #include "util/enumflag.h"
 
 #include <memory>
-#include <vector>
 
 namespace sf
 {
@@ -47,8 +46,6 @@ protected:
     void mouseReleaseEvent(MouseReleaseEvent *event) override;
     void mouseMoveEvent(MouseMoveEvent *event) override;
     void mouseScrollEvent(MouseScrollEvent *event) override;
-
-    void keyPressEvent(KeyPressEvent *event) override;
 
 private:
     sf::RenderTarget *_renderTarget{ nullptr };

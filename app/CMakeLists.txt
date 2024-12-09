@@ -27,6 +27,11 @@ set(HEADER_FILES
     src/game/weapon/iweapon.h
     src/game/weapon/snowballgun.h
     src/game/weapon/axegun.h
+    src/game/action/iaction.h
+    src/game/action/pickupteaaction.h
+    src/game/action/actionvariant.h
+    src/game/action/iactionhandler.h
+    src/game/items/loot/tealoot.h
 
     src/visitor/ivisitor.h
     src/visitor/defaultvisitor.h
@@ -99,6 +104,8 @@ set(SOURCE_FILES
     src/game/hud/weaponicon.cpp
     src/game/weapon/snowballgun.cpp
     src/game/weapon/axegun.cpp
+    src/game/action/pickupteaaction.cpp
+    src/game/items/loot/tealoot.cpp
 
     src/game/items/colliderfactory.cpp
 

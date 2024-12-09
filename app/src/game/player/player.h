@@ -1,5 +1,6 @@
 #pragma once
 
+#include "action/iactionhandler.h"
 #include "animation/animation.h"
 #include "items/entity/physicalentity.h"
 
@@ -12,7 +13,7 @@ struct b2Body;
 namespace Game
 {
 
-class Player : public PhysicalEntity
+class Player : public PhysicalEntity, public IActionHandler
 {
 public:
     Player(b2World *world, sf::Shape *shape);
@@ -27,6 +28,9 @@ public:
 
     void damage(float power) override;
     [[nodiscard]] bool isDead() const;
+
+    void visitActions(const std::vector<IAction *> &actions) override;
+    void executeAvailableAction() override;
 
 protected:
     void update(float deltatime) override;
@@ -59,6 +63,8 @@ private:
     Animation _walkAnimation;
     Animation _idleAnimation;
     Animation _jumpAnimation;
+
+    IAction *_availableAction{ nullptr };
 };
 
 extern Player *gPlayer;
