@@ -35,7 +35,7 @@ void Player::health()
     if (_countOfHealthItem <= 0)
         return;
 
-    _needHealth = true;
+    _isHealthNeeded = true;
     --_countOfHealthItem;
 }
 
@@ -51,21 +51,22 @@ sf::Vector2f Player::getPosition() const
 
 void Player::damage(float power)
 {
+    power *= 5;
     if (isStateActive(State::Dead))
         return;
 
-    if (_freezPoint > 0.f)
+    if (_freeze > 0.f)
     {
-        _freezPoint -= power;
-        if (_freezPoint <= 0.f)
-            _freezPoint = 0.f;
+        _freeze -= power;
+        if (_freeze <= 0.f)
+            _freeze = 0.f;
     }
-    else if (_healthPoint > 0)
+    else if (_health > 0)
     {
-        _healthPoint -= power;
-        if (_healthPoint <= 0.f)
+        _health -= power;
+        if (_health <= 0.f)
         {
-            _healthPoint = 0.f;
+            _health = 0.f;
             updateState(State::Dead, true);
         }
     }
@@ -83,12 +84,12 @@ bool Player::isDead() const
 
 float Player::getFreezPoints() const
 {
-    return _freezPoint;
+    return _freeze;
 }
 
 float Player::getHealthPoints() const
 {
-    return _healthPoint;
+    return _health;
 }
 
 void Player::updateAnimation(float deltatime)
@@ -128,32 +129,45 @@ void Player::updateAnimation(float deltatime)
 
 void Player::updateHealthPoint(float deltatime)
 {
-    tryToRestoreHealthPoint();
+    restoreHealthAndFreezePoints();
     damage(deltatime);
 }
 
-void Player::tryToRestoreHealthPoint()
+void Player::restoreHealthAndFreezePoints()
 {
-    if (!_needHealth || _deadAnimation.isPlaying())
+    if (!_isHealthNeeded || _deadAnimation.isPlaying())
         return;
 
-    _needHealth = false;
+    _isHealthNeeded = false;
 
-    const float restorationPoints = 25.f;
+    constexpr float restorationAmount = 25.0f;
 
-    if (_healthPoint < 100.f)
+    if (_health < 100.0f)
     {
-        if ((100.f - _healthPoint) < restorationPoints)
-            _healthPoint += (100.f - _healthPoint);
+        float healthDeficit = 100.0f - _health;
+
+        if (healthDeficit < restorationAmount)
+        {
+            _health += healthDeficit;
+            _freeze += restorationAmount - healthDeficit;
+        }
         else
-            _healthPoint += restorationPoints;
+        {
+            _health += restorationAmount;
+        }
     }
-    else if (_freezPoint < 100.f)
+    else if (_freeze < 100.0f)
     {
-        if ((100.f - _freezPoint) < restorationPoints)
-            _freezPoint += (100.f - _freezPoint);
+        float freezeDeficit = 100.0f - _freeze;
+
+        if (freezeDeficit < restorationAmount)
+        {
+            _freeze += freezeDeficit;
+        }
         else
-            _freezPoint += restorationPoints;
+        {
+            _freeze += restorationAmount;
+        }
     }
 }
 

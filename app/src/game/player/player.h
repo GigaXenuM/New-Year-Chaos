@@ -37,18 +37,18 @@ private:
     void updateAnimation(float deltatime);
     void updateHealthPoint(float deltatime);
 
-    void tryToRestoreHealthPoint();
+    void restoreHealthAndFreezePoints();
 
 private:
     const float _scale{ 0.25f };
     const float _healthUpdateInterval{ 1.0f };
 
-    float _freezPoint{ 100.f };
-    float _healthPoint{ 100.f };
+    float _freeze{ 100.f };
+    float _health{ 100.f };
 
     float _healthUpdateTimer{ 0.0f };
 
-    bool _needHealth{ false };
+    bool _isHealthNeeded{ false };
 
     sf::Sprite _sprite;
 
