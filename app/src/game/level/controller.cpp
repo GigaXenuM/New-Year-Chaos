@@ -4,6 +4,7 @@
 #include "action/iactionhandler.h"
 #include "items/colliderfactory.h"
 
+#include "items/deadzone/waterzone.h"
 #include "items/loot/tealoot.h"
 #include "keyevents/keypressevent.h"
 #include "keyevents/keyreleaseevent.h"
@@ -73,7 +74,7 @@ Controller::Controller(sf::RenderTarget *renderTarget, sf::View *view, EventHand
     initPhisicalWorld();
     initBot();
     initLoot();
-
+    initDeadZone();
     initPlayer();
 }
 
@@ -181,6 +182,15 @@ void Controller::initPhisicalWorld()
 
     _elements.push_back(std::unique_ptr<Graphics::Drawable>{ terrainItem });
     _elements.push_back(std::unique_ptr<Graphics::Drawable>{ terrainObstackleItem });
+
+    const auto &itemContainer{ _objectLayer->objects("dead_zone") };
+
+    for (auto *shape : itemContainer)
+    {
+        b2Body *body{ ColliderFactory::create<ItemType::DeadZone>(_phisicalWorld.get(),
+                                                                  { shape }) };
+        _elements.push_back(std::make_unique<StaticElement>(body, ItemType::DeadZone));
+    }
 }
 
 void Controller::initPlayer()
@@ -199,8 +209,17 @@ void Controller::initBot()
 
     for (auto *shape : itemContainer)
     {
-        auto *bot = new Bot{ _phisicalWorld.get(), shape };
-        _elements.push_back(std::unique_ptr<Bot>{ bot });
+        _elements.push_back(std::make_unique<Bot>(_phisicalWorld.get(), shape));
+    }
+}
+
+void Controller::initDeadZone()
+{
+    const auto &itemContainer{ _objectLayer->objects("water_place") };
+
+    for (auto *shape : itemContainer)
+    {
+        _elements.push_back(std::make_unique<DeadWaterZone>(_phisicalWorld.get(), shape));
     }
 }
 
@@ -210,8 +229,7 @@ void Controller::initLoot()
 
     for (auto *shape : itemContainer)
     {
-        auto *bot = new TeaLoot{ _phisicalWorld.get(), shape };
-        _elements.push_back(std::unique_ptr<TeaLoot>{ bot });
+        _elements.push_back(std::make_unique<TeaLoot>(_phisicalWorld.get(), shape));
     }
 }
 

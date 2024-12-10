@@ -29,6 +29,8 @@ public:
     void damage(float power) override;
     [[nodiscard]] bool isDead() const;
 
+    void kill();
+
     void visitActions(const std::vector<IAction *> &actions) override;
     void executeAvailableAction() override;
 

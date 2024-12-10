@@ -65,6 +65,8 @@ set(HEADER_FILES
     src/event/mouseevents/mousescrollevent.h
     src/event/mouseevents/mouse.h
 
+    src/game/items/deadzone/waterzone.h
+
     src/game/weapon/iweapon.cpp
     src/geometry/alignment.h
 
@@ -131,6 +133,8 @@ set(SOURCE_FILES
     src/game/items/bullet/snowball.cpp
     src/game/items/bullet/axebullet.cpp
 
+    src/game/items/deadzone/waterzone.cpp
+
     src/util/geometryoperation.cpp
     src/util/timeaccumulator.cpp
 
@@ -153,7 +157,7 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/app/src/event"
 )
 
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-audio sfml-graphics tmxlite box2d)
 

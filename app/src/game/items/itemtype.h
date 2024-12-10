@@ -10,6 +10,8 @@ enum class ItemType
     Entity,
     Bullet,
     Loot,
+    WaterZone,
+    DeadZone,
 };
 
 }

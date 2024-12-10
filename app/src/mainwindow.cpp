@@ -167,8 +167,8 @@ void MainWindow::switchView()
 
 void MainWindow::switchView(IView *view)
 {
-    if (auto currView = reinterpret_cast<GameOverMenu *>(&view))
-        _backgroundMusic.play();
+    // if (auto currView = reinterpret_cast<GameOverMenu *>(&view))
+    //_backgroundMusic.play();
     grabContext(view);
     _currentView = view;
 }

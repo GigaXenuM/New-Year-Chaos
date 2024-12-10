@@ -69,6 +69,14 @@ template <> b2FixtureDef fixtureDefinition<ItemType::Loot>()
 {
     return frictionDencityFixDef();
 }
+template <> b2FixtureDef fixtureDefinition<ItemType::WaterZone>()
+{
+    return frictionDencityFixDef();
+}
+template <> b2FixtureDef fixtureDefinition<ItemType::DeadZone>()
+{
+    return frictionDencityFixDef();
+}
 
 template <> b2BodyDef bodyDefinition<ItemType::Entity>()
 {
@@ -87,6 +95,14 @@ template <> b2BodyDef bodyDefinition<ItemType::TerrainObstacle>()
     return staticBodyDef();
 }
 template <> b2BodyDef bodyDefinition<ItemType::Loot>()
+{
+    return staticBodyDef();
+}
+template <> b2BodyDef bodyDefinition<ItemType::WaterZone>()
+{
+    return staticBodyDef();
+}
+template <> b2BodyDef bodyDefinition<ItemType::DeadZone>()
 {
     return staticBodyDef();
 }

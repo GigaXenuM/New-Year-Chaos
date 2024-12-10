@@ -115,6 +115,9 @@ void Bot::setValue(const float value)
 
 void Bot::walkingScript()
 {
+    if (isStateActive(State::Dead))
+        return;
+
     const auto healthBarSpriteHeight = _healthBar.getGlobalBounds().height;
     const sf::ConvexShape shape{ Util::convertBodyToSFMLShape(collider()) };
     const sf::Vector2f playerPos{ Util::pointBy(shape.getLocalBounds(), Util::ALIGN_CENTER_STATE) };

@@ -48,13 +48,13 @@ void AxeBullet::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
 void AxeBullet::updatePosition(float deltatime)
 {
-    const sf::Vector2f playerPos{ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE) };
-    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
-    _sprite.setPosition(playerPos);
+    // const sf::Vector2f playerPos{ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE) };
+    // _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
+    // _sprite.setPosition(playerPos);
 
-    b2Vec2 velocity = collider()->GetLinearVelocity();
-    float angle = std::atan2(velocity.y, velocity.x);
-    float angleInDegrees = angle * (180.0f / M_PI);
-    _sprite.setRotation(angleInDegrees);
+    // b2Vec2 velocity = collider()->GetLinearVelocity();
+    // float angle = std::atan2(velocity.y, velocity.x);
+    // float angleInDegrees = angle * (180.0f / M_PI);
+    // _sprite.setRotation(angleInDegrees);
 }
 } // namespace Game

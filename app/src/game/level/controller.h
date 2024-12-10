@@ -54,6 +54,7 @@ private:
     void initPhisicalWorld();
     void initPlayer();
     void initBot();
+    void initDeadZone();
 
     void initLoot();
 

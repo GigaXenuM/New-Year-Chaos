@@ -2,6 +2,8 @@
 
 #include "items/bullet/physicalbullet.h"
 #include "player/player.h"
+#include <iostream>
+#include <items/deadzone/waterzone.h>
 
 namespace Game
 {
@@ -20,7 +22,7 @@ void ContactListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifold
 {
     const UserData data{ toUserData(contact) };
 
-    if (data.types.test(ItemType::Loot))
+    if (data.types.test(ItemType::Loot) || data.types.test(ItemType::WaterZone))
     {
         contact->SetEnabled(false);
     }
@@ -75,11 +77,27 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
 
     if (data.types.test(ItemType::Terrain) && data.types.test(ItemType::Entity))
     {
+        if (data.types.test(ItemType::Bullet))
+        {
+        }
         auto *entity{ dynamic_cast<PhysicalEntity *>(data.itemTypeToItem.at(ItemType::Entity)) };
         assert(entity != nullptr);
         entity->updateState(contacted ? PhysicalEntity::State::OnGround
                                       : PhysicalEntity::State::PrepareGroundDetach,
                             true);
+    }
+
+    if (data.types.test(ItemType::WaterZone) && data.types.test(ItemType::Entity) && contacted)
+    {
+        if (auto *deadWaterZone{
+                dynamic_cast<DeadWaterZone *>(data.itemTypeToItem.at(ItemType::WaterZone)) })
+        {
+            deadWaterZone->playAnimation();
+        }
+    }
+    if (data.types.test(ItemType::DeadZone) && data.types.test(ItemType::Entity) && contacted)
+    {
+        gPlayer->kill();
     }
 
     if (data.types.test(ItemType::Bullet) && contacted)

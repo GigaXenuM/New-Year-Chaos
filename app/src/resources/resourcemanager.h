@@ -63,6 +63,9 @@ enum class TextureType
     Axe,
     SnowBall,
 
+    // Dead water zone
+    Dead_water_zone,
+
     SnowBallGun,
 };
 

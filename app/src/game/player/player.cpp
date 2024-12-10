@@ -52,7 +52,7 @@ sf::Vector2f Player::getPosition() const
 
 void Player::damage(float power)
 {
-    power *= 5;
+    // power *= 5;
     if (isStateActive(State::Dead))
         return;
 
@@ -62,7 +62,7 @@ void Player::damage(float power)
         if (_freeze <= 0.f)
             _freeze = 0.f;
     }
-    else if (_health > 0)
+    if (_health > 0 && _freeze < 0.01f)
     {
         _health -= power;
         if (_health <= 0.f)
@@ -81,6 +81,11 @@ size_t Player::getHealthCount() const
 bool Player::isDead() const
 {
     return isStateActive(State::Dead) && _deadAnimation.isFinished();
+}
+
+void Player::kill()
+{
+    damage(_health + _freeze + 1);
 }
 
 void Player::visitActions(const std::vector<IAction *> &actions)
@@ -198,6 +203,11 @@ void Player::restoreHealthAndFreezePoints()
 
 void Player::updatePosition(float deltatime)
 {
+    if (isStateActive(State::Dead))
+    {
+        collider()->SetType(b2_staticBody);
+        return;
+    }
     const sf::Vector2f playerPos{ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE) };
     _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
     _sprite.setPosition(playerPos);
