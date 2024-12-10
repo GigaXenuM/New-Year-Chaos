@@ -108,6 +108,15 @@ void Player::visitActions(const std::vector<IAction *> &actions)
 
 void Player::executeAvailableAction()
 {
+    switch (_availableAction->actionVariant())
+    {
+    case ActionVariant::PickUpTea:
+        ++_countOfHealthItem;
+        break;
+    default:
+        break;
+    }
+
     if (_availableAction != nullptr)
         _availableAction->execute();
 }

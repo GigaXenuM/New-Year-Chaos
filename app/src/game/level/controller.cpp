@@ -47,12 +47,17 @@ public:
     {
     }
 
-    ItemType type() const
+    ItemType type() const override
     {
         return _type;
     }
 
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const
+    bool needDestroying() const override
+    {
+        return false;
+    }
+
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override
     {
     }
 
@@ -86,7 +91,7 @@ void Controller::update(float deltatime)
     updatePhysics(deltatime);
     updateGraphics(deltatime);
     render(deltatime);
-    removeDeadItems();
+    destroyRedundantItems();
 }
 
 void Controller::keyPressEvent(KeyPressEvent *event)
@@ -226,7 +231,7 @@ void Controller::initDeadZone()
 
     for (auto *shape : itemContainer)
     {
-        _elements.push_back(std::make_unique<DeadWaterZone>(_phisicalWorld.get(), shape));
+        _elements.push_back(std::make_unique<WaterZone>(_phisicalWorld.get(), shape));
     }
 }
 
@@ -236,7 +241,9 @@ void Controller::initLoot()
 
     for (auto *shape : itemContainer)
     {
-        _elements.push_back(std::make_unique<TeaLoot>(_phisicalWorld.get(), shape));
+        auto *lootItem = new TeaLoot{ _phisicalWorld.get(), shape };
+        lootItem->setCallback([lootItem]() { lootItem->prepareDestroy(); });
+        _elements.push_back(std::unique_ptr<TeaLoot>{ lootItem });
     }
 }
 
@@ -295,13 +302,13 @@ void Controller::updateCameraPos()
     _gameView->setCenter(viewCenter);
 }
 
-void Controller::removeDeadItems()
+void Controller::destroyRedundantItems()
 {
     for (auto &item : _elements)
     {
-        if (auto abstractPhysicalItem{ dynamic_cast<PhysicalEntity *>(item.get()) })
+        if (auto abstractPhysicalItem{ dynamic_cast<AbstractPhysicalItem *>(item.get()) })
         {
-            if (abstractPhysicalItem->isStateActive(Game::Player::State::RemoveMe))
+            if (abstractPhysicalItem->needDestroying())
             {
                 abstractPhysicalItem->destroyCollider();
                 item.reset();

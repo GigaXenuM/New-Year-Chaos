@@ -12,6 +12,11 @@ PhysicalBullet::PhysicalBullet(b2Body *collider, const AbstractPhysicalItem *sho
 {
 }
 
+bool PhysicalBullet::needDestroying() const
+{
+    return isStateActive(State::Collide);
+}
+
 void PhysicalBullet::updateState(State state, bool isActive)
 {
     isActive ? _state.set(state) : _state.unset(state);

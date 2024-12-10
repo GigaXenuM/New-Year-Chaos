@@ -6,8 +6,6 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
-#include <iostream>
-
 namespace Game
 {
 
@@ -16,6 +14,21 @@ TeaLoot::TeaLoot(b2World *world, sf::Shape *shape)
       _sprite{ ResourseManager::getInstance()->getTextures(TextureType::Tea).front() }
 {
     _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
+}
+
+bool TeaLoot::needDestroying() const
+{
+    return _needDestroy;
+}
+
+void TeaLoot::prepareDestroy()
+{
+    _needDestroy = true;
+}
+
+void TeaLoot::setCallback(std::function<void()> actionCallback)
+{
+    _actionCallback = std::move(actionCallback);
 }
 
 void TeaLoot::update(float deltatime)
@@ -46,7 +59,7 @@ sf::Vector2f TeaLoot::position() const
 
 void TeaLoot::execute()
 {
-    std::cout << "TeaLoot: action executed." << std::endl;
+    _actionCallback();
 }
 
 } // namespace Game

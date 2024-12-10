@@ -18,7 +18,7 @@ void IWeapon::update(float deltatime)
     for (std::unique_ptr<PhysicalBullet> &snowball : _bullets)
     {
         snowball->update(deltatime);
-        if (snowball->isStateActive(PhysicalBullet::State::Collide))
+        if (snowball->needDestroying())
         {
             snowball->destroyCollider();
             snowball.reset();

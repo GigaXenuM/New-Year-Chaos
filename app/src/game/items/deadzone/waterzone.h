@@ -7,15 +7,16 @@
 namespace Game
 {
 
-class DeadWaterZone : public AbstractPhysicalItem
+class WaterZone : public AbstractPhysicalItem
 {
 public:
-    DeadWaterZone(b2World *world, sf::Shape *shape);
+    WaterZone(b2World *world, sf::Shape *shape);
 
     ItemType type() const override
     {
         return ItemType::WaterZone;
     }
+    bool needDestroying() const override;
 
     void playAnimation();
 

@@ -27,6 +27,8 @@ public:
         return ItemType::Bullet;
     }
 
+    bool needDestroying() const override;
+
     void updateState(State state, bool isActive);
     bool isStateActive(State state) const;
 

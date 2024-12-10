@@ -18,6 +18,11 @@ PhysicalEntity::PhysicalEntity(b2Body *collider, const Context &context,
 {
 }
 
+bool PhysicalEntity::needDestroying() const
+{
+    return isStateActive(State::RemoveMe);
+}
+
 void PhysicalEntity::updatePhysics()
 {
     if (isStateActive(State::Dead))

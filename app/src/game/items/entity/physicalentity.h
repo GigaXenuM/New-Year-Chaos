@@ -41,6 +41,9 @@ public:
     {
         return ItemType::Entity;
     }
+
+    bool needDestroying() const override;
+
     void updatePhysics() override;
 
     void updateState(State state, bool isActive);

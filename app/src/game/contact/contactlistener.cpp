@@ -90,7 +90,7 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
     if (data.types.test(ItemType::WaterZone) && data.types.test(ItemType::Entity) && contacted)
     {
         if (auto *deadWaterZone{
-                dynamic_cast<DeadWaterZone *>(data.itemTypeToItem.at(ItemType::WaterZone)) })
+                dynamic_cast<WaterZone *>(data.itemTypeToItem.at(ItemType::WaterZone)) })
         {
             deadWaterZone->playAnimation();
         }

@@ -63,7 +63,7 @@ private:
     void updateGraphics(float deltatime);
 
     void updateCameraPos();
-    void removeDeadItems();
+    void destroyRedundantItems();
 
     void executeAvailableActions();
 

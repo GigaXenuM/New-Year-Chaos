@@ -26,6 +26,7 @@ public:
     virtual ItemType type() const = 0;
     virtual void updatePhysics(){};
 
+    virtual bool needDestroying() const = 0;
     void destroyCollider();
 
 protected:

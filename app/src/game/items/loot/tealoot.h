@@ -22,6 +22,11 @@ public:
         return ActionVariant::PickUpTea;
     }
 
+    bool needDestroying() const override;
+    void prepareDestroy();
+
+    void setCallback(std::function<void()> actionCallback);
+
     void update(float deltatime) override;
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
@@ -30,6 +35,8 @@ public:
 
 private:
     sf::Sprite _sprite;
+    std::function<void()> _actionCallback;
+    float _needDestroy{ false };
 };
 
 } // namespace Game
