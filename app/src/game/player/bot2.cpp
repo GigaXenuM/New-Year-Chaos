@@ -1,4 +1,4 @@
-#include "bot.h"
+#include "Bot2.h"
 
 #include "player.h"
 
@@ -17,19 +17,19 @@
 namespace Game
 {
 
-Bot::Bot(b2World *world, sf::Shape *shape)
+Bot2::Bot2(b2World *world, sf::Shape *shape)
     : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 30 },
-                     std::make_unique<SnowBallGun>(this, world, 25.f)),
+                     std::make_unique<SnowBallGun>(this, world, 40.f)),
       _pos{ boundingRect().getPosition() },
-      _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_1_walk) },
-      _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_1_dead) },
-      _hurtAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_1_hurt) },
-      _throwAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_1_throw) }
+      _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_2_walk) },
+      _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_2_dead) },
+      _hurtAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_2_hurt) },
+      _throwAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_2_throw) }
 {
     setupSprites();
 }
 
-void Bot::damage(float power)
+void Bot2::damage(float power)
 {
     if (isStateActive(State::Dead))
         return;
@@ -44,7 +44,7 @@ void Bot::damage(float power)
     setValue(_healthPoint);
 }
 
-void Bot::update(float deltatime)
+void Bot2::update(float deltatime)
 {
     PhysicalEntity::update(deltatime);
 
@@ -57,7 +57,7 @@ void Bot::update(float deltatime)
     updateAnimation(deltatime);
 }
 
-void Bot::draw(sf::RenderTarget &target, sf::RenderStates states) const
+void Bot2::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     for (const std::unique_ptr<PhysicalBullet> &bullet : weapon()->bullets())
         target.draw(*bullet, states);
@@ -67,7 +67,7 @@ void Bot::draw(sf::RenderTarget &target, sf::RenderStates states) const
     target.draw(_health, states);
 }
 
-void Bot::setupSprites()
+void Bot2::setupSprites()
 {
     updateState(State::Right, true);
 
@@ -84,7 +84,7 @@ void Bot::setupSprites()
     _healthSize = _health.getSize();
 }
 
-void Bot::updateAnimation(float deltatime)
+void Bot2::updateAnimation(float deltatime)
 {
     if (isStateActive(State::Dead))
     {
@@ -103,7 +103,7 @@ void Bot::updateAnimation(float deltatime)
     }
 }
 
-void Bot::setValue(const float value)
+void Bot2::setValue(const float value)
 {
     if (value < 0.0f || value > 100.f)
         return;
@@ -113,7 +113,7 @@ void Bot::setValue(const float value)
     });
 }
 
-void Bot::walkingScript()
+void Bot2::walkingScript()
 {
     if (isStateActive(State::Dead))
         return;
@@ -156,7 +156,7 @@ void Bot::walkingScript()
         _isAvailableToShoot = false;
 }
 
-void Bot::shootingScript(float deltatime)
+void Bot2::shootingScript(float deltatime)
 {
     if (!_isAvailableToShoot)
         return;

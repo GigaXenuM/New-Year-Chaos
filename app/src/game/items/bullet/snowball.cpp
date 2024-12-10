@@ -13,10 +13,11 @@ namespace Game
 {
 
 SnowBall::SnowBall(b2World *world, sf::Shape *shape, const AbstractPhysicalItem *shooter,
-                   const Context &context)
+                   const Context &context, float power)
     : PhysicalBullet{ ColliderFactory::create<ItemType::Bullet>(world, { shape }), shooter,
                       context },
-      _flyAnimation{ ResourseManager::getInstance()->getTextures(TextureType::SnowBall) }
+      _flyAnimation{ ResourseManager::getInstance()->getTextures(TextureType::SnowBall) },
+      _power{ power }
 {
     _sprite.setScale({ -_scale, _scale });
 }
@@ -45,7 +46,7 @@ void SnowBall::update(float deltatime)
 
 float SnowBall::power() const
 {
-    return 25.f;
+    return _power;
 }
 
 void SnowBall::updatePosition()

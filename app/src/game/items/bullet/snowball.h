@@ -12,7 +12,7 @@ class SnowBall : public PhysicalBullet
 {
 public:
     explicit SnowBall(b2World *world, sf::Shape *shape, const AbstractPhysicalItem *shooter,
-                      const Context &context);
+                      const Context &context, float power = 25.f);
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
     void update(float deltatime) override;
@@ -25,6 +25,7 @@ private:
 
     Animation _flyAnimation;
     const float _scale{ 0.10f };
+    const float _power{ 25.f };
     sf::Sprite _sprite;
 };
 

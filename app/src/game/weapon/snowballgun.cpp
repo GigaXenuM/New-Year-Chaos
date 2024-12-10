@@ -9,9 +9,10 @@
 namespace Game
 {
 
-SnowBallGun::SnowBallGun(PhysicalEntity *owner, b2World *world)
+SnowBallGun::SnowBallGun(PhysicalEntity *owner, b2World *world, float power)
     : IWeapon(owner, world),
-      _icon{ ResourseManager::getInstance()->getTextures(TextureType::SnowBallGun).front() }
+      _icon{ ResourseManager::getInstance()->getTextures(TextureType::SnowBallGun).front() },
+      _power{ power }
 {
 }
 
@@ -25,7 +26,8 @@ void SnowBallGun::shoot(const sf::Vector2f &startPos, const sf::Vector2f &target
     sf::RectangleShape bulletShape{ { 10, 10 } };
     bulletShape.setPosition(Util::pointBy(_owner->boundingRect(), Util::ALIGN_CENTER_STATE));
 
-    auto *bullet{ new SnowBall{ _world, &bulletShape, _owner, SnowBall::Context{ 50.f, target } } };
+    auto *bullet{ new SnowBall{ _world, &bulletShape, _owner, SnowBall::Context{ 50.f, target },
+                                _power } };
     bullet->impulse();
     _bullets.push_back(std::unique_ptr<SnowBall>(bullet));
 }

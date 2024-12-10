@@ -13,6 +13,7 @@
 #include "contact/contactlistener.h"
 #include "item/drawable.h"
 #include "object-layer/objectlayer.h"
+#include "player/bot2.h"
 #include "player/player.h"
 #include "tile-layer/tilelayer.h"
 #include "util/debugdrawer.h"
@@ -206,6 +207,12 @@ void Controller::initPlayer()
 void Controller::initBot()
 {
     const auto &itemContainer{ _objectLayer->objects("snowman_1") };
+    const auto &itemContainer2{ _objectLayer->objects("snowman_2") };
+
+    for (auto *shape : itemContainer2)
+    {
+        _elements.push_back(std::make_unique<Bot2>(_phisicalWorld.get(), shape));
+    }
 
     for (auto *shape : itemContainer)
     {
