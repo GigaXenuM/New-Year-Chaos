@@ -4,6 +4,7 @@
 #include "items/abstractphysicalitem.h"
 
 #include <SFML/Graphics/Sprite.hpp>
+#include <functional>
 
 namespace Game
 {
