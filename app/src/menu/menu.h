@@ -7,6 +7,8 @@
 
 #include <memory>
 
+#include <SFML/Graphics/Text.hpp>
+
 class Layout;
 
 namespace sf
@@ -38,6 +40,7 @@ private:
     void init();
 
     sf::RenderTarget *_renderTarget;
+    std::unique_ptr<sf::Text> _title;
     std::unique_ptr<sf::View> _view;
     std::unique_ptr<Layout> _layout;
 };

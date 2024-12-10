@@ -15,6 +15,7 @@ namespace Menu
 
 Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent)
     : IView{ renderTarget, parent },
+      _title{ std::make_unique<sf::Text>() },
       _renderTarget{ renderTarget },
       _view{ std::make_unique<sf::View>(
           sf::FloatRect(sf::Vector2f{},
@@ -36,6 +37,8 @@ void Menu::update(float deltatime)
 
     for (const Item &item : _layout->items())
         _renderTarget->draw(*item);
+
+    _renderTarget->draw(*_title);
 }
 
 sf::View *Menu::view() const
@@ -45,6 +48,18 @@ sf::View *Menu::view() const
 
 void Menu::init()
 {
+    const sf::Vector2f viewSize = _view->getSize();
+    const sf::Vector2f viewCenter = _view->getCenter();
+
+    _title->setFont(ResourseManager::getInstance()->getFont(FontType::Arial));
+    _title->setCharacterSize(30);
+    _title->setFillColor(sf::Color::Cyan);
+    _title->setCharacterSize(70);
+    _title->setString("New Year Chaos");
+
+    _title->setPosition({ viewCenter.x - _title->getGlobalBounds().width / 2,
+                          viewCenter.y - (viewCenter.y / 2 + _title->getGlobalBounds().height) });
+
     _layout->setSpacing(20);
 
     const sf::Font font{ ResourseManager::getInstance()->getFont(FontType::Arial) };
