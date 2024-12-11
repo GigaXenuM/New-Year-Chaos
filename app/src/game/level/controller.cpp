@@ -27,6 +27,8 @@
 #include <tmxlite/Layer.hpp>
 #include <tmxlite/Map.hpp>
 
+#include <player/bot3.h>
+
 namespace
 {
 
@@ -213,6 +215,12 @@ void Controller::initBot()
 {
     const auto &itemContainer{ _objectLayer->objects("snowman_1") };
     const auto &itemContainer2{ _objectLayer->objects("snowman_2") };
+    const auto &itemContainer3{ _objectLayer->objects("snowman_3") };
+
+    for (auto *shape : itemContainer3)
+    {
+        _elements.push_back(std::make_unique<Bot3>(_phisicalWorld.get(), shape));
+    }
 
     for (auto *shape : itemContainer2)
     {

@@ -17,6 +17,7 @@ set(HEADER_FILES
     src/game/contact/contactlistener.h
     src/game/player/bot.h
     src/game/player/bot2.h
+    src/game/player/bot3.h
     src/game/player/player.h
     src/game/items/abstractphysicalitem.h
     src/game/items/entity/physicalentity.h
@@ -99,6 +100,7 @@ set(SOURCE_FILES
     src/game/contact/contactlistener.cpp
     src/game/player/bot.cpp
     src/game/player/bot2.cpp
+    src/game/player/bot3.cpp
     src/game/player/player.cpp
     src/game/items/entity/physicalentity.cpp
     src/game/items/bullet/physicalbullet.cpp
