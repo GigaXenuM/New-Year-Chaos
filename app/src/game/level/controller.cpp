@@ -16,6 +16,7 @@
 #include "object-layer/objectlayer.h"
 #include "player/bot2.h"
 #include "player/player.h"
+#include "resources/resourcemanager.h"
 #include "tile-layer/tilelayer.h"
 #include "util/debugdrawer.h"
 #include "util/geometryoperation.h"
@@ -32,6 +33,9 @@
 
 namespace
 {
+constexpr unsigned PREFIX_DRAW{ 0 };
+constexpr unsigned PLAYER_DRAW{ 1 };
+constexpr unsigned POSTFIX_DRAW{ 2 };
 
 constexpr float TIME_STEP = 1.0f / 60.0f;
 constexpr int VELOCITY_ITERATIONS = 8;
@@ -66,6 +70,48 @@ public:
 
 private:
     ItemType _type;
+};
+
+class DrawableJoint : public Graphics::Drawable
+{
+public:
+    explicit DrawableJoint(const AbstractPhysicalItem *item, const sf::Sprite &sprite,
+                           float rotationOffset = 0.f)
+        : _item{ item },
+          _sprite{ sprite },
+          _chainSprite{ ResourseManager::getInstance()->getTextures(TextureType::Chain).front() },
+          _rotationOffset{ rotationOffset }
+    {
+        _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
+        _chainSprite.scale(0.2, 0.3);
+        _chainSprite.setOrigin(Util::pointBy(_chainSprite.getLocalBounds(), { Align::Top }));
+        _chainSprite.setRotation(45.f);
+    }
+
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override
+    {
+        target.draw(_sprite, states);
+        if (_item->type() == ItemType::TerrainObstacle)
+            target.draw(_chainSprite, states);
+    }
+
+    void update(float /*deltatime*/) override
+    {
+        const sf::Vector2f playerPos{ Util::pointBy(_item->boundingRect(),
+                                                    Util::ALIGN_CENTER_STATE) };
+        _sprite.setPosition(playerPos);
+        _chainSprite.setPosition(Util::pointBy(_item->boundingRect(), { Align::Left }));
+
+        constexpr float RAD_TO_DEG = 180.f / b2_pi;
+        float angleInDegrees = _item->collider()->GetAngle() * RAD_TO_DEG;
+        _sprite.setRotation(angleInDegrees + _rotationOffset);
+    }
+
+private:
+    const AbstractPhysicalItem *_item{ nullptr };
+    sf::Sprite _sprite;
+    sf::Sprite _chainSprite;
+    float _rotationOffset{ 0.f };
 };
 
 namespace Level
@@ -151,8 +197,9 @@ void Controller::loadLevel()
         {
         case tmx::Layer::Type::Tile:
         {
-            _elements.push_back(
-                std::make_unique<TileLayer>(map, layer->getLayerAs<tmx::TileLayer>()));
+            _elements.insert(
+                { PREFIX_DRAW,
+                  std::make_unique<TileLayer>(map, layer->getLayerAs<tmx::TileLayer>()) });
             break;
         }
         case tmx::Layer::Type::Object:
@@ -189,14 +236,49 @@ void Controller::initPhisicalWorld()
     auto *terrainObstackleItem{ new StaticElement{ terrainObstacleBody,
                                                    ItemType::TerrainObstacle } };
 
-    _elements.push_back(std::unique_ptr<Graphics::Drawable>{ terrainItem });
-    _elements.push_back(std::unique_ptr<Graphics::Drawable>{ terrainObstackleItem });
+    _elements.insert({ PREFIX_DRAW, std::unique_ptr<Graphics::Drawable>{ terrainItem } });
+    _elements.insert({ PREFIX_DRAW, std::unique_ptr<Graphics::Drawable>{ terrainObstackleItem } });
 
     const auto &bridgeContainer{ _objectLayer->objects("bridge") };
     for (auto *shape : bridgeContainer)
     {
+        sf::RectangleShape bridgeSupportShape{ { 30, 30 } };
+        bridgeSupportShape.setOrigin(
+            Util::pointBy(bridgeSupportShape.getLocalBounds(), Util::ALIGN_CENTER_STATE));
+        bridgeSupportShape.setPosition(
+            Util::pointBy(shape->getGlobalBounds(), { Align::Right, Align::Bottom }));
+        b2Body *body{ ColliderFactory::create<ItemType::DeadZone>(_physicalWorld.get(),
+                                                                  { &bridgeSupportShape }) };
+
+        auto *bridgeSupport{ new StaticElement(body, ItemType::NonCollided) };
         auto *bridge{ new Bridge{ _physicalWorld.get(), shape } };
-        _elements.push_back(std::unique_ptr<Bridge>(bridge));
+
+        b2RevoluteJointDef jointDef;
+        jointDef.bodyA = body;
+        jointDef.bodyB = bridge->collider();
+        jointDef.enableLimit = true;
+        jointDef.lowerAngle = 0;
+        jointDef.upperAngle = b2_pi / 2;
+
+        sf::Vector2f anchorA{ Util::pointBy(bridgeSupportShape.getGlobalBounds(),
+                                            Util::ALIGN_CENTER_STATE) };
+        sf::Vector2f anchorB{ Util::pointBy(shape->getGlobalBounds(),
+                                            { Align::Right, Align::Bottom }) };
+
+        jointDef.localAnchorA.Set(anchorA.x, anchorA.y);
+        jointDef.localAnchorB.Set(anchorB.x, anchorB.y);
+        jointDef.collideConnected = false;
+        _physicalWorld->CreateJoint(&jointDef);
+
+        sf::Sprite postBridgeSprite{
+            ResourseManager::getInstance()->getTextures(TextureType::Bridge).back()
+        };
+        postBridgeSprite.scale(0.5, 0.5);
+
+        _elements.insert({ PREFIX_DRAW, std::unique_ptr<Bridge>(bridge) });
+        _elements.insert(
+            { POSTFIX_DRAW, std::make_unique<DrawableJoint>(bridge, postBridgeSprite, -90.f) });
+        _elements.insert({ PREFIX_DRAW, std::unique_ptr<StaticElement>(bridgeSupport) });
     }
 
     const auto &deadZoneContainer{ _objectLayer->objects("dead_zone") };
@@ -204,7 +286,8 @@ void Controller::initPhisicalWorld()
     {
         b2Body *body{ ColliderFactory::create<ItemType::DeadZone>(_physicalWorld.get(),
                                                                   { shape }) };
-        _elements.push_back(std::make_unique<StaticElement>(body, ItemType::DeadZone));
+        _elements.insert(
+            { PREFIX_DRAW, std::make_unique<StaticElement>(body, ItemType::DeadZone) });
     }
 }
 
@@ -215,7 +298,7 @@ void Controller::initPlayer()
     sf::Shape *playerShape{ playerContainer.front() };
 
     gPlayer = new Player(_physicalWorld.get(), playerShape);
-    _elements.push_back(std::unique_ptr<Player>(gPlayer));
+    _elements.insert({ PLAYER_DRAW, std::unique_ptr<Player>(gPlayer) });
 }
 
 void Controller::initBot()
@@ -226,17 +309,17 @@ void Controller::initBot()
 
     for (auto *shape : itemContainer3)
     {
-        _elements.push_back(std::make_unique<Bot3>(_physicalWorld.get(), shape));
+        _elements.insert({ PREFIX_DRAW, std::make_unique<Bot3>(_physicalWorld.get(), shape) });
     }
 
     for (auto *shape : itemContainer2)
     {
-        _elements.push_back(std::make_unique<Bot2>(_physicalWorld.get(), shape));
+        _elements.insert({ PREFIX_DRAW, std::make_unique<Bot2>(_physicalWorld.get(), shape) });
     }
 
     for (auto *shape : itemContainer)
     {
-        _elements.push_back(std::make_unique<Bot>(_physicalWorld.get(), shape));
+        _elements.insert({ PREFIX_DRAW, std::make_unique<Bot>(_physicalWorld.get(), shape) });
     }
 }
 
@@ -246,7 +329,7 @@ void Controller::initDeadZone()
 
     for (auto *shape : itemContainer)
     {
-        _elements.push_back(std::make_unique<WaterZone>(_physicalWorld.get(), shape));
+        _elements.insert({ PREFIX_DRAW, std::make_unique<WaterZone>(_physicalWorld.get(), shape) });
     }
 }
 
@@ -258,7 +341,7 @@ void Controller::initLoot()
     {
         auto *lootItem = new TeaLoot{ _physicalWorld.get(), shape };
         lootItem->setCallback([lootItem]() { lootItem->prepareDestroy(); });
-        _elements.push_back(std::unique_ptr<TeaLoot>{ lootItem });
+        _elements.insert({ PREFIX_DRAW, std::unique_ptr<TeaLoot>{ lootItem } });
     }
 }
 
@@ -270,7 +353,7 @@ void Controller::updatePhysics(float deltatime)
     {
         _physicalWorld->Step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 
-        for (const auto &item : _elements)
+        for (const auto &[_, item] : _elements)
         {
             auto *physicalItem{ dynamic_cast<AbstractPhysicalItem *>(item.get()) };
             if (physicalItem != nullptr)
@@ -281,7 +364,7 @@ void Controller::updatePhysics(float deltatime)
 
 void Controller::updateGraphics(float deltatime)
 {
-    for (const auto &item : _elements)
+    for (const auto &[_, item] : _elements)
         item->update(deltatime);
 
     updateCameraPos();
@@ -289,7 +372,7 @@ void Controller::updateGraphics(float deltatime)
 
 void Controller::render(float deltatime)
 {
-    for (const auto &item : _elements)
+    for (const auto &[_, item] : _elements)
         _renderTarget->draw(*item);
 
     _physicalWorld->DebugDraw();
@@ -319,7 +402,7 @@ void Controller::updateCameraPos()
 
 void Controller::destroyRedundantItems()
 {
-    for (auto &item : _elements)
+    for (auto &[_, item] : _elements)
     {
         if (auto abstractPhysicalItem{ dynamic_cast<AbstractPhysicalItem *>(item.get()) })
         {
@@ -331,9 +414,8 @@ void Controller::destroyRedundantItems()
         }
     }
 
-    _elements.erase(std::remove_if(_elements.begin(), _elements.end(),
-                                   [](auto &bullet) { return bullet == nullptr; }),
-                    _elements.end());
+    for (auto it = _elements.begin(); it != _elements.end();)
+        it = (it->second == nullptr) ? _elements.erase(it) : std::next(it);
 }
 
 void Controller::executeAvailableActions()
@@ -343,7 +425,7 @@ void Controller::executeAvailableActions()
     actions.reserve(_elements.size());
     actionHandlers.reserve(_elements.size());
 
-    for (auto &item : _elements)
+    for (auto &[_, item] : _elements)
     {
         auto *action{ dynamic_cast<IAction *>(item.get()) };
         if (action != nullptr)

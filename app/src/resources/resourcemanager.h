@@ -71,6 +71,7 @@ enum class TextureType
 
     // Map elements
     Bridge,
+    Chain,
 };
 
 class ResourseManager

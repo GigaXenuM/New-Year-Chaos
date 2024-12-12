@@ -9,8 +9,8 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include <map>
 #include <memory>
-#include <vector>
 
 class Player;
 class b2World;
@@ -79,7 +79,7 @@ private:
 
     Util::TimeAccumulator _timeAccumulator;
 
-    std::vector<std::unique_ptr<Graphics::Drawable>> _elements;
+    std::multimap<unsigned, std::unique_ptr<Graphics::Drawable>> _elements;
 };
 
 } // namespace Level

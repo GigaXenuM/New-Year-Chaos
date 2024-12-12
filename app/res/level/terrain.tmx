@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="100" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="5" nextobjectid="23">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="100" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="5" nextobjectid="24">
  <tileset firstgid="1" source="terrain.tsx"/>
  <layer id="1" name="terrain" width="100" height="20" locked="1">
   <data encoding="csv">
@@ -90,11 +90,11 @@
   <object id="15" type="snowman_3" x="5906.79" y="1633.49" width="60" height="110"/>
   <object id="17" type="dead_zone" x="1409" y="1980.88" width="256" height="29.2474"/>
   <object id="18" type="dead_zone" x="3839" y="1972.38" width="256" height="29.2474"/>
-  <object id="21" type="bridge" x="11564.4" y="1787.02" rotation="-70">
+  <object id="21" type="bridge" x="8629.22" y="1077.18">
    <polygon points="0,0 116.355,-125.052 572.874,-125.052 687.004,2.94829"/>
   </object>
-  <object id="22" type="bridge" x="1284.2" y="1657.55" rotation="-70">
-   <polygon points="0,0 116.355,-125.052 572.874,-125.052 687.004,2.94829"/>
+  <object id="22" type="bridge" x="1267.74" y="1630.56" rotation="-90">
+   <polygon points="-61.3307,58.1546 2.77037,18.7592 144.729,-30.6046 282.121,-43.5361 421.35,-33.1252 564.884,18.5962 627.84,58.1546 -56.208,58.1546"/>
   </object>
  </objectgroup>
 </map>

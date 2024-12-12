@@ -80,6 +80,7 @@ void ResourseManager::loadAllTextures()
     loadTextures("dead-zones", TextureType::Dead_water_zone, "waterzone");
 
     loadTextures("level/bridge", TextureType::Bridge, "bridge");
+    loadTextures("level/chain", TextureType::Chain, "chain");
 }
 
 void ResourseManager::loadSounds(const std::filesystem::path &path, const SoundType type,

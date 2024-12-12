@@ -3,6 +3,8 @@
 #include "action/iaction.h"
 #include "items/abstractphysicalitem.h"
 
+#include <SFML/Graphics/Sprite.hpp>
+
 namespace Game
 {
 
@@ -13,7 +15,7 @@ public:
 
     ItemType type() const override
     {
-        return ItemType::Terrain;
+        return _type;
     }
     ActionVariant actionVariant() const override
     {
@@ -22,12 +24,15 @@ public:
 
     bool needDestroying() const override;
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+    void update(float deltatime) override;
 
     sf::Vector2f position() const override;
     void execute() override;
 
 private:
-    bool _needLower{ false };
+    sf::Sprite _sprite;
+    sf::Sprite _chainSprite;
+    ItemType _type{ ItemType::TerrainObstacle };
 };
 
 } // namespace Game

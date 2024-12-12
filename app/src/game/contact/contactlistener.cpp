@@ -23,7 +23,12 @@ void ContactListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifold
 {
     const UserData data{ toUserData(contact) };
 
-    if (data.types.test(ItemType::Loot) || data.types.test(ItemType::WaterZone))
+    if (data.types.test(ItemType::Loot) || data.types.test(ItemType::WaterZone)
+        || data.types.test(ItemType::NonCollided))
+        contact->SetEnabled(false);
+
+    if (std::all_of(data.itemTypeToItem.cbegin(), data.itemTypeToItem.cend(),
+                    [](const auto &pair) { return pair.first == ItemType::Terrain; }))
         contact->SetEnabled(false);
 
     if (data.types.test(ItemType::Bullet))
