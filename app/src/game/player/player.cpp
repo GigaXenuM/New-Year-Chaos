@@ -78,6 +78,11 @@ size_t Player::getHealthCount() const
     return _countOfHealthItem;
 }
 
+sf::Sprite &Player::getSprite()
+{
+    return _sprite;
+}
+
 bool Player::isDead() const
 {
     return isStateActive(State::Dead) && _deadAnimation.isFinished();
@@ -108,6 +113,9 @@ void Player::visitActions(const std::vector<IAction *> &actions)
 
 void Player::executeAvailableAction()
 {
+    if (!_availableAction)
+        return;
+
     switch (_availableAction->actionVariant())
     {
     case ActionVariant::PickUpTea:

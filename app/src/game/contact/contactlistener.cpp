@@ -4,6 +4,7 @@
 #include "player/player.h"
 #include <iostream>
 #include <items/deadzone/waterzone.h>
+#include <items/loot/tealoot.h>
 
 namespace Game
 {
@@ -24,8 +25,11 @@ void ContactListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifold
 
     if (data.types.test(ItemType::Loot) || data.types.test(ItemType::WaterZone))
     {
+        auto *loot{ dynamic_cast<TeaLoot *>(data.itemTypeToItem.at(ItemType::Loot)) };
+        loot->showHint();
         contact->SetEnabled(false);
     }
+
     if (data.types.test(ItemType::Bullet))
     {
         auto *snowBall{ dynamic_cast<PhysicalBullet *>(data.itemTypeToItem.at(ItemType::Bullet)) };

@@ -84,6 +84,8 @@ set(HEADER_FILES
     src/util/geometryoperation.h
     src/util/debugdrawer.h
     src/util/timeaccumulator.h
+
+    src/game/tips/hint.h
 )
 
 set(SOURCE_FILES
@@ -148,6 +150,8 @@ set(SOURCE_FILES
     src/util/debugdrawer.cpp
     src/util/geometryoperation.cpp
     src/util/timeaccumulator.cpp
+
+    src/game/tips/hint.cpp
 )
 
 include_directories(

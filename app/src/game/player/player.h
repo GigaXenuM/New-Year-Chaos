@@ -21,13 +21,15 @@ public:
     void health();
     void addHealthItem();
 
-    [[nodiscard]] size_t getHealthCount() const;
+    [[nodiscard]] bool isDead() const;
     [[nodiscard]] float getFreezPoints() const;
     [[nodiscard]] float getHealthPoints() const;
+    [[nodiscard]] size_t getHealthCount() const;
+
+    [[nodiscard]] sf::Sprite &getSprite();
     [[nodiscard]] sf::Vector2f getPosition() const;
 
     void damage(float power) override;
-    [[nodiscard]] bool isDead() const;
 
     void kill();
 
