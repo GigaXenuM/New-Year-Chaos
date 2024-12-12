@@ -1,4 +1,4 @@
-#include "Bot2.h"
+#include "bot2.h"
 
 #include "player.h"
 

@@ -78,6 +78,8 @@ void ResourseManager::loadAllTextures()
     loadTextures("snowman_3/Throwing/", TextureType::Snowman_3_throw, "Throwing");
 
     loadTextures("dead-zones", TextureType::Dead_water_zone, "waterzone");
+
+    loadTextures("level/bridge", TextureType::Bridge, "bridge");
 }
 
 void ResourseManager::loadSounds(const std::filesystem::path &path, const SoundType type,

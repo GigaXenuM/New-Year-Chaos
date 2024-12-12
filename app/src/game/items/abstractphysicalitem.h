@@ -29,7 +29,6 @@ public:
     virtual bool needDestroying() const = 0;
     void destroyCollider();
 
-protected:
     b2Body *collider() const;
 
 private:

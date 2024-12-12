@@ -90,6 +90,7 @@ void ObjectLayer::fillObjects(const tmx::ObjectGroup &layer)
         object->setFillColor(sf::Color::Transparent);
         object->setOutlineColor(sf::Color::Red);
         object->setOutlineThickness(1);
+        object->setRotation(tmxObject.getRotation());
 
         _collidersMap[tmxObject.getClass()].push_back(std::move(object));
     }

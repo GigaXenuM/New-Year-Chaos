@@ -2,6 +2,7 @@
 
 #include "action/iaction.h"
 #include "action/iactionhandler.h"
+#include "items/bridge/bridge.h"
 #include "items/colliderfactory.h"
 
 #include "items/deadzone/waterzone.h"
@@ -76,7 +77,7 @@ Controller::Controller(sf::RenderTarget *renderTarget, sf::View *view, EventHand
       _gameView{ view },
       _safeZoneSize{ view->getSize().x * 0.2f, view->getSize().y * 0.2f },
       _halfSafeZone{ _safeZoneSize / 2.f },
-      _phisicalWorld{ std::make_unique<b2World>(b2Vec2(0.f, 3.8f)) }
+      _physicalWorld{ std::make_unique<b2World>(b2Vec2(0.f, 3.8f)) }
 {
     loadLevel();
     initPhisicalWorld();
@@ -172,30 +173,36 @@ void Controller::loadLevel()
 void Controller::initPhisicalWorld()
 {
     Util::DebugDrawer *debugDraw(new Util::DebugDrawer{ _renderTarget });
-    _phisicalWorld->SetAllowSleeping(true);
-    _phisicalWorld->SetDebugDraw(debugDraw);
-    _phisicalWorld->SetContactListener(ContactListener::instance());
+    _physicalWorld->SetAllowSleeping(true);
+    _physicalWorld->SetDebugDraw(debugDraw);
+    _physicalWorld->SetContactListener(ContactListener::instance());
     debugDraw->SetFlags(b2Draw::e_shapeBit);
 
     std::vector<sf::Shape *> terrainShapes{ _objectLayer->objects("terrain") };
-    b2Body *terrainBody{ ColliderFactory::create<ItemType::Terrain>(_phisicalWorld.get(),
+    b2Body *terrainBody{ ColliderFactory::create<ItemType::Terrain>(_physicalWorld.get(),
                                                                     terrainShapes) };
     auto *terrainItem{ new StaticElement{ terrainBody, ItemType::Terrain } };
 
     std::vector<sf::Shape *> terrainObstacleShapes{ _objectLayer->objects("terrain_obstacle") };
     b2Body *terrainObstacleBody{ ColliderFactory::create<ItemType::TerrainObstacle>(
-        _phisicalWorld.get(), terrainObstacleShapes) };
+        _physicalWorld.get(), terrainObstacleShapes) };
     auto *terrainObstackleItem{ new StaticElement{ terrainObstacleBody,
                                                    ItemType::TerrainObstacle } };
 
     _elements.push_back(std::unique_ptr<Graphics::Drawable>{ terrainItem });
     _elements.push_back(std::unique_ptr<Graphics::Drawable>{ terrainObstackleItem });
 
-    const auto &itemContainer{ _objectLayer->objects("dead_zone") };
-
-    for (auto *shape : itemContainer)
+    const auto &bridgeContainer{ _objectLayer->objects("bridge") };
+    for (auto *shape : bridgeContainer)
     {
-        b2Body *body{ ColliderFactory::create<ItemType::DeadZone>(_phisicalWorld.get(),
+        auto *bridge{ new Bridge{ _physicalWorld.get(), shape } };
+        _elements.push_back(std::unique_ptr<Bridge>(bridge));
+    }
+
+    const auto &deadZoneContainer{ _objectLayer->objects("dead_zone") };
+    for (auto *shape : deadZoneContainer)
+    {
+        b2Body *body{ ColliderFactory::create<ItemType::DeadZone>(_physicalWorld.get(),
                                                                   { shape }) };
         _elements.push_back(std::make_unique<StaticElement>(body, ItemType::DeadZone));
     }
@@ -207,7 +214,7 @@ void Controller::initPlayer()
     assert(playerContainer.size() == 1);
     sf::Shape *playerShape{ playerContainer.front() };
 
-    gPlayer = new Player(_phisicalWorld.get(), playerShape);
+    gPlayer = new Player(_physicalWorld.get(), playerShape);
     _elements.push_back(std::unique_ptr<Player>(gPlayer));
 }
 
@@ -219,17 +226,17 @@ void Controller::initBot()
 
     for (auto *shape : itemContainer3)
     {
-        _elements.push_back(std::make_unique<Bot3>(_phisicalWorld.get(), shape));
+        _elements.push_back(std::make_unique<Bot3>(_physicalWorld.get(), shape));
     }
 
     for (auto *shape : itemContainer2)
     {
-        _elements.push_back(std::make_unique<Bot2>(_phisicalWorld.get(), shape));
+        _elements.push_back(std::make_unique<Bot2>(_physicalWorld.get(), shape));
     }
 
     for (auto *shape : itemContainer)
     {
-        _elements.push_back(std::make_unique<Bot>(_phisicalWorld.get(), shape));
+        _elements.push_back(std::make_unique<Bot>(_physicalWorld.get(), shape));
     }
 }
 
@@ -239,7 +246,7 @@ void Controller::initDeadZone()
 
     for (auto *shape : itemContainer)
     {
-        _elements.push_back(std::make_unique<WaterZone>(_phisicalWorld.get(), shape));
+        _elements.push_back(std::make_unique<WaterZone>(_physicalWorld.get(), shape));
     }
 }
 
@@ -249,7 +256,7 @@ void Controller::initLoot()
 
     for (auto *shape : itemContainer)
     {
-        auto *lootItem = new TeaLoot{ _phisicalWorld.get(), shape };
+        auto *lootItem = new TeaLoot{ _physicalWorld.get(), shape };
         lootItem->setCallback([lootItem]() { lootItem->prepareDestroy(); });
         _elements.push_back(std::unique_ptr<TeaLoot>{ lootItem });
     }
@@ -261,7 +268,7 @@ void Controller::updatePhysics(float deltatime)
 
     while (_timeAccumulator.resolve(TIME_STEP))
     {
-        _phisicalWorld->Step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
+        _physicalWorld->Step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 
         for (const auto &item : _elements)
         {
@@ -285,7 +292,7 @@ void Controller::render(float deltatime)
     for (const auto &item : _elements)
         _renderTarget->draw(*item);
 
-    _phisicalWorld->DebugDraw();
+    _physicalWorld->DebugDraw();
 }
 
 void Controller::updateCameraPos()

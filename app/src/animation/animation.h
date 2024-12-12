@@ -5,7 +5,7 @@
 class Animation
 {
 public:
-    explicit Animation(std::vector<sf::Texture> &textures, float frameTime = 0.1f);
+    explicit Animation(const std::vector<sf::Texture> &textures, float frameTime = 0.1f);
 
     void start(const float deltatime, sf::Sprite &sprite, bool loop = true);
     void stop();
@@ -14,7 +14,7 @@ public:
     bool isFinished() const;
 
 private:
-    std::vector<sf::Texture> &_textures;
+    const std::vector<sf::Texture> &_textures;
     float _frameTime;
     float _elapsedTime{ 0.f };
     int _currentFrame{ 0 };

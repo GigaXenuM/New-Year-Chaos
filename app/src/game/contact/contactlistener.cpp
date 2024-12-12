@@ -24,11 +24,7 @@ void ContactListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifold
     const UserData data{ toUserData(contact) };
 
     if (data.types.test(ItemType::Loot) || data.types.test(ItemType::WaterZone))
-    {
-        auto *loot{ dynamic_cast<TeaLoot *>(data.itemTypeToItem.at(ItemType::Loot)) };
-        loot->showHint();
         contact->SetEnabled(false);
-    }
 
     if (data.types.test(ItemType::Bullet))
     {
@@ -102,6 +98,15 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
     if (data.types.test(ItemType::DeadZone) && data.types.test(ItemType::Entity) && contacted)
     {
         gPlayer->kill();
+    }
+
+    if (data.types.test(ItemType::Loot) && data.types.test(ItemType::Entity))
+    {
+        if (data.itemTypeToItem.at(ItemType::Entity) != gPlayer)
+            return;
+
+        auto *loot{ dynamic_cast<TeaLoot *>(data.itemTypeToItem.at(ItemType::Loot)) };
+        loot->showHint();
     }
 
     if (data.types.test(ItemType::Bullet) && contacted)

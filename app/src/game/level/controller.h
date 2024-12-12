@@ -75,7 +75,7 @@ private:
 
     std::unique_ptr<ObjectLayer> _objectLayer;
 
-    std::unique_ptr<b2World> _phisicalWorld;
+    std::unique_ptr<b2World> _physicalWorld;
 
     Util::TimeAccumulator _timeAccumulator;
 

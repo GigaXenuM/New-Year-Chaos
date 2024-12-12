@@ -66,17 +66,6 @@ void TeaLoot::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
     if (_isNeedShowHint)
         _hint.draw(target, states);
-
-    auto shape{ Util::convertBodyToSFMLShape(collider()) };
-
-    sf::RectangleShape border(shape.getLocalBounds().getSize());
-    border.setPosition(shape.getPosition());
-    border.setOutlineColor(sf::Color::Magenta);
-    border.setOutlineThickness(10);
-    border.setFillColor(sf::Color::Transparent);
-    border.setOrigin(shape.getOrigin());
-    border.setScale(shape.getScale());
-    target.draw(border, states);
 }
 
 sf::Vector2f TeaLoot::position() const

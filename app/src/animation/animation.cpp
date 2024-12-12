@@ -1,6 +1,6 @@
 #include "animation.h"
 
-Animation::Animation(std::vector<sf::Texture> &textures, float frameTime)
+Animation::Animation(const std::vector<sf::Texture> &textures, float frameTime)
     : _textures(textures), _frameTime(frameTime)
 {
 }

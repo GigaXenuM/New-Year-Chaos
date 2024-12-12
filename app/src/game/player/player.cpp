@@ -113,7 +113,7 @@ void Player::visitActions(const std::vector<IAction *> &actions)
 
 void Player::executeAvailableAction()
 {
-    if (!_availableAction)
+    if (_availableAction == nullptr)
         return;
 
     switch (_availableAction->actionVariant())
@@ -125,8 +125,7 @@ void Player::executeAvailableAction()
         break;
     }
 
-    if (_availableAction != nullptr)
-        _availableAction->execute();
+    _availableAction->execute();
 }
 
 float Player::getFreezPoints() const

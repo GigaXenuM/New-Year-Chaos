@@ -19,13 +19,20 @@ set(HEADER_FILES
     src/game/player/bot2.h
     src/game/player/bot3.h
     src/game/player/player.h
+    src/game/items/itemtype.h
     src/game/items/abstractphysicalitem.h
     src/game/items/entity/physicalentity.h
     src/game/items/bullet/physicalbullet.h
+    src/game/items/loot/tealoot.h
+    src/game/items/bridge/bridge.h
+    src/game/items/colliderfactory.h
+    src/game/items/bullet/snowball.h
+    src/game/items/bullet/axebullet.h
+    src/game/items/deadzone/waterzone.h
     src/game/hud/hudhealthbar.h
     src/game/hud/hudcomponents.h
     src/game/hud/weaponicon.h
-    src/game/items/itemtype.h
+    src/game/hud/teaicon.h
     src/game/weapon/iweapon.h
     src/game/weapon/snowballgun.h
     src/game/weapon/axegun.h
@@ -33,7 +40,6 @@ set(HEADER_FILES
     src/game/action/pickupteaaction.h
     src/game/action/actionvariant.h
     src/game/action/iactionhandler.h
-    src/game/items/loot/tealoot.h
 
     src/visitor/ivisitor.h
     src/visitor/defaultvisitor.h
@@ -50,12 +56,6 @@ set(HEADER_FILES
 
     src/animation/animation.h
 
-    src/game/items/bullet/snowball.h
-    src/game/items/bullet/axebullet.h
-
-    src/game/items/colliderfactory.h
-    src/game/hud/teaicon.h
-
     src/event/event.h
     src/event/eventhandler.h
     src/event/keyevents/keyboard.h
@@ -66,8 +66,6 @@ set(HEADER_FILES
     src/event/mouseevents/mousereleaseevent.h
     src/event/mouseevents/mousescrollevent.h
     src/event/mouseevents/mouse.h
-
-    src/game/items/deadzone/waterzone.h
 
     src/game/weapon/iweapon.cpp
     src/geometry/alignment.h
@@ -106,6 +104,11 @@ set(SOURCE_FILES
     src/game/player/player.cpp
     src/game/items/entity/physicalentity.cpp
     src/game/items/bullet/physicalbullet.cpp
+    src/game/items/loot/tealoot.cpp
+    src/game/items/bridge/bridge.cpp
+    src/game/items/bullet/snowball.cpp
+    src/game/items/bullet/axebullet.cpp
+    src/game/items/deadzone/waterzone.cpp
     src/game/hud/hudhealthbar.cpp
     src/game/hud/hudcomponents.cpp
     src/game/hud/teaicon.cpp
@@ -113,7 +116,6 @@ set(SOURCE_FILES
     src/game/weapon/snowballgun.cpp
     src/game/weapon/axegun.cpp
     src/game/action/pickupteaaction.cpp
-    src/game/items/loot/tealoot.cpp
 
     src/game/items/colliderfactory.cpp
 
@@ -135,11 +137,6 @@ set(SOURCE_FILES
     src/event/mouseevents/mousemoveevent.cpp
     src/event/mouseevents/mousereleaseevent.cpp
     src/event/mouseevents/mousescrollevent.cpp
-
-    src/game/items/bullet/snowball.cpp
-    src/game/items/bullet/axebullet.cpp
-
-    src/game/items/deadzone/waterzone.cpp
 
     src/util/geometryoperation.cpp
     src/util/timeaccumulator.cpp
@@ -165,7 +162,7 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/app/src/event"
 )
 
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} )
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-audio sfml-graphics tmxlite box2d)
 
