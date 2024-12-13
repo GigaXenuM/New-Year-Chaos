@@ -148,7 +148,7 @@ void Player::updateAnimation(float deltatime)
         return;
     }
 
-    if (isStateActive(State::Run))
+    if (isStateActive(State::Run) && isStateActive(State::Right) || isStateActive(State::Left))
     {
         _runAnimation.start(deltatime, _sprite);
         if (isStateActive(State::Right))
