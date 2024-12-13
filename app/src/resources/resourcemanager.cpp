@@ -77,7 +77,8 @@ void ResourseManager::loadAllTextures()
     loadTextures("snowman_3/Walking/", TextureType::Snowman_3_walk, "Walking");
     loadTextures("snowman_3/Throwing/", TextureType::Snowman_3_throw, "Throwing");
 
-    loadTextures("dead-zones", TextureType::Dead_water_zone, "waterzone");
+    loadTextures("dead-zones/", TextureType::Dead_water_zone, "waterzone");
+    loadTextures("key/", TextureType::Key, "key");
 
     loadTextures("level/bridge", TextureType::Bridge, "bridge");
     loadTextures("level/chain", TextureType::Chain, "chain");

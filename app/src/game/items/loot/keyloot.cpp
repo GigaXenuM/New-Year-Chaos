@@ -1,4 +1,4 @@
-#include "tealoot.h"
+#include "keyloot.h"
 
 #include "items/colliderfactory.h"
 #include "resources/resourcemanager.h"
@@ -9,9 +9,9 @@
 namespace Game
 {
 
-TeaLoot::TeaLoot(b2World *world, sf::Shape *shape)
+KeyLoot::KeyLoot(b2World *world, sf::Shape *shape)
     : AbstractPhysicalItem{ ColliderFactory::create<ItemType::Loot>(world, { shape }) },
-      _sprite{ ResourseManager::getInstance()->getTextures(TextureType::Tea).front() },
+      _sprite{ ResourseManager::getInstance()->getTextures(TextureType::Key).front() },
       _hint{ "Press E to pickup" }
 {
     _hint.setPosition({ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE).x,
@@ -20,32 +20,32 @@ TeaLoot::TeaLoot(b2World *world, sf::Shape *shape)
     _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
 }
 
-void TeaLoot::showHint()
+void KeyLoot::showHint()
 {
     _isNeedShowHint = true;
 }
 
-void TeaLoot::hideHint()
+void KeyLoot::hideHint()
 {
     _isNeedShowHint = false;
 }
 
-bool TeaLoot::needDestroying() const
+bool KeyLoot::needDestroying() const
 {
     return _needDestroy;
 }
 
-void TeaLoot::prepareDestroy()
+void KeyLoot::prepareDestroy()
 {
     _needDestroy = true;
 }
 
-void TeaLoot::setCallback(std::function<void()> actionCallback)
+void KeyLoot::setCallback(std::function<void()> actionCallback)
 {
     _actionCallback = std::move(actionCallback);
 }
 
-void TeaLoot::update(float deltatime)
+void KeyLoot::update(float deltatime)
 {
     _sprite.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
     if (_isNeedShowHint)
@@ -60,22 +60,33 @@ void TeaLoot::update(float deltatime)
     }
 }
 
-void TeaLoot::draw(sf::RenderTarget &target, sf::RenderStates states) const
+void KeyLoot::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(_sprite, states);
 
     if (_isNeedShowHint)
         _hint.draw(target, states);
+
+    auto shape{ Util::convertBodyToSFMLShape(collider()) };
+
+    sf::RectangleShape border(shape.getLocalBounds().getSize());
+    border.setPosition(shape.getPosition());
+    border.setOutlineColor(sf::Color::Magenta);
+    border.setOutlineThickness(10);
+    border.setFillColor(sf::Color::Transparent);
+    border.setOrigin(shape.getOrigin());
+    border.setScale(shape.getScale());
+    target.draw(border, states);
 }
 
-sf::Vector2f TeaLoot::position() const
+sf::Vector2f KeyLoot::position() const
 {
     return Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE);
 }
 
-void TeaLoot::execute()
+void KeyLoot::execute()
 {
-    _actionCallback();
+    prepareDestroy();
 }
 
 } // namespace Game

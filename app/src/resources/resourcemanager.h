@@ -66,10 +66,9 @@ enum class TextureType
     // Zones
     Dead_water_zone,
 
-    // Guns
-    SnowBallGun,
+    Key,
 
-    // Map elements
+    SnowBallGun,
     Bridge,
     Chain,
 };

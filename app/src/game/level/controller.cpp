@@ -408,6 +408,8 @@ void Controller::destroyRedundantItems()
         {
             if (abstractPhysicalItem->needDestroying())
             {
+                for (auto *drop : abstractPhysicalItem->dropLoots())
+                    _elements.insert({ POSTFIX_DRAW, std::unique_ptr<AbstractPhysicalItem>(drop) });
                 abstractPhysicalItem->destroyCollider();
                 item.reset();
             }

@@ -252,7 +252,7 @@ void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const
     border.setFillColor(sf::Color::Transparent);
     border.setOrigin(_sprite.getOrigin());
     border.setScale(_sprite.getScale());
-    target.draw(border, states);
+    // target.draw(border, states);
 }
 
 } // namespace Game

@@ -24,7 +24,14 @@ public:
     sf::FloatRect boundingRect() const;
 
     virtual ItemType type() const = 0;
-    virtual void updatePhysics(){};
+    virtual void updatePhysics() {};
+    virtual std::vector<AbstractPhysicalItem *> dropLoots()
+    {
+        return {};
+    };
+    virtual void showHint()
+    {
+    }
 
     virtual bool needDestroying() const = 0;
     void destroyCollider();

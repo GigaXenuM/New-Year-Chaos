@@ -14,6 +14,8 @@
 
 #include <box2d/b2_world.h>
 
+#include <items/loot/keyloot.h>
+
 namespace Game
 {
 
@@ -42,6 +44,13 @@ void Bot::damage(float power)
         updateState(State::Dead, true);
     }
     setValue(_healthPoint);
+}
+
+std::vector<AbstractPhysicalItem *> Bot::dropLoots()
+{
+    sf::RectangleShape shape{ { 50, 50 } };
+    shape.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
+    return std::vector<AbstractPhysicalItem *>{ new KeyLoot(collider()->GetWorld(), &shape) };
 }
 
 void Bot::update(float deltatime)

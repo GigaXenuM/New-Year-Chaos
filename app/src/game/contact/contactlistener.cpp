@@ -110,7 +110,7 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
         if (data.itemTypeToItem.at(ItemType::Entity) != gPlayer)
             return;
 
-        auto *loot{ dynamic_cast<TeaLoot *>(data.itemTypeToItem.at(ItemType::Loot)) };
+        auto *loot{ dynamic_cast<AbstractPhysicalItem *>(data.itemTypeToItem.at(ItemType::Loot)) };
         loot->showHint();
     }
 
