@@ -1,6 +1,7 @@
 #include "keyloot.h"
 
 #include "items/colliderfactory.h"
+#include "player/player.h"
 #include "resources/resourcemanager.h"
 
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -16,8 +17,9 @@ KeyLoot::KeyLoot(b2World *world, sf::Shape *shape)
 {
     _hint.setPosition({ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE).x,
                         Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE).y
-                            - _sprite.getLocalBounds().height });
+                            - gPlayer->boundingRect().height });
     _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
+    _sprite.setScale(0.2, 0.2);
 }
 
 void KeyLoot::showHint()
