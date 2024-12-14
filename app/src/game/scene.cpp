@@ -1,13 +1,11 @@
 #include "scene.h"
 
-#include "keyevents/keypressevent.h"
 #include "level/controller.h"
 
 #include "event/mouseevents/mousescrollevent.h"
 #include "mouseevents/mousemoveevent.h"
 #include "mouseevents/mousepressevent.h"
 #include "mouseevents/mousereleaseevent.h"
-#include "player/player.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
@@ -61,8 +59,8 @@ void Scene::mouseMoveEvent(MouseMoveEvent *event)
 void Scene::mouseScrollEvent(MouseScrollEvent *event)
 {
     const float rawDelta{ event->delta() };
-    const float delta{ rawDelta / rawDelta - rawDelta / 10.f };
-    _scaling *= delta;
+    const float delta{ rawDelta * 0.1f };
+    _scaling -= delta;
 
     _view->setSize(_viewSize * _scaling);
 }

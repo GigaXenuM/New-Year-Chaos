@@ -65,6 +65,7 @@ private:
     void updateCameraPos();
     void destroyRedundantItems();
 
+    void visitActions();
     void executeAvailableActions();
 
     sf::RenderTarget *_renderTarget{ nullptr };

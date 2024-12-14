@@ -24,8 +24,7 @@ public:
         return ActionVariant::PickUpTea;
     }
 
-    void showHint();
-    void hideHint();
+    void showHint() override;
 
     bool needDestroying() const override;
     void prepareDestroy();

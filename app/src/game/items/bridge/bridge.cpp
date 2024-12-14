@@ -1,5 +1,6 @@
 #include "bridge.h"
 
+#include "items/bridge/bridgedrawablejoint.h"
 #include "items/colliderfactory.h"
 #include "resources/resourcemanager.h"
 
@@ -11,10 +12,15 @@ namespace Game
 
 Bridge::Bridge(b2World *world, sf::Shape *shape)
     : AbstractPhysicalItem{ ColliderFactory::create<ItemType::Terrain>(world, { shape }) },
-      _sprite{ ResourseManager::getInstance()->getTextures(TextureType::Bridge).front() }
+      _sprite{ ResourseManager::getInstance()->getTextures(TextureType::Bridge).front() },
+      _postDrawElement{ new BridgeDrawableJoint(this) },
+      _actionPos{ Util::pointBy(_postDrawElement->_chainSprite.getGlobalBounds(),
+                                { Align::Bottom, Align::Left }) }
+
 {
     constexpr float scale{ 0.5f };
     _sprite.setScale(scale, scale);
+    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
 }
 
 bool Bridge::needDestroying() const
@@ -29,25 +35,16 @@ void Bridge::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
 void Bridge::update(float deltatime)
 {
-    const sf::Vector2f position{ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE) };
-    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
-    _sprite.setPosition(position);
+    constexpr float RAD_TO_DEG{ 180.f / b2_pi };
+    const float angleInDegrees{ collider()->GetAngle() * RAD_TO_DEG + _rotationOffset };
 
-    constexpr float rotationOffset = -90.f;
-    constexpr float RAD_TO_DEG = 180.f / b2_pi;
-    float angleInDegrees = collider()->GetAngle() * RAD_TO_DEG;
-    _sprite.setRotation(angleInDegrees + rotationOffset);
+    _sprite.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
+    _sprite.setRotation(angleInDegrees);
 }
 
-sf::Vector2f Bridge::position() const
+Graphics::Drawable *Bridge::postDrawElement() const
 {
-    return Util::pointBy(boundingRect(), { Align::Left, Align::Bottom });
-}
-
-void Bridge::execute()
-{
-    collider()->SetType(b2BodyType::b2_dynamicBody);
-    _type = ItemType::Terrain;
+    return _postDrawElement;
 }
 
 } // namespace Game

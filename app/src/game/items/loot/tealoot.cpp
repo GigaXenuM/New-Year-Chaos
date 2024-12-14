@@ -18,16 +18,12 @@ TeaLoot::TeaLoot(b2World *world, sf::Shape *shape)
                         Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE).y
                             - _sprite.getLocalBounds().height });
     _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
+    _sprite.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
 }
 
 void TeaLoot::showHint()
 {
     _isNeedShowHint = true;
-}
-
-void TeaLoot::hideHint()
-{
-    _isNeedShowHint = false;
 }
 
 bool TeaLoot::needDestroying() const
@@ -47,7 +43,6 @@ void TeaLoot::setCallback(std::function<void()> actionCallback)
 
 void TeaLoot::update(float deltatime)
 {
-    _sprite.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
     if (_isNeedShowHint)
     {
         _fadeTime += deltatime;

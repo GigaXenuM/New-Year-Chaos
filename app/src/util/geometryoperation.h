@@ -50,7 +50,7 @@ b2Vec2 sfVecToB2Vec(sf::Vector2f vector);
 
 sf::Color glColorToSFML(const b2Color &color, uint8 alpha = 255);
 
-void createComplexFixture(b2Body *body, const sf::Shape *sfShape, b2FixtureDef *bodyDefinition);
+void createComplexFixture(b2Body *body, const sf::Shape *sfShape, b2FixtureDef *fixtureDefinition);
 
 sf::ConvexShape convertBodyToSFMLShape(const b2Body *body);
 

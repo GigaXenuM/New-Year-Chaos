@@ -82,6 +82,7 @@ void ResourseManager::loadAllTextures()
 
     loadTextures("level/bridge", TextureType::Bridge, "bridge");
     loadTextures("level/chain", TextureType::Chain, "chain");
+    loadTextures("level/stone", TextureType::Stone, "stone");
 }
 
 void ResourseManager::loadSounds(const std::filesystem::path &path, const SoundType type,

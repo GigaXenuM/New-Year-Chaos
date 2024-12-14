@@ -71,6 +71,7 @@ enum class TextureType
     SnowBallGun,
     Bridge,
     Chain,
+    Stone,
 };
 
 class ResourseManager

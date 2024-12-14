@@ -3,6 +3,8 @@
 #include "action/iaction.h"
 #include "action/iactionhandler.h"
 #include "items/bridge/bridge.h"
+#include "items/bridge/bridgedrawablejoint.h"
+#include "items/bridge/openbridgeactionitem.h"
 #include "items/colliderfactory.h"
 
 #include "items/deadzone/waterzone.h"
@@ -16,7 +18,6 @@
 #include "object-layer/objectlayer.h"
 #include "player/bot2.h"
 #include "player/player.h"
-#include "resources/resourcemanager.h"
 #include "tile-layer/tilelayer.h"
 #include "util/debugdrawer.h"
 #include "util/geometryoperation.h"
@@ -72,48 +73,6 @@ private:
     ItemType _type;
 };
 
-class DrawableJoint : public Graphics::Drawable
-{
-public:
-    explicit DrawableJoint(const AbstractPhysicalItem *item, const sf::Sprite &sprite,
-                           float rotationOffset = 0.f)
-        : _item{ item },
-          _sprite{ sprite },
-          _chainSprite{ ResourseManager::getInstance()->getTextures(TextureType::Chain).front() },
-          _rotationOffset{ rotationOffset }
-    {
-        _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
-        _chainSprite.scale(0.2, 0.3);
-        _chainSprite.setOrigin(Util::pointBy(_chainSprite.getLocalBounds(), { Align::Top }));
-        _chainSprite.setRotation(45.f);
-    }
-
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const override
-    {
-        target.draw(_sprite, states);
-        if (_item->type() == ItemType::TerrainObstacle)
-            target.draw(_chainSprite, states);
-    }
-
-    void update(float /*deltatime*/) override
-    {
-        const sf::Vector2f playerPos{ Util::pointBy(_item->boundingRect(),
-                                                    Util::ALIGN_CENTER_STATE) };
-        _sprite.setPosition(playerPos);
-        _chainSprite.setPosition(Util::pointBy(_item->boundingRect(), { Align::Left }));
-
-        constexpr float RAD_TO_DEG = 180.f / b2_pi;
-        float angleInDegrees = _item->collider()->GetAngle() * RAD_TO_DEG;
-        _sprite.setRotation(angleInDegrees + _rotationOffset);
-    }
-
-private:
-    const AbstractPhysicalItem *_item{ nullptr };
-    sf::Sprite _sprite;
-    sf::Sprite _chainSprite;
-    float _rotationOffset{ 0.f };
-};
-
 namespace Level
 {
 
@@ -140,6 +99,8 @@ void Controller::update(float deltatime)
     updatePhysics(deltatime);
     updateGraphics(deltatime);
     render(deltatime);
+    visitActions();
+
     destroyRedundantItems();
 }
 
@@ -270,15 +231,15 @@ void Controller::initPhisicalWorld()
         jointDef.collideConnected = false;
         _physicalWorld->CreateJoint(&jointDef);
 
-        sf::Sprite postBridgeSprite{
-            ResourseManager::getInstance()->getTextures(TextureType::Bridge).back()
-        };
-        postBridgeSprite.scale(0.5, 0.5);
+        sf::RectangleShape openActionShape{ { 64, 64 } };
 
         _elements.insert({ PREFIX_DRAW, std::unique_ptr<Bridge>(bridge) });
-        _elements.insert(
-            { POSTFIX_DRAW, std::make_unique<DrawableJoint>(bridge, postBridgeSprite, -90.f) });
         _elements.insert({ PREFIX_DRAW, std::unique_ptr<StaticElement>(bridgeSupport) });
+        _elements.insert(
+            { POSTFIX_DRAW, std::unique_ptr<Graphics::Drawable>(bridge->postDrawElement()) });
+        _elements.insert(
+            { POSTFIX_DRAW, std::make_unique<OpenBridgeActionItem>(_physicalWorld.get(),
+                                                                   &openActionShape, bridge) });
     }
 
     const auto &deadZoneContainer{ _objectLayer->objects("dead_zone") };
@@ -420,7 +381,7 @@ void Controller::destroyRedundantItems()
         it = (it->second == nullptr) ? _elements.erase(it) : std::next(it);
 }
 
-void Controller::executeAvailableActions()
+void Controller::visitActions()
 {
     std::vector<IAction *> actions;
     std::vector<IActionHandler *> actionHandlers;
@@ -438,10 +399,23 @@ void Controller::executeAvailableActions()
     }
 
     for (auto *actionHandler : actionHandlers)
-    {
         actionHandler->visitActions(actions);
-        actionHandler->executeAvailableAction();
+}
+
+void Controller::executeAvailableActions()
+{
+    std::vector<IActionHandler *> actionHandlers;
+    actionHandlers.reserve(_elements.size());
+
+    for (auto &[_, item] : _elements)
+    {
+        auto *actionHandler{ dynamic_cast<IActionHandler *>(item.get()) };
+        if (actionHandler != nullptr)
+            actionHandlers.push_back(actionHandler);
     }
+
+    for (auto *actionHandler : actionHandlers)
+        actionHandler->executeAvailableAction();
 }
 
 } // namespace Level

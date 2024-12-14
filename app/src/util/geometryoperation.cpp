@@ -36,7 +36,7 @@ sf::Color glColorToSFML(const b2Color &color, uint8 alpha)
                      static_cast<uint8>(color.b * 255), alpha);
 }
 
-void createComplexFixture(b2Body *body, const sf::Shape *shape, b2FixtureDef *bodyDefinition)
+void createComplexFixture(b2Body *body, const sf::Shape *shape, b2FixtureDef *fixtureDefinition)
 {
     using Point = std::array<float, 2>;
     using Polygon = std::vector<Point>;
@@ -53,8 +53,8 @@ void createComplexFixture(b2Body *body, const sf::Shape *shape, b2FixtureDef *bo
         const sf::Vector2f transformedCenter = transform.transformPoint(circle->getOrigin());
         circleShape.m_p.Set(transformedCenter.x, transformedCenter.y);
 
-        bodyDefinition->shape = &circleShape;
-        b2Fixture *fixture = body->CreateFixture(bodyDefinition);
+        fixtureDefinition->shape = &circleShape;
+        b2Fixture *fixture = body->CreateFixture(fixtureDefinition);
         fixture->GetUserData().pointer = body->GetUserData().pointer;
         return;
     }
@@ -80,8 +80,8 @@ void createComplexFixture(b2Body *body, const sf::Shape *shape, b2FixtureDef *bo
                              transform.transformPoint(0.f, size.y).y);
 
         rectangleShape.Set(vertices, 4);
-        bodyDefinition->shape = &rectangleShape;
-        b2Fixture *fixture = body->CreateFixture(bodyDefinition);
+        fixtureDefinition->shape = &rectangleShape;
+        b2Fixture *fixture = body->CreateFixture(fixtureDefinition);
         fixture->GetUserData().pointer = body->GetUserData().pointer;
         return;
     }
@@ -117,8 +117,8 @@ void createComplexFixture(b2Body *body, const sf::Shape *shape, b2FixtureDef *bo
         b2PolygonShape triangleShape;
         triangleShape.Set(triangleVertices, 3);
 
-        bodyDefinition->shape = &triangleShape;
-        b2Fixture *fixture = body->CreateFixture(bodyDefinition);
+        fixtureDefinition->shape = &triangleShape;
+        b2Fixture *fixture = body->CreateFixture(fixtureDefinition);
         fixture->GetUserData().pointer = body->GetUserData().pointer;
     }
 }

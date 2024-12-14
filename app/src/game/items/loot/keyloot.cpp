@@ -27,11 +27,6 @@ void KeyLoot::showHint()
     _isNeedShowHint = true;
 }
 
-void KeyLoot::hideHint()
-{
-    _isNeedShowHint = false;
-}
-
 bool KeyLoot::needDestroying() const
 {
     return _needDestroy;
@@ -40,11 +35,6 @@ bool KeyLoot::needDestroying() const
 void KeyLoot::prepareDestroy()
 {
     _needDestroy = true;
-}
-
-void KeyLoot::setCallback(std::function<void()> actionCallback)
-{
-    _actionCallback = std::move(actionCallback);
 }
 
 void KeyLoot::update(float deltatime)

@@ -2,7 +2,6 @@
 
 #include "items/bullet/physicalbullet.h"
 #include "player/player.h"
-#include <iostream>
 #include <items/deadzone/waterzone.h>
 #include <items/loot/tealoot.h>
 
@@ -103,15 +102,6 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
     if (data.types.test(ItemType::DeadZone) && data.types.test(ItemType::Entity) && contacted)
     {
         gPlayer->kill();
-    }
-
-    if (data.types.test(ItemType::Loot) && data.types.test(ItemType::Entity))
-    {
-        if (data.itemTypeToItem.at(ItemType::Entity) != gPlayer)
-            return;
-
-        auto *loot{ dynamic_cast<AbstractPhysicalItem *>(data.itemTypeToItem.at(ItemType::Loot)) };
-        loot->showHint();
     }
 
     if (data.types.test(ItemType::Bullet) && contacted)

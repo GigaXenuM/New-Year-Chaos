@@ -15,6 +15,10 @@ public:
     virtual ActionVariant actionVariant() const = 0;
     virtual sf::Vector2f position() const = 0;
     virtual void execute() = 0;
+
+    virtual void showHint()
+    {
+    }
 };
 
 } // namespace Game

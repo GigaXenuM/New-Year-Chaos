@@ -109,6 +109,9 @@ void Player::visitActions(const std::vector<IAction *> &actions)
             _availableAction = action;
         }
     }
+
+    if (_availableAction != nullptr)
+        _availableAction->showHint();
 }
 
 void Player::executeAvailableAction()

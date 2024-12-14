@@ -7,14 +7,12 @@
 
 namespace Game
 {
-class Hint : Graphics::AbstractItem
+class Hint : public Graphics::AbstractItem
 {
 public:
     Hint(const std::string &text);
 
     void setPosition(const sf::Vector2f pos);
-
-    void update(float deltatime) override;
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:

@@ -41,6 +41,8 @@ set(HEADER_FILES
     src/game/action/actionvariant.h
     src/game/action/iactionhandler.h
     src/game/items/loot/keyloot.h
+    src/game/items/bridge/bridgedrawablejoint.h
+    src/game/items/bridge/openbridgeactionitem.h
 
     src/visitor/ivisitor.h
     src/visitor/defaultvisitor.h
@@ -118,6 +120,8 @@ set(SOURCE_FILES
     src/game/weapon/axegun.cpp
     src/game/action/pickupteaaction.cpp
     src/game/items/loot/keyloot.cpp
+    src/game/items/bridge/bridgedrawablejoint.cpp
+    src/game/items/bridge/openbridgeactionitem.cpp
 
     src/game/items/colliderfactory.cpp
 
