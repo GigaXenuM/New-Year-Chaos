@@ -34,9 +34,6 @@
 
 namespace
 {
-constexpr unsigned PREFIX_DRAW{ 0 };
-constexpr unsigned PLAYER_DRAW{ 1 };
-constexpr unsigned POSTFIX_DRAW{ 2 };
 
 constexpr float TIME_STEP = 1.0f / 60.0f;
 constexpr int VELOCITY_ITERATIONS = 8;
@@ -140,7 +137,7 @@ void Controller::mousePressEvent(MousePressEvent *event)
 
 void Controller::loadLevel()
 {
-    _elements.clear();
+    _independentElements.clear();
 
     tmx::Map map;
     map.load("level/terrain.tmx");
@@ -158,8 +155,8 @@ void Controller::loadLevel()
         {
         case tmx::Layer::Type::Tile:
         {
-            _elements.insert(
-                { PREFIX_DRAW,
+            _independentElements.insert(
+                { Depth::BackgroundMap,
                   std::make_unique<TileLayer>(map, layer->getLayerAs<tmx::TileLayer>()) });
             break;
         }
@@ -197,8 +194,10 @@ void Controller::initPhisicalWorld()
     auto *terrainObstackleItem{ new StaticElement{ terrainObstacleBody,
                                                    ItemType::TerrainObstacle } };
 
-    _elements.insert({ PREFIX_DRAW, std::unique_ptr<Graphics::Drawable>{ terrainItem } });
-    _elements.insert({ PREFIX_DRAW, std::unique_ptr<Graphics::Drawable>{ terrainObstackleItem } });
+    _independentElements.insert(
+        { Depth::BackgroundMap, std::unique_ptr<Graphics::Drawable>{ terrainItem } });
+    _independentElements.insert(
+        { Depth::BackgroundMap, std::unique_ptr<Graphics::Drawable>{ terrainObstackleItem } });
 
     const auto &bridgeContainer{ _objectLayer->objects("bridge") };
     for (auto *shape : bridgeContainer)
@@ -233,13 +232,15 @@ void Controller::initPhisicalWorld()
 
         sf::RectangleShape openActionShape{ { 64, 64 } };
 
-        _elements.insert({ PREFIX_DRAW, std::unique_ptr<Bridge>(bridge) });
-        _elements.insert({ PREFIX_DRAW, std::unique_ptr<StaticElement>(bridgeSupport) });
-        _elements.insert(
-            { POSTFIX_DRAW, std::unique_ptr<Graphics::Drawable>(bridge->postDrawElement()) });
-        _elements.insert(
-            { POSTFIX_DRAW, std::make_unique<OpenBridgeActionItem>(_physicalWorld.get(),
-                                                                   &openActionShape, bridge) });
+        _independentElements.insert({ Depth::BackgroundMap, std::unique_ptr<Bridge>(bridge) });
+        _independentElements.insert(
+            { Depth::BackgroundMap, std::unique_ptr<StaticElement>(bridgeSupport) });
+        _independentElements.insert({ Depth::ForegroundMap, std::unique_ptr<Graphics::Drawable>(
+                                                                bridge->postDrawElement()) });
+        _independentElements.insert(
+            { Depth::ForegroundMap,
+              std::make_unique<OpenBridgeActionItem>(_physicalWorld.get(), &openActionShape,
+                                                     bridge) });
     }
 
     const auto &deadZoneContainer{ _objectLayer->objects("dead_zone") };
@@ -247,8 +248,8 @@ void Controller::initPhisicalWorld()
     {
         b2Body *body{ ColliderFactory::create<ItemType::DeadZone>(_physicalWorld.get(),
                                                                   { shape }) };
-        _elements.insert(
-            { PREFIX_DRAW, std::make_unique<StaticElement>(body, ItemType::DeadZone) });
+        _independentElements.insert(
+            { Depth::BackgroundMap, std::make_unique<StaticElement>(body, ItemType::DeadZone) });
     }
 }
 
@@ -259,7 +260,8 @@ void Controller::initPlayer()
     sf::Shape *playerShape{ playerContainer.front() };
 
     gPlayer = new Player(_physicalWorld.get(), playerShape);
-    _elements.insert({ PLAYER_DRAW, std::unique_ptr<Player>(gPlayer) });
+    _independentElements.insert({ Depth::Player, std::unique_ptr<Player>(gPlayer) });
+    _dependedElements.insert({ Depth::Hint, gPlayer->hint() });
 }
 
 void Controller::initBot()
@@ -270,17 +272,20 @@ void Controller::initBot()
 
     for (auto *shape : itemContainer3)
     {
-        _elements.insert({ PREFIX_DRAW, std::make_unique<Bot3>(_physicalWorld.get(), shape) });
+        _independentElements.insert(
+            { Depth::BackgroundMap, std::make_unique<Bot3>(_physicalWorld.get(), shape) });
     }
 
     for (auto *shape : itemContainer2)
     {
-        _elements.insert({ PREFIX_DRAW, std::make_unique<Bot2>(_physicalWorld.get(), shape) });
+        _independentElements.insert(
+            { Depth::BackgroundMap, std::make_unique<Bot2>(_physicalWorld.get(), shape) });
     }
 
     for (auto *shape : itemContainer)
     {
-        _elements.insert({ PREFIX_DRAW, std::make_unique<Bot>(_physicalWorld.get(), shape) });
+        _independentElements.insert(
+            { Depth::BackgroundMap, std::make_unique<Bot>(_physicalWorld.get(), shape) });
     }
 }
 
@@ -290,7 +295,8 @@ void Controller::initDeadZone()
 
     for (auto *shape : itemContainer)
     {
-        _elements.insert({ PREFIX_DRAW, std::make_unique<WaterZone>(_physicalWorld.get(), shape) });
+        _independentElements.insert(
+            { Depth::BackgroundMap, std::make_unique<WaterZone>(_physicalWorld.get(), shape) });
     }
 }
 
@@ -302,7 +308,7 @@ void Controller::initLoot()
     {
         auto *lootItem = new TeaLoot{ _physicalWorld.get(), shape };
         lootItem->setCallback([lootItem]() { lootItem->prepareDestroy(); });
-        _elements.insert({ PREFIX_DRAW, std::unique_ptr<TeaLoot>{ lootItem } });
+        _independentElements.insert({ Depth::BackgroundMap, std::unique_ptr<TeaLoot>{ lootItem } });
     }
 }
 
@@ -314,7 +320,7 @@ void Controller::updatePhysics(float deltatime)
     {
         _physicalWorld->Step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 
-        for (const auto &[_, item] : _elements)
+        for (const auto &[_, item] : _independentElements)
         {
             auto *physicalItem{ dynamic_cast<AbstractPhysicalItem *>(item.get()) };
             if (physicalItem != nullptr)
@@ -325,7 +331,7 @@ void Controller::updatePhysics(float deltatime)
 
 void Controller::updateGraphics(float deltatime)
 {
-    for (const auto &[_, item] : _elements)
+    for (const auto &[_, item] : _independentElements)
         item->update(deltatime);
 
     updateCameraPos();
@@ -333,7 +339,11 @@ void Controller::updateGraphics(float deltatime)
 
 void Controller::render(float deltatime)
 {
-    for (const auto &[_, item] : _elements)
+    auto mergedElements{ _dependedElements };
+    for (auto &[key, uniqueDrawable] : _independentElements)
+        mergedElements.emplace(key, uniqueDrawable.get());
+
+    for (const auto &[_, item] : mergedElements)
         _renderTarget->draw(*item);
 
     _physicalWorld->DebugDraw();
@@ -363,32 +373,33 @@ void Controller::updateCameraPos()
 
 void Controller::destroyRedundantItems()
 {
-    for (auto &[_, item] : _elements)
+    for (auto &[_, item] : _independentElements)
     {
         if (auto abstractPhysicalItem{ dynamic_cast<AbstractPhysicalItem *>(item.get()) })
         {
             if (abstractPhysicalItem->needDestroying())
             {
                 for (auto *drop : abstractPhysicalItem->dropLoots())
-                    _elements.insert({ POSTFIX_DRAW, std::unique_ptr<AbstractPhysicalItem>(drop) });
+                    _independentElements.insert(
+                        { Depth::ForegroundMap, std::unique_ptr<AbstractPhysicalItem>(drop) });
                 abstractPhysicalItem->destroyCollider();
                 item.reset();
             }
         }
     }
 
-    for (auto it = _elements.begin(); it != _elements.end();)
-        it = (it->second == nullptr) ? _elements.erase(it) : std::next(it);
+    for (auto it = _independentElements.begin(); it != _independentElements.end();)
+        it = (it->second == nullptr) ? _independentElements.erase(it) : std::next(it);
 }
 
 void Controller::visitActions()
 {
     std::vector<IAction *> actions;
     std::vector<IActionHandler *> actionHandlers;
-    actions.reserve(_elements.size());
-    actionHandlers.reserve(_elements.size());
+    actions.reserve(_independentElements.size());
+    actionHandlers.reserve(_independentElements.size());
 
-    for (auto &[_, item] : _elements)
+    for (auto &[_, item] : _independentElements)
     {
         auto *action{ dynamic_cast<IAction *>(item.get()) };
         if (action != nullptr)
@@ -405,9 +416,9 @@ void Controller::visitActions()
 void Controller::executeAvailableActions()
 {
     std::vector<IActionHandler *> actionHandlers;
-    actionHandlers.reserve(_elements.size());
+    actionHandlers.reserve(_independentElements.size());
 
-    for (auto &[_, item] : _elements)
+    for (auto &[_, item] : _independentElements)
     {
         auto *actionHandler{ dynamic_cast<IActionHandler *>(item.get()) };
         if (actionHandler != nullptr)

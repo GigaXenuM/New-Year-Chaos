@@ -2,7 +2,6 @@
 
 #include "action/iaction.h"
 #include "items/abstractphysicalitem.h"
-#include "tips/hint.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -20,10 +19,10 @@ public:
     }
     ActionVariant actionVariant() const override
     {
-        return ActionVariant::PickUpTea;
+        return ActionVariant::PickUpKey;
     }
 
-    void showHint() override;
+    std::string hintText() const override;
 
     bool needDestroying() const override;
     void prepareDestroy();
@@ -36,14 +35,7 @@ public:
 
 private:
     sf::Sprite _sprite;
-    Hint _hint;
     float _needDestroy{ false };
-
-    bool _isNeedShowHint{ false };
-
-private:
-    float _fadeTime = 0.0f;
-    float _fadeDuration = 3.0f;
 };
 
 } // namespace Game

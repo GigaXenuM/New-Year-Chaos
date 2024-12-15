@@ -17,15 +17,24 @@
 namespace Game
 {
 
+namespace
+{
+constexpr float DEFAULT_ANIMATION_FRAME_TIME{ 0.075 };
+}
+
 Player *gPlayer = nullptr;
 
 Player::Player(b2World *world, sf::Shape *shape)
     : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 45 },
                      std::make_unique<SnowBallGun>(this, world)),
-      _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run) },
-      _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_dead) },
-      _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_walk) },
-      _idleAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_idle) },
+      _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run),
+                     DEFAULT_ANIMATION_FRAME_TIME },
+      _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_dead),
+                      DEFAULT_ANIMATION_FRAME_TIME },
+      _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_walk),
+                      DEFAULT_ANIMATION_FRAME_TIME },
+      _idleAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_idle),
+                      DEFAULT_ANIMATION_FRAME_TIME },
       _jumpAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_jump) }
 {
     _sprite.setScale({ _scale, _scale });
@@ -50,9 +59,13 @@ sf::Vector2f Player::getPosition() const
     return _sprite.getPosition();
 }
 
+const Graphics::Drawable *Player::hint() const
+{
+    return &_hint;
+}
+
 void Player::damage(float power)
 {
-    // power *= 5;
     if (isStateActive(State::Dead))
         return;
 
@@ -97,7 +110,7 @@ void Player::visitActions(const std::vector<IAction *> &actions)
 {
     _availableAction = nullptr;
 
-    constexpr float threshold{ 200.f };
+    constexpr float threshold{ 100.f };
     float smallestDistance{ threshold };
     for (auto *action : actions)
     {
@@ -110,8 +123,7 @@ void Player::visitActions(const std::vector<IAction *> &actions)
         }
     }
 
-    if (_availableAction != nullptr)
-        _availableAction->showHint();
+    _hint.setText(hintText(_availableAction));
 }
 
 void Player::executeAvailableAction()
@@ -121,10 +133,19 @@ void Player::executeAvailableAction()
 
     switch (_availableAction->actionVariant())
     {
+    case ActionVariant::OpenBridge:
+    {
+        if (!_hasKey)
+            return;
+        break;
+    }
     case ActionVariant::PickUpTea:
+    {
         ++_countOfHealthItem;
         break;
-    default:
+    }
+    case ActionVariant::PickUpKey:
+        _hasKey = true;
         break;
     }
 
@@ -151,35 +172,34 @@ void Player::updateAnimation(float deltatime)
         return;
     }
 
-    if (isStateActive(State::Run) && isStateActive(State::Right) || isStateActive(State::Left))
-    {
-        _runAnimation.start(deltatime, _sprite);
-        if (isStateActive(State::Right))
-            _sprite.setScale({ _scale, _scale });
-        else if (isStateActive(State::Left))
-            _sprite.setScale({ -_scale, _scale });
-        return;
-    }
-
     const bool isMoved{ isStateActive(State::Right) || isStateActive(State::Left) };
-    if (!isMoved)
+    if (isMoved)
     {
-        _idleAnimation.start(deltatime, _sprite);
+        Animation &animation{ isStateActive(State::Run) ? _runAnimation : _walkAnimation };
+
+        animation.start(deltatime, _sprite);
+        const float direction{ isStateActive(State::Right) ? _scale : -_scale };
+        _sprite.setScale({ direction, _scale });
         return;
     }
 
-    _walkAnimation.start(deltatime, _sprite);
-
-    if (isStateActive(State::Right))
-        _sprite.setScale({ _scale, _scale });
-    else if (isStateActive(State::Left))
-        _sprite.setScale({ -_scale, _scale });
+    _idleAnimation.start(deltatime, _sprite);
 }
 
 void Player::updateHealthPoint(float deltatime)
 {
     restoreHealthAndFreezePoints();
     damage(deltatime);
+}
+
+void Player::updateHint()
+{
+    if (!_hint.empty())
+    {
+        const sf::Vector2f topRectPos{ Util::pointBy(boundingRect(), { Align::Top }) };
+        const sf::Vector2f offset{ 0, -boundingRect().height / 2.f };
+        _hint.setPosition(topRectPos + offset);
+    }
 }
 
 void Player::restoreHealthAndFreezePoints()
@@ -220,7 +240,28 @@ void Player::restoreHealthAndFreezePoints()
     }
 }
 
-void Player::updatePosition(float deltatime)
+std::string Player::hintText(IAction *action) const
+{
+    if (action == nullptr)
+        return {};
+
+    switch (action->actionVariant())
+    {
+    case ActionVariant::OpenBridge:
+    {
+        return _hasKey ? action->hintText() : "Find a key\nto unlock";
+    }
+    case ActionVariant::PickUpTea:
+        [[fallthrough]];
+    case ActionVariant::PickUpKey:
+        return action->hintText();
+    }
+
+    assert(false);
+    return {};
+}
+
+void Player::updatePosition()
 {
     if (isStateActive(State::Dead))
     {
@@ -236,9 +277,10 @@ void Player::update(float deltatime)
 {
     PhysicalEntity::update(deltatime);
 
-    updatePosition(deltatime);
+    updatePosition();
     updateAnimation(deltatime);
     updateHealthPoint(deltatime);
+    updateHint();
 }
 
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const
@@ -248,14 +290,8 @@ void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const
     for (const std::unique_ptr<PhysicalBullet> &bullet : weapon()->bullets())
         target.draw(*bullet, states);
 
-    sf::RectangleShape border(_sprite.getLocalBounds().getSize());
-    border.setPosition(_sprite.getPosition());
-    border.setOutlineColor(isStateActive(State::OnGround) ? sf::Color::Green : sf::Color::Red);
-    border.setOutlineThickness(10);
-    border.setFillColor(sf::Color::Transparent);
-    border.setOrigin(_sprite.getOrigin());
-    border.setScale(_sprite.getScale());
-    // target.draw(border, states);
+    if (!_hint.empty())
+        _hint.draw(target, states);
 }
 
 } // namespace Game

@@ -8,30 +8,74 @@
 namespace Game
 {
 
-Hint::Hint(const std::string &text)
+namespace
 {
-    _shape.setFillColor(sf::Color::White);
-    _shape.setSize({ _text.getLocalBounds().width, 20 });
+constexpr unsigned CHARACTER_SIZE{ 18 };
+constexpr unsigned CORNER_RADIUS{ 20 };
+constexpr unsigned SHAPE_MARGIN{ CHARACTER_SIZE * 2 };
+const sf::Color TEXT_COLOR{ 54, 255, 137 };
+const sf::Color BACKGROUND_COLOR{ 66, 59, 65 };
+} // namespace
 
-    _text.setString(text);
+Hint::Hint(const std::string &text) : _shape{ {}, CORNER_RADIUS }
+{
+    _shape.setFillColor(BACKGROUND_COLOR);
+
     _text.setFont(ResourseManager::getInstance()->getFont(FontType::Arial));
-    _text.setCharacterSize(18);
+    _text.setCharacterSize(CHARACTER_SIZE);
     _text.setStyle(sf::Text::Bold);
-    _text.setOrigin(Util::pointBy(_text.getLocalBounds(), Util::ALIGN_CENTER_STATE));
+    _text.setFillColor(TEXT_COLOR);
+
+    setText(text);
+}
+
+bool Hint::empty() const
+{
+    return _text.getString().isEmpty();
+}
+
+void Hint::setText(const std::string &text)
+{
+    _text.setString(text);
+    updateGeometry();
 }
 
 void Hint::setPosition(const sf::Vector2f pos)
 {
+    if (empty())
+        return;
+
     _shape.setPosition(pos);
+    updateGeometry();
+}
 
-    _text.setFillColor(sf::Color(54, 255, 137));
-
-    _text.setPosition(pos);
+void Hint::reset()
+{
+    setText({});
 }
 
 void Hint::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    target.draw(_text, states);
+    if (empty())
+        return;
+
     target.draw(_shape, states);
+    target.draw(_text, states);
+}
+
+void Hint::updateGeometry()
+{
+    const sf::FloatRect textLocalRect{ _text.getLocalBounds() };
+    const sf::Vector2 textSize{ textLocalRect.getSize() };
+
+    const sf::FloatRect shapeLocalRect{ _shape.getLocalBounds() };
+    const sf::FloatRect shapeGlobalRect{ _shape.getGlobalBounds() };
+    const sf::Vector2 shapeNewSize{ textSize.x + SHAPE_MARGIN, textSize.y + SHAPE_MARGIN };
+
+    _shape.setSize(shapeNewSize);
+    _shape.setOrigin(Util::pointBy(shapeLocalRect, { Align::Bottom }));
+
+    _text.setOrigin(Util::pointBy(textLocalRect, Util::ALIGN_CENTER_STATE));
+    _text.setPosition(Util::pointBy(shapeGlobalRect, Util::ALIGN_CENTER_STATE));
 }
 } // namespace Game

@@ -1,7 +1,6 @@
 #include "keyloot.h"
 
 #include "items/colliderfactory.h"
-#include "player/player.h"
 #include "resources/resourcemanager.h"
 
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -12,19 +11,15 @@ namespace Game
 
 KeyLoot::KeyLoot(b2World *world, sf::Shape *shape)
     : AbstractPhysicalItem{ ColliderFactory::create<ItemType::Loot>(world, { shape }) },
-      _sprite{ ResourseManager::getInstance()->getTextures(TextureType::Key).front() },
-      _hint{ "Press E to pickup" }
+      _sprite{ ResourseManager::getInstance()->getTextures(TextureType::Key).front() }
 {
-    _hint.setPosition({ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE).x,
-                        Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE).y
-                            - gPlayer->boundingRect().height });
     _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
     _sprite.setScale(0.2, 0.2);
 }
 
-void KeyLoot::showHint()
+std::string KeyLoot::hintText() const
 {
-    _isNeedShowHint = true;
+    return "Press E to pickup";
 }
 
 bool KeyLoot::needDestroying() const
@@ -40,24 +35,11 @@ void KeyLoot::prepareDestroy()
 void KeyLoot::update(float deltatime)
 {
     _sprite.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
-    if (_isNeedShowHint)
-    {
-        _fadeTime += deltatime;
-        _hint.update(deltatime);
-        if (_fadeTime >= _fadeDuration)
-        {
-            _fadeTime = 0.f;
-            _isNeedShowHint = false;
-        }
-    }
 }
 
 void KeyLoot::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(_sprite, states);
-
-    if (_isNeedShowHint)
-        _hint.draw(target, states);
 
     auto shape{ Util::convertBodyToSFMLShape(collider()) };
 

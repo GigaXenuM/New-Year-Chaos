@@ -114,8 +114,9 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
                 std::any_of(data.itemTypeToItem.cbegin(), data.itemTypeToItem.cend(),
                             [bullet](auto &value) { return bullet->shooter() == value.second; })
             };
-            const bool lootCollided{ data.itemTypeToItem.contains(ItemType::Loot) };
-            if (!shooterCollided && !lootCollided)
+            const bool nonCollided{ data.itemTypeToItem.contains(ItemType::Loot)
+                                    || data.itemTypeToItem.contains(ItemType::NonCollided) };
+            if (!shooterCollided && !nonCollided)
             {
                 bullet->updateState(PhysicalBullet::State::Collide, true);
 

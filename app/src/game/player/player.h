@@ -3,6 +3,7 @@
 #include "action/iactionhandler.h"
 #include "animation/animation.h"
 #include "items/entity/physicalentity.h"
+#include "tips/hint.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -29,6 +30,8 @@ public:
     [[nodiscard]] sf::Sprite &getSprite();
     [[nodiscard]] sf::Vector2f getPosition() const;
 
+    const Drawable *hint() const;
+
     void damage(float power) override;
 
     void kill();
@@ -41,11 +44,14 @@ protected:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
-    void updatePosition(float deltatime);
+    void updatePosition();
     void updateAnimation(float deltatime);
     void updateHealthPoint(float deltatime);
+    void updateHint();
 
     void restoreHealthAndFreezePoints();
+
+    std::string hintText(IAction *action) const;
 
 private:
     const float _scale{ 0.25f };
@@ -57,6 +63,7 @@ private:
     float _healthUpdateTimer{ 0.0f };
 
     bool _isHealthNeeded{ false };
+    bool _hasKey{ false };
 
     sf::Sprite _sprite;
 
@@ -69,6 +76,8 @@ private:
     Animation _jumpAnimation;
 
     IAction *_availableAction{ nullptr };
+
+    Hint _hint;
 };
 
 extern Player *gPlayer;

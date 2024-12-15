@@ -1,22 +1,30 @@
 #pragma once
 
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/Text.hpp>
+#include "item/abstractitem.h"
 
-#include <item/abstractitem.h>
+#include "shape/roundedrectshape.h"
+
+#include <SFML/Graphics/Text.hpp>
 
 namespace Game
 {
 class Hint : public Graphics::AbstractItem
 {
 public:
-    Hint(const std::string &text);
+    Hint(const std::string &text = {});
 
+    bool empty() const;
+
+    void setText(const std::string &text);
     void setPosition(const sf::Vector2f pos);
+    void reset();
+
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
-    sf::RectangleShape _shape;
+    void updateGeometry();
+
+    Graphics::RoundedRectShape _shape;
     sf::Text _text;
 };
 } // namespace Game

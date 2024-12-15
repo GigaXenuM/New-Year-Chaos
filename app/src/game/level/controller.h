@@ -38,6 +38,14 @@ class ObjectLayer;
 
 class Controller : public IUpdatable, public EventHandler
 {
+    enum class Depth
+    {
+        BackgroundMap,
+        Player,
+        ForegroundMap,
+        Hint,
+    };
+
 public:
     explicit Controller(sf::RenderTarget *renderTarget, sf::View *view, EventHandler *parent);
     ~Controller();
@@ -80,7 +88,8 @@ private:
 
     Util::TimeAccumulator _timeAccumulator;
 
-    std::multimap<unsigned, std::unique_ptr<Graphics::Drawable>> _elements;
+    std::multimap<Depth, std::unique_ptr<Graphics::Drawable>> _independentElements;
+    std::multimap<Depth, const Graphics::Drawable *> _dependedElements;
 };
 
 } // namespace Level

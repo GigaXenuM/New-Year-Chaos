@@ -4,6 +4,8 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include <string>
+
 namespace Game
 {
 
@@ -16,8 +18,9 @@ public:
     virtual sf::Vector2f position() const = 0;
     virtual void execute() = 0;
 
-    virtual void showHint()
+    virtual std::string hintText() const
     {
+        return {};
     }
 };
 

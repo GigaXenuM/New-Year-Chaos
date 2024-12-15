@@ -12,6 +12,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 option(BOX2D_BUILD_TESTBED "BOX2D: Build the testbed" OFF)
 option(BOX2D_BUILD_UNIT_TESTS "BOX2D: Build the unit tests" OFF)
 option(EARCUT_BUILD_VIZ "EARCUT: Build the earcut visualizer program" OFF)
+option(EARCUT_BUILD_TESTS "EARCUT: Build the earcut test program" OFF)
+option(EARCUT_BUILD_BENCH "EARCUT: Build the earcut benchmark program" OFF)
 
 add_subdirectory(libs/sfml)
 add_subdirectory(libs/box2d)
@@ -25,4 +27,7 @@ install(TARGETS ${PROJECT_NAME}
 )
 
 file(COPY ${CMAKE_SOURCE_DIR}/app/res/ DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-# file(COPY ${CMAKE_SOURCE_DIR}/libs/sfml/extlibs/bin/x64/ DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+if(WIN32)
+    file(COPY ${CMAKE_SOURCE_DIR}/libs/sfml/extlibs/bin/x64/ DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+endif()

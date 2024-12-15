@@ -37,7 +37,6 @@ set(HEADER_FILES
     src/game/weapon/snowballgun.h
     src/game/weapon/axegun.h
     src/game/action/iaction.h
-    src/game/action/pickupteaaction.h
     src/game/action/actionvariant.h
     src/game/action/iactionhandler.h
     src/game/items/loot/keyloot.h
@@ -56,6 +55,7 @@ set(HEADER_FILES
     src/graphics-element/item/abstractitem.h
     src/graphics-element/button/textbutton.h
     src/graphics-element/layout/verticallayout.h
+    src/graphics-element/shape/roundedrectshape.h
 
     src/animation/animation.h
 
@@ -118,7 +118,6 @@ set(SOURCE_FILES
     src/game/hud/weaponicon.cpp
     src/game/weapon/snowballgun.cpp
     src/game/weapon/axegun.cpp
-    src/game/action/pickupteaaction.cpp
     src/game/items/loot/keyloot.cpp
     src/game/items/bridge/bridgedrawablejoint.cpp
     src/game/items/bridge/openbridgeactionitem.cpp
@@ -133,6 +132,7 @@ set(SOURCE_FILES
     src/graphics-element/button/textbutton.cpp
     src/graphics-element/item/abstractitem.cpp
     src/graphics-element/layout/verticallayout.cpp
+    src/graphics-element/shape/roundedrectshape.cpp
 
     src/animation/animation.cpp
 

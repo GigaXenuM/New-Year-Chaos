@@ -2,7 +2,6 @@
 
 #include "action/iaction.h"
 #include "items/abstractphysicalitem.h"
-#include "tips/hint.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -25,7 +24,7 @@ public:
         return ActionVariant::OpenBridge;
     }
 
-    void showHint() override;
+    std::string hintText() const override;
 
     bool needDestroying() const override;
 
@@ -38,11 +37,7 @@ public:
 private:
     Bridge *_bridge{ nullptr };
     sf::Sprite _sprite;
-    Hint _hint;
-
-    bool _needShowHint{ false };
-    float _fadeTime = 0.0f;
-    const float _fadeDuration = 3.0f;
+    std::string _hintText;
 };
 
 } // namespace Game
