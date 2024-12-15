@@ -16,6 +16,8 @@ public:
 
     void damage(float power) override;
 
+    std::vector<AbstractPhysicalItem *> dropLoots() override;
+
 protected:
     void update(float deltatime) override;
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;

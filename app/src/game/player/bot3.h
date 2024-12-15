@@ -15,6 +15,7 @@ public:
     Bot3(b2World *world, sf::Shape *shape);
 
     void damage(float power) override;
+    std::vector<AbstractPhysicalItem *> dropLoots() override;
 
 protected:
     void update(float deltatime) override;

@@ -4,6 +4,7 @@
 
 #include "items/bullet/physicalbullet.h"
 #include "items/colliderfactory.h"
+#include "items/loot/keyloot.h"
 #include "weapon/snowballgun.h"
 
 #include "resources/resourcemanager.h"
@@ -42,6 +43,13 @@ void Bot2::damage(float power)
         updateState(State::Dead, true);
     }
     setValue(_healthPoint);
+}
+
+std::vector<AbstractPhysicalItem *> Bot2::dropLoots()
+{
+    sf::RectangleShape shape{ { 50, 50 } };
+    shape.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
+    return std::vector<AbstractPhysicalItem *>{ new KeyLoot(collider()->GetWorld(), &shape) };
 }
 
 void Bot2::update(float deltatime)
