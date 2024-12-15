@@ -192,13 +192,14 @@ void Player::updateHealthPoint(float deltatime)
     damage(deltatime);
 }
 
-void Player::updateHint()
+void Player::updateHint(float deltatime)
 {
     if (!_hint.empty())
     {
         const sf::Vector2f topRectPos{ Util::pointBy(boundingRect(), { Align::Top }) };
         const sf::Vector2f offset{ 0, -boundingRect().height / 2.f };
         _hint.setPosition(topRectPos + offset);
+        _hint.update(deltatime);
     }
 }
 
@@ -280,7 +281,7 @@ void Player::update(float deltatime)
     updatePosition();
     updateAnimation(deltatime);
     updateHealthPoint(deltatime);
-    updateHint();
+    updateHint(deltatime);
 }
 
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const

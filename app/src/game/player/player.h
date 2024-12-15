@@ -47,7 +47,7 @@ private:
     void updatePosition();
     void updateAnimation(float deltatime);
     void updateHealthPoint(float deltatime);
-    void updateHint();
+    void updateHint(float deltatime);
 
     void restoreHealthAndFreezePoints();
 

@@ -20,11 +20,16 @@ public:
     void reset();
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+    void update(float deltatime) override;
 
 private:
     void updateGeometry();
 
     Graphics::RoundedRectShape _shape;
-    sf::Text _text;
+    sf::Text _textItem;
+
+    std::string _text{};
+    float _drawTextDuration{ 0.f };
+    size_t _characterIndex{ 0 };
 };
 } // namespace Game
