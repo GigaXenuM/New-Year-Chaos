@@ -1,27 +1,25 @@
 #pragma once
 
+#include "SFML/Graphics/Sprite.hpp"
 #include "action/iaction.h"
 #include "items/abstractphysicalitem.h"
-
-#include <SFML/Graphics/Sprite.hpp>
+#include "util/limitedvalue.h"
 
 namespace Game
 {
 
-class Bridge;
-
-class OpenBridgeActionItem : public AbstractPhysicalItem, public IAction
+class Door : public AbstractPhysicalItem, public IAction
 {
 public:
-    explicit OpenBridgeActionItem(b2World *world, sf::Shape *shape, Bridge *bridge);
+    explicit Door(b2World *world, sf::Shape *shape);
 
     ItemType type() const override
     {
-        return ItemType::NonCollided;
+        return _type;
     }
     ActionVariant actionVariant() const override
     {
-        return ActionVariant::OpenBridge;
+        return ActionVariant::OpenDoor;
     }
 
     std::string hintText() const override;
@@ -35,9 +33,11 @@ public:
     void execute() override;
 
 private:
-    Bridge *_bridge{ nullptr };
+    ItemType _type{ ItemType::TerrainObstacle };
     sf::Sprite _sprite;
     std::string _hintText;
+
+    Util::LimitedValueF _doorOpening;
 };
 
 } // namespace Game

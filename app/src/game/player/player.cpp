@@ -137,6 +137,12 @@ void Player::executeAvailableAction()
             return;
         break;
     }
+    case ActionVariant::OpenDoor:
+    {
+        if (!_hasKey)
+            return;
+        break;
+    }
     case ActionVariant::PickUpTea:
     {
         ++_countOfHealthItem;
@@ -144,6 +150,9 @@ void Player::executeAvailableAction()
     }
     case ActionVariant::PickUpKey:
         _hasKey = true;
+        break;
+    default:
+        assert(false);
         break;
     }
 
@@ -247,6 +256,10 @@ std::string Player::hintText(IAction *action) const
     switch (action->actionVariant())
     {
     case ActionVariant::OpenBridge:
+    {
+        return _hasKey ? action->hintText() : "Find a key to unlock";
+    }
+    case ActionVariant::OpenDoor:
     {
         return _hasKey ? action->hintText() : "Find a key to unlock";
     }
