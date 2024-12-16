@@ -8,6 +8,7 @@
 #include "items/colliderfactory.h"
 
 #include "items/deadzone/waterzone.h"
+#include "items/door/door.h"
 #include "items/loot/tealoot.h"
 #include "keyevents/keypressevent.h"
 #include "keyevents/keyreleaseevent.h"
@@ -190,23 +191,32 @@ void Controller::initPhisicalWorld()
     _physicalWorld->SetContactListener(ContactListener::instance());
     debugDraw->SetFlags(b2Draw::e_shapeBit);
 
+    // Terrain
     std::vector<sf::Shape *> terrainShapes{ _objectLayer->objects("terrain") };
     assert(!terrainShapes.empty());
-    b2Body *terrainBody{ ColliderFactory::create<ItemType::Terrain>(_physicalWorld.get(),
-                                                                    terrainShapes) };
-    auto *terrainItem{ new StaticElement{ terrainBody, ItemType::Terrain } };
+    for (auto *shape : terrainShapes)
+    {
+        b2Body *terrainBody{ ColliderFactory::create<ItemType::Terrain>(_physicalWorld.get(),
+                                                                        { shape }) };
+        auto *terrainItem{ new StaticElement{ terrainBody, ItemType::Terrain } };
+        _independentElements.insert(
+            { Depth::BackgroundMap, std::unique_ptr<Graphics::Drawable>{ terrainItem } });
+    }
 
+    // Obstacles
     std::vector<sf::Shape *> terrainObstacleShapes{ _objectLayer->objects("terrain_obstacle") };
-    b2Body *terrainObstacleBody{ ColliderFactory::create<ItemType::TerrainObstacle>(
-        _physicalWorld.get(), terrainObstacleShapes) };
-    auto *terrainObstackleItem{ new StaticElement{ terrainObstacleBody,
-                                                   ItemType::TerrainObstacle } };
+    for (auto *shape : terrainObstacleShapes)
+    {
+        b2Body *terrainObstacleBody{
+            ColliderFactory::create<ItemType::TerrainObstacle>(_physicalWorld.get(), { shape })
+        };
+        auto *terrainObstackleItem{ new StaticElement{ terrainObstacleBody,
+                                                       ItemType::TerrainObstacle } };
+        _independentElements.insert(
+            { Depth::BackgroundMap, std::unique_ptr<Graphics::Drawable>{ terrainObstackleItem } });
+    }
 
-    _independentElements.insert(
-        { Depth::BackgroundMap, std::unique_ptr<Graphics::Drawable>{ terrainItem } });
-    _independentElements.insert(
-        { Depth::BackgroundMap, std::unique_ptr<Graphics::Drawable>{ terrainObstackleItem } });
-
+    // Bridge
     const auto &bridgeContainer{ _objectLayer->objects("bridge") };
     for (auto *shape : bridgeContainer)
     {
@@ -251,6 +261,15 @@ void Controller::initPhisicalWorld()
                                                      bridge) });
     }
 
+    // Doors
+    const auto &doorContainer{ _objectLayer->objects("door") };
+    for (auto *shape : doorContainer)
+    {
+        _independentElements.insert(
+            { Depth::ForegroundMap, std::make_unique<Door>(_physicalWorld.get(), shape) });
+    }
+
+    // Dead Zones
     const auto &deadZoneContainer{ _objectLayer->objects("dead_zone") };
     for (auto *shape : deadZoneContainer)
     {
@@ -259,6 +278,7 @@ void Controller::initPhisicalWorld()
         _independentElements.insert(
             { Depth::BackgroundMap, std::make_unique<StaticElement>(body, ItemType::DeadZone) });
     }
+    // END Dead Zones
 }
 
 void Controller::initPlayer()
