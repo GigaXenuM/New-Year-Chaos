@@ -60,7 +60,7 @@ void Bot::setupSprites()
 
 void Bot::updateAnimation(float deltatime)
 {
-    if (isStateActive(State::Dead) && !_deadAnimation.isPlaying())
+    if (isStateActive(State::Dead))
     {
         _deadAnimation.start(deltatime, _sprite, false);
         return;
