@@ -86,6 +86,8 @@ set(HEADER_FILES
     src/util/geometryoperation.h
     src/util/debugdrawer.h
     src/util/timeaccumulator.h
+    src/util/limitedvalue.h
+    src/util/typetraits.h
 
     src/game/tips/hint.h
 )

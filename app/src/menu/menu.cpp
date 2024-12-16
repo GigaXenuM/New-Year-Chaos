@@ -5,6 +5,7 @@
 #include "controller.h"
 #include "item/abstractitem.h"
 #include "layout/verticallayout.h"
+#include "player/player.h"
 #include "resources/resourcemanager.h"
 
 #include <SFML/Graphics/Font.hpp>
@@ -28,7 +29,9 @@ Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent)
                         sf::Vector2f(renderTarget->getSize().x, renderTarget->getSize().y))) },
       _layout{ std::make_unique<VerticalLayout>(sf::FloatRect{ VIEW_OFFSET, _view->getSize() }) },
       _levelController{ std::make_unique<Game::Level::Controller>(renderTarget, nullptr,
-                                                                  "level/menu.tmx") }
+                                                                  "level/menu.tmx") },
+      _jumpTimer{ 0.f, 0.f, 3.f },
+      _shootTimer{ 0.f, 0.f, 4.f }
 {
     init();
 }
@@ -44,6 +47,7 @@ void Menu::update(float deltatime)
     _renderTarget->clear(sf::Color(50, 56, 59, 255));
 
     _levelController->update(deltatime);
+    updateBackground(deltatime);
 
     for (const Item &item : _layout->items())
         _renderTarget->draw(*item);
@@ -84,6 +88,31 @@ void Menu::init()
 
     _layout->addItem(startButton);
     _layout->addItem(exitButton);
+}
+
+void Menu::updateBackground(float deltatime)
+{
+    using PlayerState = Game::PhysicalEntity::State;
+
+    _jumpTimer.move(deltatime);
+    const bool needJump{ _jumpTimer.isMax() };
+    if (needJump)
+        _jumpTimer.setMin();
+
+    _shootTimer.move(deltatime);
+    const bool needShoot{ _shootTimer.isMax() };
+    if (needShoot)
+        _shootTimer.setMin();
+
+    Game::Player *player{ _levelController->player() };
+    player->updateState(PlayerState::Jump, needJump);
+    if (needShoot)
+    {
+
+        const sf::Vector2f targetPos{ Util::pointBy(player->boundingRect(),
+                                                    { Align::Top, Align::Right }) };
+        player->shoot(targetPos);
+    }
 }
 
 } // namespace Menu
