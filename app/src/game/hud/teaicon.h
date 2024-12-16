@@ -14,7 +14,7 @@ public:
 
     sf::FloatRect globalRect() const override;
 
-    void updateCountHealthItems();
+    void updateHealCount(size_t healCount);
 
     void setPosition(const sf::Vector2f pos);
     [[nodiscard]] const sf::Sprite *getSprite() const;

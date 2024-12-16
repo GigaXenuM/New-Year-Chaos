@@ -73,20 +73,22 @@ private:
 namespace Level
 {
 
-Controller::Controller(sf::RenderTarget *renderTarget, sf::View *view, EventHandler *parent)
+Controller::Controller(sf::RenderTarget *renderTarget, EventHandler *parent,
+                       std::string levelSource)
     : EventHandler{ parent },
       _renderTarget{ renderTarget },
-      _gameView{ view },
-      _safeZoneSize{ view->getSize().x * 0.2f, view->getSize().y * 0.2f },
-      _halfSafeZone{ _safeZoneSize / 2.f },
+      _levelSource{ std::move(levelSource) },
       _physicalWorld{ std::make_unique<b2World>(b2Vec2(0.f, 3.8f)) }
 {
     loadLevel();
     initPhisicalWorld();
-    initBot();
-    initLoot();
-    initDeadZone();
+
     initPlayer();
+
+    initEnemies();
+    initLoot();
+
+    initDeadZone();
 }
 
 Controller::~Controller() = default;
@@ -101,38 +103,43 @@ void Controller::update(float deltatime)
     destroyRedundantItems();
 }
 
+Player *Controller::player() const
+{
+    return _player;
+}
+
 void Controller::keyPressEvent(KeyPressEvent *event)
 {
     if (event->key() == sf::Keyboard::D)
-        gPlayer->updateState(Player::State::Right, true);
+        _player->updateState(Player::State::Right, true);
     if (event->key() == sf::Keyboard::A)
-        gPlayer->updateState(Player::State::Left, true);
+        _player->updateState(Player::State::Left, true);
     if (event->key() == sf::Keyboard::LShift)
-        gPlayer->updateState(Player::State::Run, true);
+        _player->updateState(Player::State::Run, true);
     if (event->key() == sf::Keyboard::Space)
-        gPlayer->updateState(Player::State::Jump, true);
+        _player->updateState(Player::State::Jump, true);
 }
 
 void Controller::keyReleaseEvent(KeyReleaseEvent *event)
 {
     if (event->key() == sf::Keyboard::D)
-        gPlayer->updateState(Player::State::Right, false);
+        _player->updateState(Player::State::Right, false);
     if (event->key() == sf::Keyboard::A)
-        gPlayer->updateState(Player::State::Left, false);
+        _player->updateState(Player::State::Left, false);
     if (event->key() == sf::Keyboard::LShift)
-        gPlayer->updateState(Player::State::Run, false);
+        _player->updateState(Player::State::Run, false);
     if (event->key() == sf::Keyboard::Space)
-        gPlayer->updateState(Player::State::Jump, false);
+        _player->updateState(Player::State::Jump, false);
     if (event->key() == sf::Keyboard::E)
         executeAvailableActions();
     if (event->key() == sf::Keyboard::Q)
-        gPlayer->health();
+        _player->health();
 }
 
 void Controller::mousePressEvent(MousePressEvent *event)
 {
     if (event->button() == Mouse::Button::Left)
-        gPlayer->shoot(event->position());
+        _player->shoot(event->position());
 }
 
 void Controller::loadLevel()
@@ -140,7 +147,7 @@ void Controller::loadLevel()
     _independentElements.clear();
 
     tmx::Map map;
-    map.load("level/terrain.tmx");
+    map.load(_levelSource);
     if (map.getOrientation() != tmx::Orientation::Orthogonal)
     {
         std::cerr << "Map is not orthogonal - nothing will be drawn" << std::endl;
@@ -184,6 +191,7 @@ void Controller::initPhisicalWorld()
     debugDraw->SetFlags(b2Draw::e_shapeBit);
 
     std::vector<sf::Shape *> terrainShapes{ _objectLayer->objects("terrain") };
+    assert(!terrainShapes.empty());
     b2Body *terrainBody{ ColliderFactory::create<ItemType::Terrain>(_physicalWorld.get(),
                                                                     terrainShapes) };
     auto *terrainItem{ new StaticElement{ terrainBody, ItemType::Terrain } };
@@ -259,12 +267,12 @@ void Controller::initPlayer()
     assert(playerContainer.size() == 1);
     sf::Shape *playerShape{ playerContainer.front() };
 
-    gPlayer = new Player(_physicalWorld.get(), playerShape);
-    _independentElements.insert({ Depth::Player, std::unique_ptr<Player>(gPlayer) });
-    _dependedElements.insert({ Depth::Hint, gPlayer->hint() });
+    _player = new Player(_physicalWorld.get(), playerShape);
+    _independentElements.insert({ Depth::Player, std::unique_ptr<Player>(_player) });
+    _dependedElements.insert({ Depth::Hint, _player->hint() });
 }
 
-void Controller::initBot()
+void Controller::initEnemies()
 {
     const auto &itemContainer{ _objectLayer->objects("snowman_1") };
     const auto &itemContainer2{ _objectLayer->objects("snowman_2") };
@@ -273,19 +281,19 @@ void Controller::initBot()
     for (auto *shape : itemContainer3)
     {
         _independentElements.insert(
-            { Depth::BackgroundMap, std::make_unique<Bot3>(_physicalWorld.get(), shape) });
+            { Depth::BackgroundMap, std::make_unique<Bot3>(_physicalWorld.get(), shape, _player) });
     }
 
     for (auto *shape : itemContainer2)
     {
         _independentElements.insert(
-            { Depth::BackgroundMap, std::make_unique<Bot2>(_physicalWorld.get(), shape) });
+            { Depth::BackgroundMap, std::make_unique<Bot2>(_physicalWorld.get(), shape, _player) });
     }
 
     for (auto *shape : itemContainer)
     {
         _independentElements.insert(
-            { Depth::BackgroundMap, std::make_unique<Bot>(_physicalWorld.get(), shape) });
+            { Depth::BackgroundMap, std::make_unique<Bot>(_physicalWorld.get(), shape, _player) });
     }
 }
 
@@ -333,8 +341,6 @@ void Controller::updateGraphics(float deltatime)
 {
     for (const auto &[_, item] : _independentElements)
         item->update(deltatime);
-
-    updateCameraPos();
 }
 
 void Controller::render(float deltatime)
@@ -347,28 +353,6 @@ void Controller::render(float deltatime)
         _renderTarget->draw(*item);
 
     _physicalWorld->DebugDraw();
-}
-
-void Controller::updateCameraPos()
-{
-    const sf::Vector2f playerPosition = gPlayer->getPosition();
-
-    sf::Vector2f viewCenter{ _gameView->getCenter() };
-    const sf::Vector2f safeZoneMin{ viewCenter.x - _halfSafeZone.x,
-                                    viewCenter.y - _halfSafeZone.y };
-    const sf::Vector2f safeZoneMax{ viewCenter.x + _halfSafeZone.x,
-                                    viewCenter.y + _halfSafeZone.y };
-
-    if (playerPosition.x < safeZoneMin.x)
-        viewCenter.x = playerPosition.x + _halfSafeZone.x;
-    else if (playerPosition.x > safeZoneMax.x)
-        viewCenter.x = playerPosition.x - _halfSafeZone.x;
-    if (playerPosition.y < safeZoneMin.y)
-        viewCenter.y = playerPosition.y + _halfSafeZone.y;
-    else if (playerPosition.y > safeZoneMax.y)
-        viewCenter.y = playerPosition.y - _halfSafeZone.y;
-
-    _gameView->setCenter(viewCenter);
 }
 
 void Controller::destroyRedundantItems()

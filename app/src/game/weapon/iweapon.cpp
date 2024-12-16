@@ -6,7 +6,8 @@
 namespace Game
 {
 
-IWeapon::IWeapon(PhysicalEntity *owner, b2World *world) : _world{ world }, _owner{ owner }
+IWeapon::IWeapon(PhysicalEntity *owner, b2World *world, float reloading)
+    : _world{ world }, _owner{ owner }, _reloading{ reloading }, _reloadTimer{ reloading }
 {
 }
 

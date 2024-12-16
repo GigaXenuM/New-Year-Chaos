@@ -39,8 +39,8 @@ void TeaIcon::draw(sf::RenderTarget &target, sf::RenderStates states) const
     target.draw(_text, states);
 }
 
-void TeaIcon::updateCountHealthItems()
+void TeaIcon::updateHealCount(size_t healCount)
 {
-    _text.setString(std::to_string(gPlayer->getHealthCount()));
+    _text.setString(std::to_string(healCount));
 }
 } // namespace Game

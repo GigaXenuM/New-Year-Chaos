@@ -81,9 +81,6 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
 
     if (data.types.test(ItemType::Terrain) && data.types.test(ItemType::Entity))
     {
-        if (data.types.test(ItemType::Bullet))
-        {
-        }
         auto *entity{ dynamic_cast<PhysicalEntity *>(data.itemTypeToItem.at(ItemType::Entity)) };
         assert(entity != nullptr);
         entity->updateState(contacted ? PhysicalEntity::State::OnGround
@@ -101,7 +98,8 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
     }
     if (data.types.test(ItemType::DeadZone) && data.types.test(ItemType::Entity) && contacted)
     {
-        gPlayer->kill();
+        if (auto *player{ dynamic_cast<Player *>(data.itemTypeToItem.at(ItemType::Entity)) })
+            player->kill();
     }
 
     if (data.types.test(ItemType::Bullet) && contacted)

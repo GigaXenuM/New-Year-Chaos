@@ -39,6 +39,9 @@ ObjectLayer::ObjectLayer(const tmx::ObjectGroup &layer)
 
 std::vector<sf::Shape *> ObjectLayer::objects(const std::string &objectName) const
 {
+    if (!_collidersMap.contains(objectName))
+        return {};
+
     const std::vector<std::unique_ptr<sf::Shape>> &objects{ _collidersMap.at(objectName) };
 
     std::vector<sf::Shape *> result;

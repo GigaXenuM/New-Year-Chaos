@@ -5,7 +5,8 @@
 
 namespace Game
 {
-AxeGun::AxeGun(PhysicalEntity *owner, b2World *world) : IWeapon(owner, world)
+AxeGun::AxeGun(PhysicalEntity *owner, b2World *world, float reloading)
+    : IWeapon(owner, world, reloading)
 {
     _reloading = 1.f;
 }

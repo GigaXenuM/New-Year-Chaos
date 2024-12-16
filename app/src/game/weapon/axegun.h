@@ -11,7 +11,7 @@ class PhysicalBullet;
 class AxeGun : public IWeapon
 {
 public:
-    AxeGun(PhysicalEntity *owner, b2World *world);
+    AxeGun(PhysicalEntity *owner, b2World *world, float reloading);
     ~AxeGun() = default;
 
 protected:

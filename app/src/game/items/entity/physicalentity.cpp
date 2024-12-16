@@ -26,7 +26,10 @@ bool PhysicalEntity::needDestroying() const
 void PhysicalEntity::updatePhysics()
 {
     if (isStateActive(State::Dead))
+    {
+        collider()->SetType(b2BodyType::b2_staticBody);
         return;
+    }
 
     b2Vec2 velocity{ collider()->GetLinearVelocity() };
 

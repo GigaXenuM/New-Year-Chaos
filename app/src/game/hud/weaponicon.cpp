@@ -1,6 +1,7 @@
 #include "weaponicon.h"
 
-#include "player/player.h"
+#include "items/entity/physicalentity.h"
+
 #include "resources/resourcemanager.h"
 #include "weapon/iweapon.h"
 
@@ -12,8 +13,10 @@
 namespace Game
 {
 
-WeaponIcon::WeaponIcon(const sf::Vector2f &size)
-    : _text{ "", ResourseManager::getInstance()->getFont(FontType::Arial) }, _size{ size }
+WeaponIcon::WeaponIcon(const PhysicalEntity *entity, const sf::Vector2f &size)
+    : _entity{ entity },
+      _text{ "", ResourseManager::getInstance()->getFont(FontType::Arial) },
+      _size{ size }
 {
     _text.setFillColor(sf::Color{ 250, 90, 109 });
 }
@@ -43,7 +46,7 @@ sf::Vector2f WeaponIcon::position() const
 
 void WeaponIcon::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    const IWeapon *weapon{ gPlayer->weapon() };
+    const IWeapon *weapon{ _entity->weapon() };
 
     _icon.setTexture(*weapon->icon());
     const sf::Vector2f currentSize{ _icon.getLocalBounds().getSize() };

@@ -1,20 +1,30 @@
-#include "ibot.h"
+#include "enemy.h"
 
-#include "SFML/Graphics/RenderTarget.hpp"
+#include "items/colliderfactory.h"
 #include "items/loot/keyloot.h"
-#include "player.h"
-#include "weapon/iweapon.h"
+#include "weapon/snowballgun.h"
 
 namespace Game
 {
-class PhysicalBullet;
 
-IBot::IBot(b2Body *collider, const Context &context, std::unique_ptr<IWeapon> weapon)
-    : PhysicalEntity(collider, context, std::move(weapon)), _pos{ boundingRect().getPosition() }
+Enemy::Enemy(b2World *world, sf::Shape *shape, const PhysicalEntity *targetEntity, float reloading,
+             float bulletPower)
+    : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 30 },
+                     std::make_unique<SnowBallGun>(this, world, reloading, bulletPower)),
+      _targetEntity{ targetEntity },
+      _pos{ boundingRect().getPosition() }
 {
 }
 
-void IBot::damage(float power)
+void Enemy::updatePhysics()
+{
+    walkingScript();
+    shootingScript();
+
+    PhysicalEntity::updatePhysics();
+}
+
+void Enemy::damage(float power)
 {
     if (isStateActive(State::Dead))
         return;
@@ -29,14 +39,14 @@ void IBot::damage(float power)
     setValue(_healthPoint);
 }
 
-std::vector<AbstractPhysicalItem *> IBot::dropLoots()
+std::vector<AbstractPhysicalItem *> Enemy::dropLoots()
 {
     sf::RectangleShape shape{ { 50, 50 } };
     shape.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
     return std::vector<AbstractPhysicalItem *>{ new KeyLoot(collider()->GetWorld(), &shape) };
 }
 
-void IBot::setValue(const float value)
+void Enemy::setValue(const float value)
 {
     if (value < 0.0f || value > 100.f)
         return;
@@ -45,7 +55,8 @@ void IBot::setValue(const float value)
         _healthSize.y,
     });
 }
-void IBot::walkingScript()
+
+void Enemy::walkingScript()
 {
     if (isStateActive(State::Dead))
         return;
@@ -60,8 +71,6 @@ void IBot::walkingScript()
     const bool isRightEnd{ playerPos.x >= _pos.x + _moveLimit };
     const bool isLeftEnd{ playerPos.x <= _pos.x - _moveLimit };
 
-    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
-
     if (isLeftEnd)
     {
         updateState(State::Right, true);
@@ -73,7 +82,8 @@ void IBot::walkingScript()
         updateState(State::Right, false);
     }
 
-    _sprite.setPosition(playerPos);
+    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
+    _sprite.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
 
     _healthBar.setOrigin(Util::pointBy(_healthBar.getLocalBounds(), Util::ALIGN_CENTER_STATE));
     _healthBar.setPosition({ healthBarPos.x, healthBarPos.y - 15 });
@@ -81,18 +91,22 @@ void IBot::walkingScript()
     _healthBar.setOrigin(Util::pointBy(_healthBar.getLocalBounds(), Align::Left));
     _health.setPosition({ _healthBar.getPosition().x + 6, _healthBar.getPosition().y - 4 });
 
-    if (gPlayer->getPosition().x >= _pos.x - (_moveLimit * 5)
-        && gPlayer->getPosition().x <= _pos.x + (_moveLimit * 5))
+    sf::Vector2f targetPos{ Util::pointBy(_targetEntity->boundingRect(),
+                                          Util::ALIGN_CENTER_STATE) };
+
+    if (targetPos.x >= _pos.x - (_moveLimit * 5) && targetPos.x <= _pos.x + (_moveLimit * 5))
         _isAvailableToShoot = true;
     else
         _isAvailableToShoot = false;
 }
 
-void IBot::shootingScript(float deltatime)
+void Enemy::shootingScript()
 {
     if (!_isAvailableToShoot)
         return;
 
-    shoot(gPlayer->getPosition());
+    sf::Vector2f targetPos{ Util::pointBy(_targetEntity->boundingRect(), { Align::Top }) };
+    shoot(targetPos);
 }
+
 } // namespace Game

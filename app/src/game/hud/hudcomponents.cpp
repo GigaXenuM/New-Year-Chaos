@@ -9,11 +9,12 @@
 namespace Game
 {
 
-HUDComponents::HUDComponents(sf::RenderTarget *renderTarget, sf::View *view)
-    : _gameView{ view },
-      _renderTarget{ renderTarget },
+HUDComponents::HUDComponents(sf::RenderTarget *renderTarget, sf::View *view, const Player *player)
+    : _renderTarget{ renderTarget },
+      _gameView{ view },
+      _player{ player },
       _teaIcon{ std::make_unique<TeaIcon>() },
-      _weaponIcon{ std::make_shared<WeaponIcon>(sf::Vector2f{ 50.f, 50.f }) },
+      _weaponIcon{ std::make_shared<WeaponIcon>(_player, sf::Vector2f{ 50.f, 50.f }) },
       _freezBar{ std::make_unique<HUDHealthBar>(
           ResourseManager::getInstance()->getTextures(TextureType::FreezBar_icon)[0]) },
       _healthBar{ std::make_unique<HUDHealthBar>(
@@ -39,9 +40,9 @@ void HUDComponents::update(const float deltatime)
 
 void HUDComponents::updateBarValue()
 {
-    _teaIcon->updateCountHealthItems();
-    _freezBar->setValue(gPlayer->getFreezPoints());
-    _healthBar->setValue(gPlayer->getHealthPoints());
+    _teaIcon->updateHealCount(_player->getHealCount());
+    _freezBar->setValue(_player->getFreezPoints());
+    _healthBar->setValue(_player->getHealthPoints());
 }
 
 void HUDComponents::updateBarPosition()

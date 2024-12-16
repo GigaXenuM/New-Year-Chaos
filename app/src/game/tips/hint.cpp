@@ -10,7 +10,7 @@ namespace Game
 
 namespace
 {
-constexpr float DRAW_CHARACTER_TIME{ 0.02f };
+constexpr float DRAW_CHARACTER_TIME{ 0.4f };
 constexpr unsigned CHARACTER_SIZE{ 18 };
 constexpr unsigned CORNER_RADIUS{ 20 };
 constexpr unsigned SHAPE_MARGIN{ CHARACTER_SIZE * 2 };
@@ -75,7 +75,7 @@ void Hint::update(float deltatime)
         return;
 
     _drawTextDuration += deltatime;
-    if (_drawTextDuration < DRAW_CHARACTER_TIME)
+    if (_drawTextDuration < DRAW_CHARACTER_TIME / _text.size())
         return;
 
     _drawTextDuration = 0.f;

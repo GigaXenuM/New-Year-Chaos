@@ -2,6 +2,7 @@
 
 #include "actionvariant.h"
 #include "button/textbutton.h"
+#include "controller.h"
 #include "item/abstractitem.h"
 #include "layout/verticallayout.h"
 #include "resources/resourcemanager.h"
@@ -13,14 +14,21 @@
 namespace Menu
 {
 
+namespace
+{
+const sf::Vector2f VIEW_OFFSET{ 60, 0 };
+}
+
 Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent)
     : IView{ renderTarget, parent },
       _title{ std::make_unique<sf::Text>() },
       _renderTarget{ renderTarget },
       _view{ std::make_unique<sf::View>(
-          sf::FloatRect(sf::Vector2f{},
+          sf::FloatRect(VIEW_OFFSET,
                         sf::Vector2f(renderTarget->getSize().x, renderTarget->getSize().y))) },
-      _layout{ std::make_unique<VerticalLayout>(sf::FloatRect{ {}, _view->getSize() }) }
+      _layout{ std::make_unique<VerticalLayout>(sf::FloatRect{ VIEW_OFFSET, _view->getSize() }) },
+      _levelController{ std::make_unique<Game::Level::Controller>(renderTarget, nullptr,
+                                                                  "level/menu.tmx") }
 {
     init();
 }
@@ -34,6 +42,8 @@ void Menu::update(float deltatime)
     IView::update(deltatime);
 
     _renderTarget->clear(sf::Color(50, 56, 59, 255));
+
+    _levelController->update(deltatime);
 
     for (const Item &item : _layout->items())
         _renderTarget->draw(*item);

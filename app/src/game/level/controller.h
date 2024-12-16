@@ -11,8 +11,8 @@
 
 #include <map>
 #include <memory>
+#include <string>
 
-class Player;
 class b2World;
 
 namespace sf
@@ -29,7 +29,9 @@ class Drawable;
 
 namespace Game
 {
+class Player;
 class Bot;
+
 namespace Level
 {
 
@@ -47,10 +49,13 @@ class Controller : public IUpdatable, public EventHandler
     };
 
 public:
-    explicit Controller(sf::RenderTarget *renderTarget, sf::View *view, EventHandler *parent);
+    explicit Controller(sf::RenderTarget *renderTarget, EventHandler *parent,
+                        std::string levelSource);
     ~Controller();
 
     void update(float deltatime) override;
+
+    Player *player() const;
 
 protected:
     void keyPressEvent(KeyPressEvent *event) override;
@@ -61,7 +66,7 @@ private:
     void loadLevel();
     void initPhisicalWorld();
     void initPlayer();
-    void initBot();
+    void initEnemies();
     void initDeadZone();
 
     void initLoot();
@@ -70,17 +75,16 @@ private:
     void updatePhysics(float deltatime);
     void updateGraphics(float deltatime);
 
-    void updateCameraPos();
     void destroyRedundantItems();
 
     void visitActions();
     void executeAvailableActions();
 
     sf::RenderTarget *_renderTarget{ nullptr };
-    sf::View *_gameView{ nullptr };
 
-    sf::Vector2f _safeZoneSize;
-    sf::Vector2f _halfSafeZone;
+    std::string _levelSource;
+
+    Player *_player{ nullptr };
 
     std::unique_ptr<ObjectLayer> _objectLayer;
 

@@ -41,6 +41,8 @@ public:
     void update(float deltatime) override;
     sf::View *view() const override;
 
+    bool isGameOver() const;
+
 protected:
     void mousePressEvent(MousePressEvent *event) override;
     void mouseReleaseEvent(MouseReleaseEvent *event) override;
@@ -48,12 +50,17 @@ protected:
     void mouseScrollEvent(MouseScrollEvent *event) override;
 
 private:
+    void updateCamera();
+
     sf::RenderTarget *_renderTarget{ nullptr };
     float _scaling{ 1.0f };
     const sf::Vector2f _viewSize;
     std::unique_ptr<sf::View> _view;
-    std::unique_ptr<HUDComponents> _hudComponents;
     std::unique_ptr<Level::Controller> _levelController;
+    std::unique_ptr<HUDComponents> _hudComponents;
+
+    sf::Vector2f _safeZoneSize;
+    sf::Vector2f _halfSafeZone;
 
     Util::EnumFlag<State> _sceneState;
 };

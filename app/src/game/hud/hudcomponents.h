@@ -2,7 +2,6 @@
 
 #include "hudhealthbar.h"
 
-#include "layout/layout.h"
 #include "teaicon.h"
 #include "weaponicon.h"
 
@@ -16,10 +15,12 @@ class View;
 namespace Game
 {
 
+class Player;
+
 class HUDComponents : public IUpdatable
 {
 public:
-    HUDComponents(sf::RenderTarget *renderTarget, sf::View *view);
+    HUDComponents(sf::RenderTarget *renderTarget, sf::View *view, const Player *player);
 
     void update(float deltatime) override;
 
@@ -28,9 +29,9 @@ private:
     void updateBarPosition();
 
 private:
-    sf::View *_gameView{ nullptr };
     sf::RenderTarget *_renderTarget{ nullptr };
-    std::unique_ptr<Layout> _layout;
+    sf::View *_gameView{ nullptr };
+    const Player *_player{ nullptr };
 
     std::unique_ptr<TeaIcon> _teaIcon;
     std::shared_ptr<WeaponIcon> _weaponIcon;

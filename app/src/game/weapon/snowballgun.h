@@ -4,8 +4,6 @@
 
 #include <SFML/Graphics/Texture.hpp>
 
-#include <vector>
-
 namespace Game
 {
 
@@ -15,7 +13,7 @@ class PhysicalBullet;
 class SnowBallGun : public IWeapon
 {
 public:
-    explicit SnowBallGun(PhysicalEntity *owner, b2World *world, float power = 25.f);
+    explicit SnowBallGun(PhysicalEntity *owner, b2World *world, float reloading, float power);
     ~SnowBallGun() = default;
 
     void shoot(const sf::Vector2f &startPos, const sf::Vector2f &target) override;

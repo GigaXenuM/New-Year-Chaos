@@ -22,11 +22,9 @@ namespace
 constexpr float DEFAULT_ANIMATION_FRAME_TIME{ 0.075 };
 }
 
-Player *gPlayer = nullptr;
-
 Player::Player(b2World *world, sf::Shape *shape)
     : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 45 },
-                     std::make_unique<SnowBallGun>(this, world)),
+                     std::make_unique<SnowBallGun>(this, world, 1.f, 150.f)),
       _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run),
                      DEFAULT_ANIMATION_FRAME_TIME },
       _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_dead),
@@ -86,7 +84,7 @@ void Player::damage(float power)
     }
 }
 
-size_t Player::getHealthCount() const
+size_t Player::getHealCount() const
 {
     return _countOfHealthItem;
 }
@@ -250,7 +248,7 @@ std::string Player::hintText(IAction *action) const
     {
     case ActionVariant::OpenBridge:
     {
-        return _hasKey ? action->hintText() : "Find a key\nto unlock";
+        return _hasKey ? action->hintText() : "Find a key to unlock";
     }
     case ActionVariant::PickUpTea:
         [[fallthrough]];

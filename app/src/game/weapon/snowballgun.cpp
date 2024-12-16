@@ -9,8 +9,8 @@
 namespace Game
 {
 
-SnowBallGun::SnowBallGun(PhysicalEntity *owner, b2World *world, float power)
-    : IWeapon(owner, world),
+SnowBallGun::SnowBallGun(PhysicalEntity *owner, b2World *world, float reloading, float power)
+    : IWeapon(owner, world, reloading),
       _icon{ ResourseManager::getInstance()->getTextures(TextureType::SnowBallGun).front() },
       _power{ power }
 {

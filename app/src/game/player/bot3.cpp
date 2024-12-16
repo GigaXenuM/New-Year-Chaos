@@ -14,9 +14,8 @@
 namespace Game
 {
 
-Bot3::Bot3(b2World *world, sf::Shape *shape)
-    : IBot(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 30 },
-           std::make_unique<SnowBallGun>(this, world, 55.f)),
+Bot3::Bot3(b2World *world, sf::Shape *shape, const PhysicalEntity *targetEntity)
+    : Enemy(world, shape, targetEntity, 3.f, 25.f),
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_3_walk) },
       _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_3_dead) },
       _hurtAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_3_hurt) },
@@ -27,13 +26,10 @@ Bot3::Bot3(b2World *world, sf::Shape *shape)
 
 void Bot3::update(float deltatime)
 {
-    PhysicalEntity::update(deltatime);
+    Enemy::update(deltatime);
 
     if (isStateActive(State::Dead) && _deadAnimation.isFinished())
         updateState(State::RemoveMe, true);
-
-    walkingScript();
-    shootingScript(deltatime);
 
     updateAnimation(deltatime);
 }

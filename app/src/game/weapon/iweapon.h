@@ -31,7 +31,7 @@ enum class State
 class IWeapon : public IUpdatable
 {
 public:
-    IWeapon(PhysicalEntity *owner, b2World *world);
+    IWeapon(PhysicalEntity *owner, b2World *world, float reloading);
     virtual ~IWeapon();
 
     void update(float deltatime) override;
@@ -49,7 +49,7 @@ protected:
     Util::EnumFlag<State> _state;
 
     float _reloading{ 3.f };
-    float _reloadTimer{ _reloading };
+    float _reloadTimer{ 3.f };
 
     std::vector<std::unique_ptr<PhysicalBullet>> _bullets;
 };

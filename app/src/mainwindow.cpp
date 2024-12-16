@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 
-#include "controller.h"
 #include "layout/verticallayout.h"
 
 #include "graphics-element/button/textbutton.h"
@@ -17,7 +16,6 @@
 #include "menu/menu.h"
 
 #include "game/scene.h"
-#include "player/player.h"
 #include "resources/resourcemanager.h"
 
 #include <SFML/Graphics/Drawable.hpp>
@@ -54,7 +52,7 @@ int MainWindow::gameLoop()
             handleSfmlEvent(event);
 
         _currentView->update(deltatime);
-        if (Game::gPlayer->isDead())
+        if (_scene->isGameOver())
         {
             _backgroundMusic.stop();
             switchView(_gameOverMenu.get());

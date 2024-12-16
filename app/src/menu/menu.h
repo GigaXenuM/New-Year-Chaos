@@ -22,6 +22,11 @@ namespace Graphics
 class AbstractItem;
 } // namespace Graphics
 
+namespace Game::Level
+{
+class Controller;
+}
+
 namespace Menu
 {
 
@@ -43,6 +48,8 @@ private:
     std::unique_ptr<sf::Text> _title;
     std::unique_ptr<sf::View> _view;
     std::unique_ptr<Layout> _layout;
+
+    std::unique_ptr<Game::Level::Controller> _levelController;
 };
 
 } // namespace Menu

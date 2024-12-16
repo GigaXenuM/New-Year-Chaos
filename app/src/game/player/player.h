@@ -25,7 +25,7 @@ public:
     [[nodiscard]] bool isDead() const;
     [[nodiscard]] float getFreezPoints() const;
     [[nodiscard]] float getHealthPoints() const;
-    [[nodiscard]] size_t getHealthCount() const;
+    [[nodiscard]] size_t getHealCount() const;
 
     [[nodiscard]] sf::Sprite &getSprite();
     [[nodiscard]] sf::Vector2f getPosition() const;
@@ -79,7 +79,5 @@ private:
 
     Hint _hint;
 };
-
-extern Player *gPlayer;
 
 } // namespace Game

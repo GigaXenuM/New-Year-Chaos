@@ -1,15 +1,15 @@
 #pragma once
 
 #include "animation/animation.h"
-#include "ibot.h"
+#include "player/enemy.h"
 
 namespace Game
 {
 
-class Bot2 final : public IBot
+class Bot2 final : public Enemy
 {
 public:
-    Bot2(b2World *world, sf::Shape *shape);
+    Bot2(b2World *world, sf::Shape *shape, const PhysicalEntity *targetEntity);
 
 protected:
     void update(float deltatime) override;

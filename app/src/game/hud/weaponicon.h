@@ -7,10 +7,12 @@
 
 namespace Game
 {
+class PhysicalEntity;
+
 class WeaponIcon : public Graphics::AbstractItem
 {
 public:
-    WeaponIcon(const sf::Vector2f &size);
+    WeaponIcon(const PhysicalEntity *entity, const sf::Vector2f &size);
 
     void setPosition(const sf::Vector2f pos);
     [[nodiscard]] const sf::Sprite *getSprite() const;
@@ -23,6 +25,8 @@ protected:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
+    const PhysicalEntity *_entity{ nullptr };
+
     mutable sf::Sprite _icon;
     mutable sf::Text _text;
 

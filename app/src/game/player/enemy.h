@@ -1,15 +1,20 @@
 #pragma once
 
-#include "SFML/Graphics/RectangleShape.hpp"
-#include "SFML/Graphics/Sprite.hpp"
 #include "items/entity/physicalentity.h"
+
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 namespace Game
 {
-class IBot : public PhysicalEntity
+
+class Enemy : public PhysicalEntity
 {
 public:
-    IBot(b2Body *collider, const Context &context, std::unique_ptr<IWeapon> weapon);
+    Enemy(b2World *world, sf::Shape *shape, const PhysicalEntity *targetEntity, float reloading,
+          float bulletPower);
+
+    void updatePhysics() override;
 
     void damage(float power) override;
     std::vector<AbstractPhysicalItem *> dropLoots() override;
@@ -21,22 +26,26 @@ public:
     void setValue(const float value = 25.f);
 
 protected:
-    void walkingScript();
-    void shootingScript(float deltatime);
-
-protected:
     sf::Sprite _sprite;
     sf::Sprite _healthBar;
     sf::RectangleShape _health;
 
     const float _scale{ 0.30f };
     const float _scaleHealthBar{ 0.17f };
-    const float _moveLimit{ 100.f };
 
-    sf::Vector2f _pos{};
     sf::Vector2f _healthSize{};
 
     float _healthPoint{ 100.f };
+
+private:
+    void walkingScript();
+    void shootingScript();
+
+    const PhysicalEntity *_targetEntity{ nullptr };
+
+    sf::Vector2f _pos;
+    const float _moveLimit{ 100.f };
     bool _isAvailableToShoot{ false };
 };
+
 } // namespace Game

@@ -6,6 +6,7 @@
 #include "mouseevents/mousemoveevent.h"
 #include "mouseevents/mousepressevent.h"
 #include "mouseevents/mousereleaseevent.h"
+#include "player/player.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
@@ -16,8 +17,12 @@ Scene::Scene(sf::RenderTarget *renderTarget, EventHandler *parent)
       _renderTarget{ renderTarget },
       _viewSize{ sf::Vector2f(renderTarget->getSize().x, renderTarget->getSize().y) },
       _view{ std::make_unique<sf::View>(sf::FloatRect(sf::Vector2f{}, _viewSize)) },
-      _levelController{ std::make_unique<Level::Controller>(renderTarget, _view.get(), this) },
-      _hudComponents{ std::make_unique<HUDComponents>(_renderTarget, _view.get()) }
+      _levelController{ std::make_unique<Level::Controller>(renderTarget, this,
+                                                            "level/terrain.tmx") },
+      _hudComponents{ std::make_unique<HUDComponents>(_renderTarget, _view.get(),
+                                                      _levelController->player()) },
+      _safeZoneSize{ _view->getSize().x * 0.2f, _view->getSize().y * 0.2f },
+      _halfSafeZone{ _safeZoneSize / 2.f }
 {
 }
 
@@ -31,11 +36,18 @@ void Scene::update(float deltatime)
 
     _levelController->update(deltatime);
     _hudComponents->update(deltatime);
+
+    updateCamera();
 }
 
 sf::View *Scene::view() const
 {
     return _view.get();
+}
+
+bool Scene::isGameOver() const
+{
+    return _levelController->player()->isDead();
 }
 
 void Scene::mousePressEvent(MousePressEvent *event)
@@ -63,6 +75,29 @@ void Scene::mouseScrollEvent(MouseScrollEvent *event)
     _scaling -= delta;
 
     _view->setSize(_viewSize * _scaling);
+}
+
+void Scene::updateCamera()
+{
+    const Player *player{ _levelController->player() };
+    const sf::Vector2f playerPosition = player->getPosition();
+
+    sf::Vector2f viewCenter{ _view->getCenter() };
+    const sf::Vector2f safeZoneMin{ viewCenter.x - _halfSafeZone.x,
+                                    viewCenter.y - _halfSafeZone.y };
+    const sf::Vector2f safeZoneMax{ viewCenter.x + _halfSafeZone.x,
+                                    viewCenter.y + _halfSafeZone.y };
+
+    if (playerPosition.x < safeZoneMin.x)
+        viewCenter.x = playerPosition.x + _halfSafeZone.x;
+    else if (playerPosition.x > safeZoneMax.x)
+        viewCenter.x = playerPosition.x - _halfSafeZone.x;
+    if (playerPosition.y < safeZoneMin.y)
+        viewCenter.y = playerPosition.y + _halfSafeZone.y;
+    else if (playerPosition.y > safeZoneMax.y)
+        viewCenter.y = playerPosition.y - _halfSafeZone.y;
+
+    _view->setCenter(viewCenter);
 }
 
 } // namespace Game
