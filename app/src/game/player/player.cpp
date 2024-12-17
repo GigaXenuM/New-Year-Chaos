@@ -149,7 +149,11 @@ void Player::executeAvailableAction()
         break;
     }
     case ActionVariant::PickUpKey:
+    {
         _hasKey = true;
+        break;
+    }
+    case ActionVariant::MountainObstacle:
         break;
     default:
         assert(false);
@@ -285,6 +289,7 @@ std::string Player::hintText(IAction *action) const
     case ActionVariant::PickUpTea:
         [[fallthrough]];
     case ActionVariant::PickUpKey:
+    case ActionVariant::MountainObstacle:
         return action->hintText();
     }
 

@@ -10,6 +10,7 @@
 #include "items/deadzone/waterzone.h"
 #include "items/door/door.h"
 #include "items/loot/tealoot.h"
+#include "items/mountain/mountain.h"
 #include "keyevents/keypressevent.h"
 #include "keyevents/keyreleaseevent.h"
 #include "mouseevents/mousepressevent.h"
@@ -214,6 +215,14 @@ void Controller::initPhisicalWorld()
                                                        ItemType::TerrainObstacle } };
         _independentElements.insert(
             { Depth::BackgroundMap, std::unique_ptr<Graphics::Drawable>{ terrainObstackleItem } });
+    }
+
+    // Obstacle actions
+    std::vector<sf::Shape *> ObstacleActionShapes{ _objectLayer->objects("obstacle_action") };
+    for (auto *shape : ObstacleActionShapes)
+    {
+        _independentElements.insert(
+            { Depth::BackgroundMap, std::make_unique<Mountain>(_physicalWorld.get(), shape) });
     }
 
     // Bridge

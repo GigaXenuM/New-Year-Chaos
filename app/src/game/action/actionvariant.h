@@ -9,6 +9,7 @@ enum class ActionVariant
     PickUpKey,
     OpenBridge,
     OpenDoor,
+    MountainObstacle,
 };
 
 }

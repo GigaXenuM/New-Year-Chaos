@@ -44,6 +44,7 @@ set(HEADER_FILES
     src/game/items/bridge/bridgedrawablejoint.h
     src/game/items/bridge/openbridgeactionitem.h
     src/game/items/door/door.h
+    src/game/items/mountain/mountain.h
 
     src/visitor/ivisitor.h
     src/visitor/defaultvisitor.h
@@ -127,6 +128,7 @@ set(SOURCE_FILES
     src/game/items/bridge/bridgedrawablejoint.cpp
     src/game/items/bridge/openbridgeactionitem.cpp
     src/game/items/door/door.cpp
+    src/game/items/mountain/mountain.cpp
 
     src/game/items/colliderfactory.cpp
 
