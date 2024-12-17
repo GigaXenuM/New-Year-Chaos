@@ -71,6 +71,7 @@ enum class TextureType
 
     SnowBallGun,
     Door,
+    DoorSide,
     Bridge,
     Chain,
     Stone,

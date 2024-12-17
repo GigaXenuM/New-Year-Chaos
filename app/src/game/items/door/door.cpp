@@ -17,8 +17,8 @@ constexpr const char *const CLOSE_DOOR_HINT{ "Press E to close the door" };
 
 Door::Door(b2World *world, sf::Shape *shape)
     : AbstractPhysicalItem{ ColliderFactory::create<ItemType::TerrainObstacle>(world, { shape }) },
-      _sprite{ ResourseManager::getInstance()->getTextures(TextureType::Door).back() },
-      _doorSideSprite{ ResourseManager::getInstance()->getTextures(TextureType::Door).front() },
+      _sprite{ ResourseManager::getInstance()->getTextures(TextureType::Door).front() },
+      _doorSideSprite{ ResourseManager::getInstance()->getTextures(TextureType::DoorSide).front() },
       _hintText{ OPEN_DOOR_HINT },
       _doorScaling{ 0.2, 0.2, _sprite.getScale().x }
 {

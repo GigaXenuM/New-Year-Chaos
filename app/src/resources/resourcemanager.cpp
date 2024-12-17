@@ -82,6 +82,7 @@ void ResourseManager::loadAllTextures()
     loadTextures("key/", TextureType::Key, "key");
 
     loadTextures("level/door", TextureType::Door, "door");
+    loadTextures("level/doorside", TextureType::DoorSide, "doorside");
     loadTextures("level/bridge", TextureType::Bridge, "bridge");
     loadTextures("level/chain", TextureType::Chain, "chain");
     loadTextures("level/stone", TextureType::Stone, "stone");
