@@ -58,6 +58,8 @@ public:
 protected:
     void update(float deltatime) override;
 
+    float _stamina{ 100.f };
+
 private:
     const Context _context;
     std::unique_ptr<IWeapon> _weapon;

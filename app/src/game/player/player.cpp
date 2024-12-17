@@ -169,6 +169,11 @@ float Player::getHealthPoints() const
     return _health;
 }
 
+float Player::getStaminaPoints() const
+{
+    return _stamina;
+}
+
 void Player::updateAnimation(float deltatime)
 {
     if (isStateActive(State::Dead))
@@ -199,6 +204,13 @@ void Player::updateHealthPoint(float deltatime)
     damage(deltatime);
 }
 
+void Player::updateStaminaPoint(float deltatime)
+{
+    if (_stamina <= 0.f)
+        return;
+    _stamina -= (deltatime * 10);
+}
+
 void Player::updateHint(float deltatime)
 {
     if (!_hint.empty())
@@ -208,6 +220,13 @@ void Player::updateHint(float deltatime)
         _hint.setPosition(topRectPos + offset);
         _hint.update(deltatime);
     }
+}
+
+void Player::restoreStaminaPoints(float deltatime)
+{
+    if (_stamina >= 100.f)
+        return;
+    _stamina += (deltatime * 10);
 }
 
 void Player::restoreHealthAndFreezePoints()
@@ -273,13 +292,22 @@ std::string Player::hintText(IAction *action) const
     return {};
 }
 
-void Player::updatePosition()
+void Player::updatePosition(float deltatime)
 {
     if (isStateActive(State::Dead))
     {
         collider()->SetType(b2_staticBody);
         return;
     }
+    if (isStateActive(State::Run) && (isStateActive(State::Right) || isStateActive(State::Left)))
+    {
+        updateStaminaPoint(deltatime);
+    }
+    else
+    {
+        restoreStaminaPoints(deltatime);
+    }
+
     const sf::Vector2f playerPos{ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE) };
     _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
     _sprite.setPosition(playerPos);
@@ -289,7 +317,7 @@ void Player::update(float deltatime)
 {
     PhysicalEntity::update(deltatime);
 
-    updatePosition();
+    updatePosition(deltatime);
     updateAnimation(deltatime);
     updateHealthPoint(deltatime);
     updateHint(deltatime);

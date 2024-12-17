@@ -18,16 +18,20 @@ HUDComponents::HUDComponents(sf::RenderTarget *renderTarget, sf::View *view, con
       _freezBar{ std::make_unique<HUDHealthBar>(
           ResourseManager::getInstance()->getTextures(TextureType::FreezBar_icon)[0]) },
       _healthBar{ std::make_unique<HUDHealthBar>(
-          ResourseManager::getInstance()->getTextures(TextureType::HeartBar_icon)[0]) }
+          ResourseManager::getInstance()->getTextures(TextureType::HeartBar_icon)[0]) },
+      _staminaBar{ std::make_unique<HUDHealthBar>(
+          ResourseManager::getInstance()->getTextures(TextureType::Stamina_icon)[0]) }
 {
     _freezBar->setColor(sf::Color::Blue);
     _healthBar->setColor(sf::Color::Red);
+    _staminaBar->setColor(sf::Color::Green);
 }
 
 void HUDComponents::update(const float deltatime)
 {
     const std::vector<Graphics::AbstractItem *> hudItems{ _freezBar.get(), _healthBar.get(),
-                                                          _teaIcon.get(), _weaponIcon.get() };
+                                                          _teaIcon.get(), _weaponIcon.get(),
+                                                          _staminaBar.get() };
 
     updateBarValue();
     updateBarPosition();
@@ -43,6 +47,7 @@ void HUDComponents::updateBarValue()
     _teaIcon->updateHealCount(_player->getHealCount());
     _freezBar->setValue(_player->getFreezPoints());
     _healthBar->setValue(_player->getHealthPoints());
+    _staminaBar->setValue(_player->getStaminaPoints());
 }
 
 void HUDComponents::updateBarPosition()
@@ -67,5 +72,10 @@ void HUDComponents::updateBarPosition()
         { Util::pointBy(_teaIcon->getSprite()->getGlobalBounds(), Util::ALIGN_CENTER_STATE).x,
           Util::pointBy(_teaIcon->getSprite()->getGlobalBounds(), Align::Top).y
               - (_weaponIcon->globalRect().height / 2) });
+
+    _staminaBar->setPosition(
+        { bottomLeft.x, bottomLeft.y + _staminaBar->getSprite()->getGlobalBounds().height
+                            + yDistBetweenItems / 2 });
+    _staminaBar->setIconScaleFactors(0.08, 0.08);
 }
 } // namespace Game

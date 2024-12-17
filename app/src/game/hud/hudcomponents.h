@@ -37,6 +37,7 @@ private:
     std::shared_ptr<WeaponIcon> _weaponIcon;
     std::unique_ptr<HUDHealthBar> _freezBar;
     std::unique_ptr<HUDHealthBar> _healthBar;
+    std::unique_ptr<HUDHealthBar> _staminaBar;
 };
 
 } // namespace Game

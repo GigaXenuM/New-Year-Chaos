@@ -37,7 +37,7 @@ void PhysicalEntity::updatePhysics()
 
     float runVelocity = _context.velocity;
 
-    if (isStateActive(State::Run))
+    if (isStateActive(State::Run) && _stamina > 0.f)
         runVelocity *= 2;
 
     if (isStateActive(State::Left))

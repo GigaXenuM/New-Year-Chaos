@@ -25,6 +25,7 @@ public:
     [[nodiscard]] bool isDead() const;
     [[nodiscard]] float getFreezPoints() const;
     [[nodiscard]] float getHealthPoints() const;
+    [[nodiscard]] float getStaminaPoints() const;
     [[nodiscard]] size_t getHealCount() const;
 
     [[nodiscard]] sf::Sprite &getSprite();
@@ -44,12 +45,14 @@ protected:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
-    void updatePosition();
+    void updatePosition(float deltatime);
     void updateAnimation(float deltatime);
     void updateHealthPoint(float deltatime);
+    void updateStaminaPoint(float deltatime);
     void updateHint(float deltatime);
 
     void restoreHealthAndFreezePoints();
+    void restoreStaminaPoints(float deltatime);
 
     std::string hintText(IAction *action) const;
 

@@ -34,6 +34,7 @@ enum class TextureType
     // HUD
     Tea,
     Health_bar,
+    Stamina_icon,
     HeartBar_icon,
     FreezBar_icon,
 
