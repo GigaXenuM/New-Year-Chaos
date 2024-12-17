@@ -35,9 +35,10 @@ public:
 private:
     ItemType _type{ ItemType::TerrainObstacle };
     sf::Sprite _sprite;
+    sf::Sprite _doorSideSprite;
     std::string _hintText;
 
-    Util::LimitedValueF _doorOpening;
+    Util::LimitedValueF _doorScaling;
 };
 
 } // namespace Game

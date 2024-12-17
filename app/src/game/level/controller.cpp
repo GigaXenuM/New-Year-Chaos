@@ -381,7 +381,7 @@ void Controller::render(float deltatime)
     for (const auto &[_, item] : mergedElements)
         _renderTarget->draw(*item);
 
-    _physicalWorld->DebugDraw();
+    // _physicalWorld->DebugDraw();
 }
 
 void Controller::destroyRedundantItems()

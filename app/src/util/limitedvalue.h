@@ -70,6 +70,14 @@ public:
     {
         return _value;
     }
+    T min()
+    {
+        return _min;
+    }
+    T max()
+    {
+        return _max;
+    }
 
 private:
     T _value{ T{} };
