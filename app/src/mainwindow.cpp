@@ -22,19 +22,29 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
+namespace
+{
+constexpr float DEFAULT_WIDTH{ 1150 };
+sf::Vector2f defineViewSize(const sf::Vector2f &windowSize)
+{
+    const float scaling{ DEFAULT_WIDTH / windowSize.x };
+    return { windowSize.x * scaling, windowSize.y * scaling };
+}
+} // namespace
+
 MainWindow::MainWindow(unsigned int width, unsigned int height, const char *name)
     : sf::RenderWindow{ sf::VideoMode({ width, height }), name },
       EventHandler{ nullptr },
-      _menu{ std::make_unique<Menu::Menu>(this, this) },
-      _gameOverMenu{ std::make_unique<GameOverMenu>(this, this) },
-      _scene{ std::make_unique<Game::Scene>(this, this) },
-      _currentView{ _menu.get() },
+      _viewSize{ defineViewSize(sf::Vector2f(width, height)) },
+      _menu{ std::make_unique<Menu::Menu>(this, this, _viewSize) },
+      _gameOverMenu{ std::make_unique<GameOverMenu>(this, this, _viewSize) },
+      _scene{ std::make_unique<Game::Scene>(this, this, _viewSize) },
       _latestMouseMoveEvent{ {}, {} }
 {
     initBackgroundMusic();
     composeMenu();
 
-    grabContext(_currentView);
+    switchView();
 }
 
 MainWindow::~MainWindow()
@@ -140,7 +150,7 @@ void MainWindow::composeMenu()
     _gameOverMenu->registerAction(Menu::ActionVariant::RestartGame,
                                   [this]()
                                   {
-                                      _scene = std::make_unique<Game::Scene>(this, this);
+                                      _scene = std::make_unique<Game::Scene>(this, this, _viewSize);
                                       switchView(_scene.get());
                                   });
 }
@@ -155,18 +165,15 @@ void MainWindow::initBackgroundMusic()
 
 void MainWindow::switchView()
 {
-    static bool showMenu{ true };
-    showMenu = !showMenu;
+    const bool needShowMenu{ _currentView != _menu.get() };
 
-    IView *view{ showMenu ? dynamic_cast<IView *>(_menu.get())
-                          : dynamic_cast<IView *>(_scene.get()) };
+    IView *view{ needShowMenu ? dynamic_cast<IView *>(_menu.get())
+                              : dynamic_cast<IView *>(_scene.get()) };
     switchView(view);
 }
 
 void MainWindow::switchView(IView *view)
 {
-    // if (auto currView = reinterpret_cast<GameOverMenu *>(&view))
-    //_backgroundMusic.play();
     grabContext(view);
     _currentView = view;
 }

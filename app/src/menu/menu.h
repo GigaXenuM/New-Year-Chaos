@@ -34,10 +34,12 @@ namespace Menu
 class Menu : public IView, public Action::ActionStorage<ActionVariant>
 {
 public:
-    explicit Menu(sf::RenderTarget *renderTarget, EventHandler *parent);
+    explicit Menu(sf::RenderTarget *renderTarget, EventHandler *parent,
+                  const sf::Vector2f &viewSize);
     ~Menu();
 
     void update(float deltatime) override;
+    void updateViewSize(const sf::Vector2f &size) override;
 
 protected:
     sf::View *view() const override;
@@ -48,11 +50,11 @@ private:
     void updateBackground(float deltatime);
 
     sf::RenderTarget *_renderTarget;
+
+    std::unique_ptr<Game::Level::Controller> _levelController;
     std::unique_ptr<sf::Text> _title;
     std::unique_ptr<sf::View> _view;
     std::unique_ptr<Layout> _layout;
-
-    std::unique_ptr<Game::Level::Controller> _levelController;
 
     Util::LimitedValueF _jumpTimer;
     Util::LimitedValueF _shootTimer;

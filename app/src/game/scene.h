@@ -35,18 +35,17 @@ enum class State
 class Scene : public IView
 {
 public:
-    explicit Scene(sf::RenderTarget *renderTarget, EventHandler *parent);
+    explicit Scene(sf::RenderTarget *renderTarget, EventHandler *parent,
+                   const sf::Vector2f &viewSize);
     virtual ~Scene();
 
     void update(float deltatime) override;
     sf::View *view() const override;
+    void updateViewSize(const sf::Vector2f &size) override;
 
     bool isGameOver() const;
 
 protected:
-    void mousePressEvent(MousePressEvent *event) override;
-    void mouseReleaseEvent(MouseReleaseEvent *event) override;
-    void mouseMoveEvent(MouseMoveEvent *event) override;
     void mouseScrollEvent(MouseScrollEvent *event) override;
 
 private:
@@ -54,13 +53,9 @@ private:
 
     sf::RenderTarget *_renderTarget{ nullptr };
     float _scaling{ 1.0f };
-    const sf::Vector2f _viewSize;
     std::unique_ptr<sf::View> _view;
     std::unique_ptr<Level::Controller> _levelController;
     std::unique_ptr<HUDComponents> _hudComponents;
-
-    sf::Vector2f _safeZoneSize;
-    sf::Vector2f _halfSafeZone;
 
     Util::EnumFlag<State> _sceneState;
 };

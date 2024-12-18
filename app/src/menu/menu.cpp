@@ -15,21 +15,23 @@
 namespace Menu
 {
 
-namespace
+sf::FloatRect viewRect(const sf::View *view)
 {
-const sf::Vector2f VIEW_OFFSET{ 60, 0 };
+    const sf::Vector2f center{ view->getCenter() };
+    const sf::Vector2f size{ view->getSize() };
+    const sf::Vector2f rectPosition{ center.x - size.x / 2.f, center.y - size.y / 2.f };
+
+    return { rectPosition, size };
 }
 
-Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent)
+Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vector2f &viewSize)
     : IView{ renderTarget, parent },
       _title{ std::make_unique<sf::Text>() },
       _renderTarget{ renderTarget },
-      _view{ std::make_unique<sf::View>(
-          sf::FloatRect(VIEW_OFFSET,
-                        sf::Vector2f(renderTarget->getSize().x, renderTarget->getSize().y))) },
-      _layout{ std::make_unique<VerticalLayout>(sf::FloatRect{ VIEW_OFFSET, _view->getSize() }) },
       _levelController{ std::make_unique<Game::Level::Controller>(renderTarget, nullptr,
                                                                   "level/menu.tmx") },
+      _view{ std::make_unique<sf::View>(sf::FloatRect{ {}, viewSize }) },
+      _layout{ std::make_unique<VerticalLayout>() },
       _jumpTimer{ 0.f, 0.f, 3.f },
       _shootTimer{ 0.f, 0.f, 4.f }
 {
@@ -55,6 +57,17 @@ void Menu::update(float deltatime)
     _renderTarget->draw(*_title);
 }
 
+void Menu::updateViewSize(const sf::Vector2f &size)
+{
+    const sf::Vector2f mapCenter{ Util::pointBy(_levelController->mapGlobalRect(),
+                                                Util::ALIGN_CENTER_STATE) };
+    const sf::Vector2f playerCenter{ Util::pointBy(_levelController->player()->boundingRect(),
+                                                   Util::ALIGN_CENTER_STATE) };
+    _view->setSize(size);
+    _view->setCenter(mapCenter.x, playerCenter.y);
+    _layout->setRect(viewRect(_view.get()));
+}
+
 sf::View *Menu::view() const
 {
     return _view.get();
@@ -62,6 +75,13 @@ sf::View *Menu::view() const
 
 void Menu::init()
 {
+    const sf::Vector2f mapCenter{ Util::pointBy(_levelController->mapGlobalRect(),
+                                                Util::ALIGN_CENTER_STATE) };
+    const sf::Vector2f playerCenter{ Util::pointBy(_levelController->player()->boundingRect(),
+                                                   Util::ALIGN_CENTER_STATE) };
+    _view->setCenter(mapCenter.x, playerCenter.y);
+    _layout->setRect(viewRect(_view.get()));
+
     const sf::Vector2f viewSize = _view->getSize();
     const sf::Vector2f viewCenter = _view->getCenter();
 

@@ -7,6 +7,7 @@
 
 #include <box2d/b2_body.h>
 
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <map>
@@ -56,6 +57,7 @@ public:
     void update(float deltatime) override;
 
     Player *player() const;
+    sf::FloatRect mapGlobalRect() const;
 
 protected:
     void keyPressEvent(KeyPressEvent *event) override;
@@ -95,6 +97,8 @@ private:
 
     std::multimap<Depth, std::unique_ptr<Graphics::Drawable>> _independentElements;
     std::multimap<Depth, const Graphics::Drawable *> _dependedElements;
+
+    sf::FloatRect _mapGlobalRect;
 };
 
 } // namespace Level

@@ -3,26 +3,21 @@
 #include "level/controller.h"
 
 #include "event/mouseevents/mousescrollevent.h"
-#include "mouseevents/mousemoveevent.h"
-#include "mouseevents/mousepressevent.h"
-#include "mouseevents/mousereleaseevent.h"
+
 #include "player/player.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
 namespace Game
 {
-Scene::Scene(sf::RenderTarget *renderTarget, EventHandler *parent)
+Scene::Scene(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vector2f &viewSize)
     : IView{ renderTarget, parent },
       _renderTarget{ renderTarget },
-      _viewSize{ sf::Vector2f(renderTarget->getSize().x, renderTarget->getSize().y) },
-      _view{ std::make_unique<sf::View>(sf::FloatRect(sf::Vector2f{}, _viewSize)) },
+      _view{ std::make_unique<sf::View>(sf::FloatRect{ {}, viewSize }) },
       _levelController{ std::make_unique<Level::Controller>(renderTarget, this,
                                                             "level/terrain.tmx") },
       _hudComponents{ std::make_unique<HUDComponents>(_renderTarget, _view.get(),
-                                                      _levelController->player()) },
-      _safeZoneSize{ _view->getSize().x * 0.2f, _view->getSize().y * 0.2f },
-      _halfSafeZone{ _safeZoneSize / 2.f }
+                                                      _levelController->player()) }
 {
 }
 
@@ -45,27 +40,14 @@ sf::View *Scene::view() const
     return _view.get();
 }
 
+void Scene::updateViewSize(const sf::Vector2f &size)
+{
+    _view->setSize(size);
+}
+
 bool Scene::isGameOver() const
 {
     return _levelController->player()->isDead();
-}
-
-void Scene::mousePressEvent(MousePressEvent *event)
-{
-    if (event->button() == Mouse::Button::Right)
-        _sceneState.set(State::DragView);
-}
-
-void Scene::mouseReleaseEvent(MouseReleaseEvent *event)
-{
-    if (event->button() == Mouse::Button::Right)
-        _sceneState.unset(State::DragView);
-}
-
-void Scene::mouseMoveEvent(MouseMoveEvent *event)
-{
-    if (_sceneState.test(State::DragView))
-        _view->move((event->lastPosition() - event->position()) * _scaling);
 }
 
 void Scene::mouseScrollEvent(MouseScrollEvent *event)
@@ -74,28 +56,29 @@ void Scene::mouseScrollEvent(MouseScrollEvent *event)
     const float delta{ rawDelta * 0.1f };
     _scaling -= delta;
 
-    _view->setSize(_viewSize * _scaling);
+    _view->setSize(_view->getSize() * _scaling);
 }
 
 void Scene::updateCamera()
 {
+    const sf::Vector2f safeZoneSize{ _view->getSize().x * 0.2f, _view->getSize().y * 0.2f };
+    const sf::Vector2f halfSafeZone{ safeZoneSize / 2.f };
+
     const Player *player{ _levelController->player() };
     const sf::Vector2f playerPosition = player->getPosition();
 
     sf::Vector2f viewCenter{ _view->getCenter() };
-    const sf::Vector2f safeZoneMin{ viewCenter.x - _halfSafeZone.x,
-                                    viewCenter.y - _halfSafeZone.y };
-    const sf::Vector2f safeZoneMax{ viewCenter.x + _halfSafeZone.x,
-                                    viewCenter.y + _halfSafeZone.y };
+    const sf::Vector2f safeZoneMin{ viewCenter.x - halfSafeZone.x, viewCenter.y - halfSafeZone.y };
+    const sf::Vector2f safeZoneMax{ viewCenter.x + halfSafeZone.x, viewCenter.y + halfSafeZone.y };
 
     if (playerPosition.x < safeZoneMin.x)
-        viewCenter.x = playerPosition.x + _halfSafeZone.x;
+        viewCenter.x = playerPosition.x + halfSafeZone.x;
     else if (playerPosition.x > safeZoneMax.x)
-        viewCenter.x = playerPosition.x - _halfSafeZone.x;
+        viewCenter.x = playerPosition.x - halfSafeZone.x;
     if (playerPosition.y < safeZoneMin.y)
-        viewCenter.y = playerPosition.y + _halfSafeZone.y;
+        viewCenter.y = playerPosition.y + halfSafeZone.y;
     else if (playerPosition.y > safeZoneMax.y)
-        viewCenter.y = playerPosition.y - _halfSafeZone.y;
+        viewCenter.y = playerPosition.y - halfSafeZone.y;
 
     _view->setCenter(viewCenter);
 }

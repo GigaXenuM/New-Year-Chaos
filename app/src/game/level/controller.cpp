@@ -82,7 +82,8 @@ Controller::Controller(sf::RenderTarget *renderTarget, EventHandler *parent,
     : EventHandler{ parent },
       _renderTarget{ renderTarget },
       _levelSource{ std::move(levelSource) },
-      _physicalWorld{ std::make_unique<b2World>(b2Vec2(0.f, 3.8f)) }
+      _physicalWorld{ std::make_unique<b2World>(b2Vec2(0.f, 3.8f)) },
+      _mapGlobalRect{ { 0.f, 0.f }, { 0.f, 0.f } }
 {
     loadLevel();
     initPhisicalWorld();
@@ -111,6 +112,11 @@ void Controller::update(float deltatime)
 Player *Controller::player() const
 {
     return _player;
+}
+
+sf::FloatRect Controller::mapGlobalRect() const
+{
+    return _mapGlobalRect;
 }
 
 void Controller::keyPressEvent(KeyPressEvent *event)
@@ -196,15 +202,16 @@ void Controller::initPhisicalWorld()
     debugDraw->SetFlags(b2Draw::e_shapeBit);
 
     // Terrain
-    std::vector<sf::Shape *> terrainShapes{ _objectLayer->objects("terrain") };
-    assert(!terrainShapes.empty());
-    for (auto *shape : terrainShapes)
     {
+        std::vector<sf::Shape *> terrainShapes{ _objectLayer->objects("terrain") };
+        assert(!terrainShapes.empty());
         b2Body *terrainBody{ ColliderFactory::create<ItemType::Terrain>(_physicalWorld.get(),
-                                                                        { shape }) };
+                                                                        terrainShapes) };
         auto *terrainItem{ new StaticElement{ terrainBody, ItemType::Terrain } };
         _independentElements.insert(
             { Depth::BackgroundMap, std::unique_ptr<Graphics::Drawable>{ terrainItem } });
+
+        _mapGlobalRect = Util::convertBodyToSFMLShape(terrainBody).getGlobalBounds();
     }
 
     // Obstacles

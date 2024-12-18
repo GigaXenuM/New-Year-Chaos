@@ -19,7 +19,7 @@ class Layout
     using Items = std::vector<std::shared_ptr<Graphics::ILayoutItem>>;
 
 public:
-    explicit Layout(const sf::FloatRect &rect);
+    explicit Layout(const sf::FloatRect &rect = {});
     virtual ~Layout() = default;
 
     void addItem(std::shared_ptr<Graphics::ILayoutItem> item);
@@ -28,6 +28,7 @@ public:
     void setAlignment(Align alingment);
     Util::EnumFlag<Align> alignment() const;
 
+    void setRect(const sf::FloatRect &rect);
     const sf::FloatRect &rect() const;
 
     void setSpacing(float spacing);

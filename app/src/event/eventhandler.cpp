@@ -104,17 +104,17 @@ void EventHandler::mousePressEvent(MousePressEvent * /*event*/)
     // Override it to define the logic.
 }
 
-void EventHandler::mouseReleaseEvent(MouseReleaseEvent *event)
+void EventHandler::mouseReleaseEvent(MouseReleaseEvent * /*event*/)
 {
     // Override it to define the logic.
 }
 
-void EventHandler::mouseMoveEvent(MouseMoveEvent *event)
+void EventHandler::mouseMoveEvent(MouseMoveEvent * /*event*/)
 {
     // Override it to define the logic.
 }
 
-void EventHandler::mouseScrollEvent(MouseScrollEvent *event)
+void EventHandler::mouseScrollEvent(MouseScrollEvent * /*event*/)
 {
     // Override it to define the logic.
 }

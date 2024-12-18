@@ -18,12 +18,14 @@ public:
     {
     }
 
-    void update(float deltatime)
+    void update(float deltatime) override
     {
         _renderTarget->setView(*view());
     }
 
     virtual sf::View *view() const = 0;
+
+    virtual void updateViewSize(const sf::Vector2f &size) = 0;
 
 private:
     sf::RenderTarget *_renderTarget{ nullptr };

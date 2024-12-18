@@ -10,10 +10,11 @@
 class GameOverMenu : public IView, public Action::ActionStorage<Menu::ActionVariant>
 {
 public:
-    explicit GameOverMenu(sf::RenderTarget *renderTarget, EventHandler *parent);
-    //~GameOverMenu();
+    explicit GameOverMenu(sf::RenderTarget *renderTarget, EventHandler *parent,
+                          const sf::Vector2f &viewSize);
 
     void update(float deltatime) override;
+    void updateViewSize(const sf::Vector2f &size) override;
 
 protected:
     sf::View *view() const override;

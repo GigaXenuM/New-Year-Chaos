@@ -32,6 +32,12 @@ Util::EnumFlag<Align> Layout::alignment() const
     return _alignment;
 }
 
+void Layout::setRect(const sf::FloatRect &rect)
+{
+    _rect = rect;
+    updateGeometry();
+}
+
 const sf::FloatRect &Layout::rect() const
 {
     return _rect;

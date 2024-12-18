@@ -6,12 +6,11 @@
 
 #include <SFML/Graphics/Font.hpp>
 
-GameOverMenu::GameOverMenu(sf::RenderTarget *renderTarget, EventHandler *parent)
+GameOverMenu::GameOverMenu(sf::RenderTarget *renderTarget, EventHandler *parent,
+                           const sf::Vector2f &viewSize)
     : IView{ renderTarget, parent },
       _renderTarget{ renderTarget },
-      _view{ std::make_unique<sf::View>(
-          sf::FloatRect(sf::Vector2f{},
-                        sf::Vector2f(renderTarget->getSize().x, renderTarget->getSize().y))) },
+      _view{ std::make_unique<sf::View>(sf::FloatRect{ {}, viewSize }) },
       _layout{ std::make_unique<VerticalLayout>(sf::FloatRect{ {}, _view->getSize() }) }
 {
     init();
@@ -27,6 +26,11 @@ void GameOverMenu::update(float deltatime)
 
     for (const Item &item : _layout->items())
         _renderTarget->draw(*item);
+}
+
+void GameOverMenu::updateViewSize(const sf::Vector2f &size)
+{
+    _view->setSize(size);
 }
 
 sf::View *GameOverMenu::view() const
