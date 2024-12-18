@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="100" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="10" nextobjectid="43">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="100" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="10" nextobjectid="45">
  <tileset firstgid="1" source="terrain.tsx"/>
  <layer id="5" name="cave_background" width="100" height="20" locked="1">
   <data encoding="csv">
@@ -214,5 +214,6 @@
   <object id="37" type="door" x="7166.33" y="1797.33" width="17.3333" height="117.333"/>
   <object id="38" type="terrain_obstacle" x="7650.76" y="837.947" width="588.059" height="454.886"/>
   <object id="42" type="obstacle_action" x="7582.04" y="1221.18" width="57.3381" height="57.3381"/>
+  <object id="43" type="win_zone" x="12408.7" y="1548" width="260" height="128"/>
  </objectgroup>
 </map>

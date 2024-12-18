@@ -34,6 +34,8 @@
 
 #include <player/bot3.h>
 
+#include <items/deadzone/winzome.h>
+
 namespace
 {
 
@@ -91,6 +93,7 @@ Controller::Controller(sf::RenderTarget *renderTarget, EventHandler *parent,
     initLoot();
 
     initDeadZone();
+    initWinZone();
 }
 
 Controller::~Controller() = default;
@@ -334,6 +337,17 @@ void Controller::initDeadZone()
     {
         _independentElements.insert(
             { Depth::BackgroundMap, std::make_unique<WaterZone>(_physicalWorld.get(), shape) });
+    }
+}
+
+void Controller::initWinZone()
+{
+    const auto &itemContainer{ _objectLayer->objects("win_zone") };
+
+    for (auto *shape : itemContainer)
+    {
+        _independentElements.insert(
+            { Depth::BackgroundMap, std::make_unique<WinZone>(_physicalWorld.get(), shape) });
     }
 }
 

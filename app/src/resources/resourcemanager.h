@@ -65,6 +65,7 @@ enum class TextureType
     SnowBall,
 
     // Zones
+    Win_gift_zone,
     Dead_water_zone,
 
     Key,

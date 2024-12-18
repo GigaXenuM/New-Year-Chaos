@@ -79,6 +79,7 @@ void ResourseManager::loadAllTextures()
     loadTextures("snowman_3/Throwing/", TextureType::Snowman_3_throw, "Throwing");
 
     loadTextures("dead-zones/", TextureType::Dead_water_zone, "waterzone");
+    loadTextures("win-zones/", TextureType::Win_gift_zone, "Gift");
     loadTextures("key/", TextureType::Key, "key");
 
     loadTextures("level/door", TextureType::Door, "door");

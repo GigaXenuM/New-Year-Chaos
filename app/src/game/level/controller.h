@@ -68,6 +68,7 @@ private:
     void initPlayer();
     void initEnemies();
     void initDeadZone();
+    void initWinZone();
 
     void initLoot();
 
