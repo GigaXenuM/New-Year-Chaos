@@ -1,5 +1,6 @@
 #pragma once
 
+#include "eventhandler.h"
 #include "geometry/alignment.h"
 #include "util/enumflag.h"
 #include "util/geometryoperation.h"
@@ -14,12 +15,12 @@ namespace Graphics
 class ILayoutItem;
 } // namespace Graphics
 
-class Layout
+class Layout : public EventHandler
 {
     using Items = std::vector<std::shared_ptr<Graphics::ILayoutItem>>;
 
 public:
-    explicit Layout(const sf::FloatRect &rect = {});
+    explicit Layout(EventHandler *parent, const sf::FloatRect &rect = {});
     virtual ~Layout() = default;
 
     void addItem(std::shared_ptr<Graphics::ILayoutItem> item);

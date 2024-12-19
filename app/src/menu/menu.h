@@ -41,11 +41,14 @@ public:
     void update(float deltatime) override;
     void updateViewSize(const sf::Vector2f &size) override;
 
+    void updateMenuLayout(const MenuType type) override;
+
 protected:
     sf::View *view() const override;
 
 private:
-    void init();
+    void initLooseLayout();
+    void initDefaultLayout();
 
     void updateBackground(float deltatime);
 
@@ -53,8 +56,13 @@ private:
 
     sf::RenderTarget *_renderTarget;
     std::unique_ptr<sf::View> _view;
-    std::unique_ptr<Layout> _layout;
-    std::unique_ptr<Game::Level::Controller> _levelController;
+
+    std::unique_ptr<Layout> _looseLayout;
+    std::unique_ptr<Layout> _defaultLayout;
+
+    Layout *_currentLayout;
+
+     std::unique_ptr<Game::Level::Controller> _levelController;
 
     Util::LimitedValueF _jumpTimer;
     Util::LimitedValueF _shootTimer;

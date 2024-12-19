@@ -50,6 +50,11 @@ bool Scene::isGameOver() const
     return _levelController->player()->isDead();
 }
 
+bool Scene::isPlayerWon() const
+{
+    return _levelController->player()->isWon();
+}
+
 void Scene::mouseScrollEvent(MouseScrollEvent *event)
 {
     const float rawDelta{ event->delta() };

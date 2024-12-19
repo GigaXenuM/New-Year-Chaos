@@ -29,13 +29,17 @@ Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vecto
       _title{ std::make_unique<sf::Text>() },
       _renderTarget{ renderTarget },
       _view{ std::make_unique<sf::View>(sf::FloatRect{ {}, viewSize }) },
-      _layout{ std::make_unique<VerticalLayout>() },
+      _looseLayout{ std::make_unique<VerticalLayout>(this) },
+      _defaultLayout{ std::make_unique<VerticalLayout>(this) },
       _levelController{ std::make_unique<Game::Level::Controller>(renderTarget, nullptr,
                                                                   "level/menu.tmx", _view.get()) },
       _jumpTimer{ 0.f, 0.f, 3.f },
       _shootTimer{ 0.f, 0.f, 4.f }
 {
-    init();
+    initLooseLayout();
+    initDefaultLayout();
+
+    updateMenuLayout(MenuType::Default);
 }
 
 Menu::~Menu() = default;
@@ -51,7 +55,7 @@ void Menu::update(float deltatime)
     _levelController->update(deltatime);
     updateBackground(deltatime);
 
-    for (const Item &item : _layout->items())
+    for (const Item &item : _currentLayout->items())
         _renderTarget->draw(*item);
 
     _renderTarget->draw(*_title);
@@ -65,7 +69,26 @@ void Menu::updateViewSize(const sf::Vector2f &size)
                                                    Util::ALIGN_CENTER_STATE) };
     _view->setSize(size);
     _view->setCenter(mapCenter.x, playerCenter.y);
-    _layout->setRect(viewRect(_view.get()));
+    _defaultLayout->setRect(viewRect(_view.get()));
+}
+
+void Menu::updateMenuLayout(const MenuType type)
+{
+    switch (type)
+    {
+    case MenuType::Default:
+        _currentLayout = _defaultLayout.get();
+        break;
+    case MenuType::GameOver:
+        _currentLayout = _looseLayout.get();
+        break;
+    case MenuType::Victory:
+        break;
+    default:
+        break;
+    }
+
+    grabContext(_currentLayout);
 }
 
 sf::View *Menu::view() const
@@ -73,14 +96,52 @@ sf::View *Menu::view() const
     return _view.get();
 }
 
-void Menu::init()
+void Menu::initLooseLayout()
 {
     const sf::Vector2f mapCenter{ Util::pointBy(_levelController->mapGlobalRect(),
                                                 Util::ALIGN_CENTER_STATE) };
     const sf::Vector2f playerCenter{ Util::pointBy(_levelController->player()->boundingRect(),
                                                    Util::ALIGN_CENTER_STATE) };
     _view->setCenter(mapCenter.x, playerCenter.y);
-    _layout->setRect(viewRect(_view.get()));
+    _looseLayout->setRect(viewRect(_view.get()));
+
+    const sf::Vector2f viewSize = _view->getSize();
+    const sf::Vector2f viewCenter = _view->getCenter();
+
+    _title->setFont(ResourseManager::getInstance()->getFont(FontType::Arial));
+    _title->setCharacterSize(30);
+    _title->setFillColor(sf::Color::Cyan);
+    _title->setCharacterSize(70);
+    _title->setString("GAME OVER!!!");
+
+    _title->setPosition({ viewCenter.x - _title->getGlobalBounds().width / 2,
+                          viewCenter.y - (viewCenter.y / 2 + _title->getGlobalBounds().height) });
+
+    _looseLayout->setSpacing(20);
+
+    const sf::Font font{ ResourseManager::getInstance()->getFont(FontType::Arial) };
+
+    auto restartButton{ std::make_shared<Graphics::TextButton>("Try again", font,
+                                                               sf::Vector2f{ 180.0f, 50.0f },
+                                                               _looseLayout.get()) };
+    auto exit{ std::make_shared<Graphics::TextButton>("Exit", font, sf::Vector2f{ 180.0f, 50.0f },
+                                                      _looseLayout.get()) };
+
+    restartButton->onClick([this]() { executeActions(ActionVariant::RestartGame); });
+    exit->onClick([this]() { executeActions(ActionVariant::Exit); });
+
+    _looseLayout->addItem(restartButton);
+    _looseLayout->addItem(exit);
+}
+
+void Menu::initDefaultLayout()
+{
+    const sf::Vector2f mapCenter{ Util::pointBy(_levelController->mapGlobalRect(),
+                                                Util::ALIGN_CENTER_STATE) };
+    const sf::Vector2f playerCenter{ Util::pointBy(_levelController->player()->boundingRect(),
+                                                   Util::ALIGN_CENTER_STATE) };
+    _view->setCenter(mapCenter.x, playerCenter.y);
+    _defaultLayout->setRect(viewRect(_view.get()));
 
     const sf::Vector2f viewSize = _view->getSize();
     const sf::Vector2f viewCenter = _view->getCenter();
@@ -94,20 +155,22 @@ void Menu::init()
     _title->setPosition({ viewCenter.x - _title->getGlobalBounds().width / 2,
                           viewCenter.y - (viewCenter.y / 2 + _title->getGlobalBounds().height) });
 
-    _layout->setSpacing(20);
+    _defaultLayout->setSpacing(20);
 
     const sf::Font font{ ResourseManager::getInstance()->getFont(FontType::Arial) };
 
     auto startButton{ std::make_shared<Graphics::TextButton>("Start Game", font,
-                                                             sf::Vector2f{ 180.0f, 50.0f }, this) };
+                                                             sf::Vector2f{ 180.0f, 50.0f },
+                                                             _defaultLayout.get()) };
     auto exitButton{ std::make_shared<Graphics::TextButton>("Exit", font,
-                                                            sf::Vector2f{ 180.0f, 50.0f }, this) };
+                                                            sf::Vector2f{ 180.0f, 50.0f },
+                                                            _defaultLayout.get()) };
 
     startButton->onClick([this]() { executeActions(ActionVariant::StartGame); });
     exitButton->onClick([this]() { executeActions(ActionVariant::Exit); });
 
-    _layout->addItem(startButton);
-    _layout->addItem(exitButton);
+    _defaultLayout->addItem(startButton);
+    _defaultLayout->addItem(exitButton);
 }
 
 void Menu::updateBackground(float deltatime)

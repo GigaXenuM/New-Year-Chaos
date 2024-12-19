@@ -101,6 +101,11 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
         if (auto *player{ dynamic_cast<Player *>(data.itemTypeToItem.at(ItemType::Entity)) })
             player->kill();
     }
+    if (data.types.test(ItemType::WinZone) && data.types.test(ItemType::Entity) && contacted)
+    {
+        if (auto *player{ dynamic_cast<Player *>(data.itemTypeToItem.at(ItemType::Entity)) })
+            player->setWinStatus(true);
+    }
 
     if (data.types.test(ItemType::Bullet) && contacted)
     {

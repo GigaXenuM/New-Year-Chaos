@@ -14,7 +14,7 @@ struct b2Body;
 namespace Game
 {
 
-class Player : public PhysicalEntity, public IActionHandler
+class Player final : public PhysicalEntity, public IActionHandler
 {
 public:
     Player(b2World *world, sf::Shape *shape);
@@ -22,6 +22,7 @@ public:
     void health();
     void addHealthItem();
 
+    [[nodiscard]] bool isWon() const;
     [[nodiscard]] bool isDead() const;
     [[nodiscard]] float getFreezPoints() const;
     [[nodiscard]] float getHealthPoints() const;
@@ -36,6 +37,7 @@ public:
     void damage(float power) override;
 
     void kill();
+    void setWinStatus(const bool status);
 
     void visitActions(const std::vector<IAction *> &actions) override;
     void executeAvailableAction() override;
@@ -65,8 +67,9 @@ private:
 
     float _healthUpdateTimer{ 0.0f };
 
-    bool _isHealthNeeded{ false };
+    bool _isWon{ false };
     bool _hasKey{ false };
+    bool _isHealthNeeded{ false };
 
     sf::Sprite _sprite;
 

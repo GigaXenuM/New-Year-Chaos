@@ -9,9 +9,9 @@
 GameOverMenu::GameOverMenu(sf::RenderTarget *renderTarget, EventHandler *parent,
                            const sf::Vector2f &viewSize)
     : IView{ renderTarget, parent },
-      _renderTarget{ renderTarget },
-      _view{ std::make_unique<sf::View>(sf::FloatRect{ {}, viewSize }) },
-      _layout{ std::make_unique<VerticalLayout>(sf::FloatRect{ {}, _view->getSize() }) }
+      _renderTarget{ renderTarget }
+//      _view{ std::make_unique<sf::View>(sf::FloatRect{ {}, viewSize }) },
+     // _layout{ std::make_unique<VerticalLayout>(sf::FloatRect{ {}, _view->getSize() }) }
 {
     init();
 }

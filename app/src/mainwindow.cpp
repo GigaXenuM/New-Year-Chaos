@@ -37,7 +37,6 @@ MainWindow::MainWindow(unsigned int width, unsigned int height, const char *name
       EventHandler{ nullptr },
       _viewSize{ defineViewSize(sf::Vector2f(width, height)) },
       _menu{ std::make_unique<Menu::Menu>(this, this, _viewSize) },
-      _gameOverMenu{ std::make_unique<GameOverMenu>(this, this, _viewSize) },
       _scene{ std::make_unique<Game::Scene>(this, this, _viewSize) },
       _latestMouseMoveEvent{ {}, {} }
 {
@@ -65,7 +64,13 @@ int MainWindow::gameLoop()
         if (_scene->isGameOver())
         {
             _backgroundMusic.stop();
-            switchView(_gameOverMenu.get());
+            _menu->updateMenuLayout(MenuType::GameOver);
+            switchView(_menu.get());
+        }
+        if (_scene->isPlayerWon())
+        {
+            _menu->updateMenuLayout(MenuType::GameOver);
+            switchView(_menu.get());
         }
 
         display();
@@ -145,14 +150,12 @@ void MainWindow::composeMenu()
 {
     _menu->registerAction(Menu::ActionVariant::Exit, [this]() { close(); });
     _menu->registerAction(Menu::ActionVariant::StartGame, [this]() { switchView(); });
-
-    _gameOverMenu->registerAction(Menu::ActionVariant::Exit, [this]() { close(); });
-    _gameOverMenu->registerAction(Menu::ActionVariant::RestartGame,
-                                  [this]()
-                                  {
-                                      _scene = std::make_unique<Game::Scene>(this, this, _viewSize);
-                                      switchView(_scene.get());
-                                  });
+    _menu->registerAction(Menu::ActionVariant::RestartGame,
+                          [this]()
+                          {
+                              _scene = std::make_unique<Game::Scene>(this, this, _viewSize);
+                              switchView(_scene.get());
+                          });
 }
 
 void MainWindow::initBackgroundMusic()
@@ -169,6 +172,7 @@ void MainWindow::switchView()
 
     IView *view{ needShowMenu ? dynamic_cast<IView *>(_menu.get())
                               : dynamic_cast<IView *>(_scene.get()) };
+
     switchView(view);
 }
 

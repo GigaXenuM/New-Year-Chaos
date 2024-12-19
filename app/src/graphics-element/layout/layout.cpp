@@ -2,7 +2,8 @@
 
 #include "item/ilayoutitem.h"
 
-Layout::Layout(const sf::FloatRect &rect) : _rect{ rect }
+Layout::Layout(EventHandler *parent, const sf::FloatRect &rect)
+    : EventHandler(parent), _rect{ rect }
 {
 }
 

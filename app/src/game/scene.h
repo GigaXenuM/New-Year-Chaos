@@ -44,6 +44,7 @@ public:
     void updateViewSize(const sf::Vector2f &size) override;
 
     bool isGameOver() const;
+    bool isPlayerWon() const;
 
 protected:
     void mouseScrollEvent(MouseScrollEvent *event) override;

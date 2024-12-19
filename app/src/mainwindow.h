@@ -46,7 +46,6 @@ private:
     sf::Vector2f _viewSize;
 
     std::unique_ptr<Menu::Menu> _menu;
-    std::unique_ptr<GameOverMenu> _gameOverMenu;
     std::unique_ptr<Game::Scene> _scene;
 
     IView *_currentView{ nullptr };

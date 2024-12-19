@@ -10,11 +10,22 @@ namespace sf
 class View;
 }
 
+enum class MenuType
+{
+    Default,
+    GameOver,
+    Victory,
+};
+
 class IView : public IUpdatable, public EventHandler
 {
 public:
     IView(sf::RenderTarget *renderTarget, EventHandler *parent)
         : EventHandler{ parent }, _renderTarget{ renderTarget }
+    {
+    }
+
+    virtual void updateMenuLayout(const MenuType type)
     {
     }
 

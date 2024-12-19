@@ -52,6 +52,11 @@ void Player::addHealthItem()
     _countOfHealthItem++;
 }
 
+bool Player::isWon() const
+{
+    return _isWon;
+}
+
 sf::Vector2f Player::getPosition() const
 {
     return _sprite.getPosition();
@@ -102,6 +107,12 @@ bool Player::isDead() const
 void Player::kill()
 {
     damage(_health + _freeze + 1);
+    _stamina = 0.f;
+}
+
+void Player::setWinStatus(const bool status)
+{
+    _isWon = status;
 }
 
 void Player::visitActions(const std::vector<IAction *> &actions)

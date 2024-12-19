@@ -10,7 +10,7 @@ class EventHandler;
 class VerticalLayout : public Layout
 {
 public:
-    explicit VerticalLayout(const sf::FloatRect &rect = {});
+    explicit VerticalLayout(EventHandler *parent, const sf::FloatRect &rect = {});
 
 protected:
     void updateGeometry() override;

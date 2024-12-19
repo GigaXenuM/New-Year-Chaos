@@ -3,7 +3,8 @@
 #include "item/ilayoutitem.h"
 #include "util/geometryoperation.h"
 
-VerticalLayout::VerticalLayout(const sf::FloatRect &rect) : Layout{ rect }
+VerticalLayout::VerticalLayout(EventHandler *parent, const sf::FloatRect &rect)
+    : Layout{ parent, rect }
 {
 }
 
