@@ -59,4 +59,16 @@ template <typename T> float distance(const sf::Vector2<T> &vec2)
     return sqrt(vec2.x * vec2.x + vec2.y * vec2.y);
 }
 
+template <typename ToType, typename FromType>
+sf::Vector2<ToType> castSfVector(const sf::Vector2<FromType> &vector)
+{
+    return { static_cast<ToType>(vector.x), static_cast<ToType>(vector.y) };
+}
+
+template <typename ToType, typename FromType>
+sf::Rect<ToType> castSfRect(const sf::Rect<FromType> &rect)
+{
+    return { castSfVector<ToType>(rect.getPosition()), castSfVector<ToType>(rect.getSize()) };
+}
+
 } // namespace Util

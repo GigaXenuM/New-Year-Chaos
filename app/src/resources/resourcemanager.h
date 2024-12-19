@@ -76,6 +76,7 @@ enum class TextureType
     Bridge,
     Chain,
     Stone,
+    Background,
 };
 
 class ResourseManager

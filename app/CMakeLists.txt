@@ -177,7 +177,8 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES}
-    src/game/items/deadzone/winzome.h src/game/items/deadzone/winzome.cpp)
+    src/game/items/deadzone/winzome.h src/game/items/deadzone/winzome.cpp
+    src/game/items/background/background.h src/game/items/background/background.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-audio sfml-graphics tmxlite box2d)
 

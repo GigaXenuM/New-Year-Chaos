@@ -2,7 +2,6 @@
 
 #include "action/iaction.h"
 #include "items/abstractphysicalitem.h"
-#include "util/limitedvalue.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 

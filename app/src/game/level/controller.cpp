@@ -2,6 +2,7 @@
 
 #include "action/iaction.h"
 #include "action/iactionhandler.h"
+#include "items/background/background.h"
 #include "items/bridge/bridge.h"
 #include "items/bridge/bridgedrawablejoint.h"
 #include "items/bridge/openbridgeactionitem.h"
@@ -78,14 +79,14 @@ namespace Level
 {
 
 Controller::Controller(sf::RenderTarget *renderTarget, EventHandler *parent,
-                       std::string levelSource)
+                       std::string levelSource, const sf::View *view)
     : EventHandler{ parent },
       _renderTarget{ renderTarget },
-      _levelSource{ std::move(levelSource) },
       _physicalWorld{ std::make_unique<b2World>(b2Vec2(0.f, 3.8f)) },
-      _mapGlobalRect{ { 0.f, 0.f }, { 0.f, 0.f } }
+      _mapGlobalRect{ { 0.f, 0.f }, { 0.f, 0.f } },
+      _view{ view }
 {
-    loadLevel();
+    loadLevel(std::move(levelSource));
     initPhisicalWorld();
 
     initPlayer();
@@ -153,12 +154,12 @@ void Controller::mousePressEvent(MousePressEvent *event)
         _player->shoot(event->position());
 }
 
-void Controller::loadLevel()
+void Controller::loadLevel(std::string levelSource)
 {
     _independentElements.clear();
 
     tmx::Map map;
-    map.load(_levelSource);
+    map.load(levelSource);
     if (map.getOrientation() != tmx::Orientation::Orthogonal)
     {
         std::cerr << "Map is not orthogonal - nothing will be drawn" << std::endl;
@@ -174,7 +175,7 @@ void Controller::loadLevel()
         case tmx::Layer::Type::Tile:
         {
             _independentElements.insert(
-                { Depth::BackgroundMap,
+                { Depth::PrefixPlayer,
                   std::make_unique<TileLayer>(map, layer->getLayerAs<tmx::TileLayer>()) });
             break;
         }
@@ -201,6 +202,11 @@ void Controller::initPhisicalWorld()
     _physicalWorld->SetContactListener(ContactListener::instance());
     debugDraw->SetFlags(b2Draw::e_shapeBit);
 
+    // Background
+    {
+        _independentElements.insert({ Depth::Backgrouund, std::make_unique<Background>(_view) });
+    }
+
     // Terrain
     {
         std::vector<sf::Shape *> terrainShapes{ _objectLayer->objects("terrain") };
@@ -209,7 +215,7 @@ void Controller::initPhisicalWorld()
                                                                         terrainShapes) };
         auto *terrainItem{ new StaticElement{ terrainBody, ItemType::Terrain } };
         _independentElements.insert(
-            { Depth::BackgroundMap, std::unique_ptr<Graphics::Drawable>{ terrainItem } });
+            { Depth::PrefixPlayer, std::unique_ptr<Graphics::Drawable>{ terrainItem } });
 
         _mapGlobalRect = Util::convertBodyToSFMLShape(terrainBody).getGlobalBounds();
     }
@@ -224,7 +230,7 @@ void Controller::initPhisicalWorld()
         auto *terrainObstackleItem{ new StaticElement{ terrainObstacleBody,
                                                        ItemType::TerrainObstacle } };
         _independentElements.insert(
-            { Depth::BackgroundMap, std::unique_ptr<Graphics::Drawable>{ terrainObstackleItem } });
+            { Depth::PrefixPlayer, std::unique_ptr<Graphics::Drawable>{ terrainObstackleItem } });
     }
 
     // Obstacle actions
@@ -232,7 +238,7 @@ void Controller::initPhisicalWorld()
     for (auto *shape : ObstacleActionShapes)
     {
         _independentElements.insert(
-            { Depth::BackgroundMap, std::make_unique<Mountain>(_physicalWorld.get(), shape) });
+            { Depth::PrefixPlayer, std::make_unique<Mountain>(_physicalWorld.get(), shape) });
     }
 
     // Bridge
@@ -269,13 +275,13 @@ void Controller::initPhisicalWorld()
 
         sf::RectangleShape openActionShape{ { 64, 64 } };
 
-        _independentElements.insert({ Depth::BackgroundMap, std::unique_ptr<Bridge>(bridge) });
+        _independentElements.insert({ Depth::PrefixPlayer, std::unique_ptr<Bridge>(bridge) });
         _independentElements.insert(
-            { Depth::BackgroundMap, std::unique_ptr<StaticElement>(bridgeSupport) });
-        _independentElements.insert({ Depth::ForegroundMap, std::unique_ptr<Graphics::Drawable>(
+            { Depth::PrefixPlayer, std::unique_ptr<StaticElement>(bridgeSupport) });
+        _independentElements.insert({ Depth::PostfixPlayer, std::unique_ptr<Graphics::Drawable>(
                                                                 bridge->postDrawElement()) });
         _independentElements.insert(
-            { Depth::ForegroundMap,
+            { Depth::PostfixPlayer,
               std::make_unique<OpenBridgeActionItem>(_physicalWorld.get(), &openActionShape,
                                                      bridge) });
     }
@@ -285,7 +291,7 @@ void Controller::initPhisicalWorld()
     for (auto *shape : doorContainer)
     {
         _independentElements.insert(
-            { Depth::ForegroundMap, std::make_unique<Door>(_physicalWorld.get(), shape) });
+            { Depth::PostfixPlayer, std::make_unique<Door>(_physicalWorld.get(), shape) });
     }
 
     // Dead Zones
@@ -295,7 +301,7 @@ void Controller::initPhisicalWorld()
         b2Body *body{ ColliderFactory::create<ItemType::DeadZone>(_physicalWorld.get(),
                                                                   { shape }) };
         _independentElements.insert(
-            { Depth::BackgroundMap, std::make_unique<StaticElement>(body, ItemType::DeadZone) });
+            { Depth::PrefixPlayer, std::make_unique<StaticElement>(body, ItemType::DeadZone) });
     }
     // END Dead Zones
 }
@@ -320,19 +326,19 @@ void Controller::initEnemies()
     for (auto *shape : itemContainer3)
     {
         _independentElements.insert(
-            { Depth::BackgroundMap, std::make_unique<Bot3>(_physicalWorld.get(), shape, _player) });
+            { Depth::PrefixPlayer, std::make_unique<Bot3>(_physicalWorld.get(), shape, _player) });
     }
 
     for (auto *shape : itemContainer2)
     {
         _independentElements.insert(
-            { Depth::BackgroundMap, std::make_unique<Bot2>(_physicalWorld.get(), shape, _player) });
+            { Depth::PrefixPlayer, std::make_unique<Bot2>(_physicalWorld.get(), shape, _player) });
     }
 
     for (auto *shape : itemContainer)
     {
         _independentElements.insert(
-            { Depth::BackgroundMap, std::make_unique<Bot>(_physicalWorld.get(), shape, _player) });
+            { Depth::PrefixPlayer, std::make_unique<Bot>(_physicalWorld.get(), shape, _player) });
     }
 }
 
@@ -343,7 +349,7 @@ void Controller::initDeadZone()
     for (auto *shape : itemContainer)
     {
         _independentElements.insert(
-            { Depth::BackgroundMap, std::make_unique<WaterZone>(_physicalWorld.get(), shape) });
+            { Depth::PrefixPlayer, std::make_unique<WaterZone>(_physicalWorld.get(), shape) });
     }
 }
 
@@ -354,7 +360,7 @@ void Controller::initWinZone()
     for (auto *shape : itemContainer)
     {
         _independentElements.insert(
-            { Depth::BackgroundMap, std::make_unique<WinZone>(_physicalWorld.get(), shape) });
+            { Depth::PrefixPlayer, std::make_unique<WinZone>(_physicalWorld.get(), shape) });
     }
 }
 
@@ -366,7 +372,7 @@ void Controller::initLoot()
     {
         auto *lootItem = new TeaLoot{ _physicalWorld.get(), shape };
         lootItem->setCallback([lootItem]() { lootItem->prepareDestroy(); });
-        _independentElements.insert({ Depth::BackgroundMap, std::unique_ptr<TeaLoot>{ lootItem } });
+        _independentElements.insert({ Depth::PrefixPlayer, std::unique_ptr<TeaLoot>{ lootItem } });
     }
 }
 
@@ -415,7 +421,7 @@ void Controller::destroyRedundantItems()
             {
                 for (auto *drop : abstractPhysicalItem->dropLoots())
                     _independentElements.insert(
-                        { Depth::ForegroundMap, std::unique_ptr<AbstractPhysicalItem>(drop) });
+                        { Depth::PostfixPlayer, std::unique_ptr<AbstractPhysicalItem>(drop) });
                 abstractPhysicalItem->destroyCollider();
                 item.reset();
             }

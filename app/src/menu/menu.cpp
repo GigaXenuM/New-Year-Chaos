@@ -28,10 +28,10 @@ Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vecto
     : IView{ renderTarget, parent },
       _title{ std::make_unique<sf::Text>() },
       _renderTarget{ renderTarget },
-      _levelController{ std::make_unique<Game::Level::Controller>(renderTarget, nullptr,
-                                                                  "level/menu.tmx") },
       _view{ std::make_unique<sf::View>(sf::FloatRect{ {}, viewSize }) },
       _layout{ std::make_unique<VerticalLayout>() },
+      _levelController{ std::make_unique<Game::Level::Controller>(renderTarget, nullptr,
+                                                                  "level/menu.tmx", _view.get()) },
       _jumpTimer{ 0.f, 0.f, 3.f },
       _shootTimer{ 0.f, 0.f, 4.f }
 {

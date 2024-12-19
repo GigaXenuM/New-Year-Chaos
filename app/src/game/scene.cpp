@@ -14,8 +14,8 @@ Scene::Scene(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vec
     : IView{ renderTarget, parent },
       _renderTarget{ renderTarget },
       _view{ std::make_unique<sf::View>(sf::FloatRect{ {}, viewSize }) },
-      _levelController{ std::make_unique<Level::Controller>(renderTarget, this,
-                                                            "level/terrain.tmx") },
+      _levelController{ std::make_unique<Level::Controller>(renderTarget, this, "level/terrain.tmx",
+                                                            _view.get()) },
       _hudComponents{ std::make_unique<HUDComponents>(_renderTarget, _view.get(),
                                                       _levelController->player()) }
 {
@@ -54,9 +54,10 @@ void Scene::mouseScrollEvent(MouseScrollEvent *event)
 {
     const float rawDelta{ event->delta() };
     const float delta{ rawDelta * 0.1f };
-    _scaling -= delta;
 
-    _view->setSize(_view->getSize() * _scaling);
+    float scaling{ -delta * 100 };
+
+    _view->setSize({ _view->getSize().x + scaling, _view->getSize().y + scaling });
 }
 
 void Scene::updateCamera()

@@ -87,6 +87,7 @@ void ResourseManager::loadAllTextures()
     loadTextures("level/bridge", TextureType::Bridge, "bridge");
     loadTextures("level/chain", TextureType::Chain, "chain");
     loadTextures("level/stone", TextureType::Stone, "stone");
+    loadTextures("level/background", TextureType::Background, "background");
 }
 
 void ResourseManager::loadSounds(const std::filesystem::path &path, const SoundType type,
@@ -143,7 +144,10 @@ void ResourseManager::loadTexture(const std::string &filePath, const TextureType
         return;
     }
 
+    const bool needRepeat{ type == TextureType::Background };
     texture.setSmooth(true);
+    texture.setRepeated(needRepeat);
+
     _textures[type].emplace_back(std::move(texture));
     std::cout << "Loaded texture: " << filePath << std::endl;
 }

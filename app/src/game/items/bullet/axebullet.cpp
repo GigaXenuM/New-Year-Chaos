@@ -35,15 +35,6 @@ float AxeBullet::power() const
 void AxeBullet::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(_sprite, states);
-
-    sf::RectangleShape border(_sprite.getLocalBounds().getSize());
-    border.setPosition(_sprite.getPosition());
-    border.setOutlineColor(sf::Color::Red);
-    border.setOutlineThickness(10);
-    border.setFillColor(sf::Color::Transparent);
-    border.setOrigin(_sprite.getOrigin());
-    border.setScale(_sprite.getScale());
-    target.draw(border, states);
 }
 
 void AxeBullet::updatePosition(float deltatime)

@@ -43,15 +43,16 @@ class Controller : public IUpdatable, public EventHandler
 {
     enum class Depth
     {
-        BackgroundMap,
+        Backgrouund,
+        PrefixPlayer,
         Player,
-        ForegroundMap,
+        PostfixPlayer,
         Hint,
     };
 
 public:
     explicit Controller(sf::RenderTarget *renderTarget, EventHandler *parent,
-                        std::string levelSource);
+                        std::string levelSource, const sf::View *view);
     ~Controller();
 
     void update(float deltatime) override;
@@ -65,7 +66,7 @@ protected:
     void mousePressEvent(MousePressEvent *event) override;
 
 private:
-    void loadLevel();
+    void loadLevel(std::string levelSource);
     void initPhisicalWorld();
     void initPlayer();
     void initEnemies();
@@ -84,21 +85,18 @@ private:
     void executeAvailableActions();
 
     sf::RenderTarget *_renderTarget{ nullptr };
-
-    std::string _levelSource;
-
-    Player *_player{ nullptr };
-
     std::unique_ptr<ObjectLayer> _objectLayer;
 
     std::unique_ptr<b2World> _physicalWorld;
-
+    Player *_player{ nullptr };
     Util::TimeAccumulator _timeAccumulator;
 
     std::multimap<Depth, std::unique_ptr<Graphics::Drawable>> _independentElements;
     std::multimap<Depth, const Graphics::Drawable *> _dependedElements;
 
     sf::FloatRect _mapGlobalRect;
+
+    const sf::View *_view{ nullptr };
 };
 
 } // namespace Level

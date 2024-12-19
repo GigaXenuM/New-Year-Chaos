@@ -40,17 +40,6 @@ void KeyLoot::update(float deltatime)
 void KeyLoot::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(_sprite, states);
-
-    auto shape{ Util::convertBodyToSFMLShape(collider()) };
-
-    sf::RectangleShape border(shape.getLocalBounds().getSize());
-    border.setPosition(shape.getPosition());
-    border.setOutlineColor(sf::Color::Magenta);
-    border.setOutlineThickness(10);
-    border.setFillColor(sf::Color::Transparent);
-    border.setOrigin(shape.getOrigin());
-    border.setScale(shape.getScale());
-    target.draw(border, states);
 }
 
 sf::Vector2f KeyLoot::position() const

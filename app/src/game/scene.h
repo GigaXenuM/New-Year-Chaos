@@ -52,7 +52,6 @@ private:
     void updateCamera();
 
     sf::RenderTarget *_renderTarget{ nullptr };
-    float _scaling{ 1.0f };
     std::unique_ptr<sf::View> _view;
     std::unique_ptr<Level::Controller> _levelController;
     std::unique_ptr<HUDComponents> _hudComponents;

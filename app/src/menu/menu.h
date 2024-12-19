@@ -49,12 +49,12 @@ private:
 
     void updateBackground(float deltatime);
 
-    sf::RenderTarget *_renderTarget;
-
-    std::unique_ptr<Game::Level::Controller> _levelController;
     std::unique_ptr<sf::Text> _title;
+
+    sf::RenderTarget *_renderTarget;
     std::unique_ptr<sf::View> _view;
     std::unique_ptr<Layout> _layout;
+    std::unique_ptr<Game::Level::Controller> _levelController;
 
     Util::LimitedValueF _jumpTimer;
     Util::LimitedValueF _shootTimer;
