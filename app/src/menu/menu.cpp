@@ -40,6 +40,10 @@ Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vecto
     initDefaultLayout();
 
     updateMenuLayout(MenuType::Default);
+    
+    _title->setFont(ResourseManager::getInstance()->getFont(FontType::Arial));
+    _title->setCharacterSize(30);
+    _title->setCharacterSize(70);
 }
 
 Menu::~Menu() = default;
@@ -58,6 +62,10 @@ void Menu::update(float deltatime)
     for (const Item &item : _currentLayout->items())
         _renderTarget->draw(*item);
 
+    const sf::Vector2f viewCenter = _view->getCenter();
+    _title->setOrigin(Util::pointBy(_title->getLocalBounds(), Util::ALIGN_CENTER_STATE));
+    _title->setPosition(
+        { viewCenter.x, viewCenter.y - (viewCenter.y / 2 + _title->getGlobalBounds().height) });
     _renderTarget->draw(*_title);
 }
 
@@ -77,12 +85,18 @@ void Menu::updateMenuLayout(const MenuType type)
     switch (type)
     {
     case MenuType::Default:
+        _title->setFillColor(sf::Color::Green);
+        _title->setString("NEW YEAR CHAOS");
         _currentLayout = _defaultLayout.get();
         break;
     case MenuType::GameOver:
         _currentLayout = _looseLayout.get();
+        _title->setFillColor(sf::Color::Red);
+        _title->setString("GAME OVER");
         break;
     case MenuType::Victory:
+        _title->setString("VICTORY");
+        _title->setFillColor(sf::Color::Green);
         break;
     default:
         break;
@@ -104,18 +118,6 @@ void Menu::initLooseLayout()
                                                    Util::ALIGN_CENTER_STATE) };
     _view->setCenter(mapCenter.x, playerCenter.y);
     _looseLayout->setRect(viewRect(_view.get()));
-
-    const sf::Vector2f viewSize = _view->getSize();
-    const sf::Vector2f viewCenter = _view->getCenter();
-
-    _title->setFont(ResourseManager::getInstance()->getFont(FontType::Arial));
-    _title->setCharacterSize(30);
-    _title->setFillColor(sf::Color::Cyan);
-    _title->setCharacterSize(70);
-    _title->setString("GAME OVER!!!");
-
-    _title->setPosition({ viewCenter.x - _title->getGlobalBounds().width / 2,
-                          viewCenter.y - (viewCenter.y / 2 + _title->getGlobalBounds().height) });
 
     _looseLayout->setSpacing(20);
 
@@ -142,18 +144,6 @@ void Menu::initDefaultLayout()
                                                    Util::ALIGN_CENTER_STATE) };
     _view->setCenter(mapCenter.x, playerCenter.y);
     _defaultLayout->setRect(viewRect(_view.get()));
-
-    const sf::Vector2f viewSize = _view->getSize();
-    const sf::Vector2f viewCenter = _view->getCenter();
-
-    _title->setFont(ResourseManager::getInstance()->getFont(FontType::Arial));
-    _title->setCharacterSize(30);
-    _title->setFillColor(sf::Color::Cyan);
-    _title->setCharacterSize(70);
-    _title->setString("New Year Chaos");
-
-    _title->setPosition({ viewCenter.x - _title->getGlobalBounds().width / 2,
-                          viewCenter.y - (viewCenter.y / 2 + _title->getGlobalBounds().height) });
 
     _defaultLayout->setSpacing(20);
 

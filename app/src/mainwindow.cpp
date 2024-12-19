@@ -69,7 +69,7 @@ int MainWindow::gameLoop()
         }
         if (_scene->isPlayerWon())
         {
-            _menu->updateMenuLayout(MenuType::GameOver);
+            _menu->updateMenuLayout(MenuType::Victory);
             switchView(_menu.get());
         }
 
