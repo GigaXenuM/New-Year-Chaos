@@ -70,6 +70,7 @@ int MainWindow::gameLoop()
         if (_scene->isPlayerWon())
         {
             _menu->updateMenuLayout(MenuType::Victory);
+            _scene = std::make_unique<Game::Scene>(this, this, _viewSize);
             switchView(_menu.get());
         }
 
@@ -149,11 +150,17 @@ void MainWindow::handleSfmlEvent(const sf::Event &event)
 void MainWindow::composeMenu()
 {
     _menu->registerAction(Menu::ActionVariant::Exit, [this]() { close(); });
-    _menu->registerAction(Menu::ActionVariant::StartGame, [this]() { switchView(); });
+    _menu->registerAction(Menu::ActionVariant::StartGame,
+                          [this]()
+                          {
+                              _menu->updateMenuLayout(MenuType::Default);
+                              switchView();
+                          });
     _menu->registerAction(Menu::ActionVariant::RestartGame,
                           [this]()
                           {
                               _scene = std::make_unique<Game::Scene>(this, this, _viewSize);
+                              _menu->updateMenuLayout(MenuType::Default);
                               switchView(_scene.get());
                           });
 }
