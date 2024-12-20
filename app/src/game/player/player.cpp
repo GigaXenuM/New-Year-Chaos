@@ -84,11 +84,16 @@ void Player::freezeDamage(float power)
     if (isStateActive(State::Dead))
         return;
 
+    power *= 10;
+
     float lastValue{ _freeze.get() };
     _freeze.move(-power);
 
+    if (_freeze.get() < _freeze.max() / 2.f)
+        setMentadoryHint("Q - випити чай, щоб зігрітись", true);
+
     if (_freeze.isMin())
-        damage(lastValue - power);
+        damage(power - lastValue);
 }
 
 size_t Player::getHealCount() const
@@ -159,7 +164,6 @@ void Player::executeAvailableAction()
     }
     case ActionVariant::PickUpTea:
     {
-        setMentadoryHint("Q - випити чай, щоб зігрітись");
         ++_countOfHealthItem;
         break;
     }
@@ -296,8 +300,9 @@ std::string Player::hintText(IAction *action)
 
         _mandatoryHintTimer.setMin();
 
-        std::string text{ *_mandatoryHints.begin() };
-        _showedMandatoryHints.insert(text);
+        const auto &[text, disposable]{ *_mandatoryHints.begin() };
+        if (disposable)
+            _showedMandatoryHints.insert(text);
         _mandatoryHints.erase(_mandatoryHints.cbegin());
         return text;
     }
@@ -326,10 +331,10 @@ std::string Player::hintText(IAction *action)
     return {};
 }
 
-void Player::setMentadoryHint(std::string hintText)
+void Player::setMentadoryHint(std::string hintText, bool disposable)
 {
     if (!_showedMandatoryHints.contains(hintText))
-        _mandatoryHints.insert(hintText);
+        _mandatoryHints.insert({ hintText, disposable });
 }
 
 void Player::updatePosition(float deltatime)

@@ -11,6 +11,7 @@
 #include <box2d/b2_body.h>
 
 #include <set>
+#include <unordered_map>
 
 struct b2Body;
 
@@ -46,7 +47,7 @@ public:
     void visitActions(const std::vector<IAction *> &actions) override;
     void executeAvailableAction() override;
 
-    void setMentadoryHint(std::string hintText);
+    void setMentadoryHint(std::string hintText, bool disposable);
 
 protected:
     void update(float deltatime) override;
@@ -91,7 +92,7 @@ private:
 
     Hint _hint;
 
-    std::set<std::string> _mandatoryHints;
+    std::unordered_map<std::string, bool> _mandatoryHints;
     std::set<std::string> _showedMandatoryHints;
     Util::LimitedValueF _mandatoryHintTimer;
 };
