@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.90" orientation="orthogonal" renderorder="right-down" width="114" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="14" nextobjectid="52">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="114" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="14" nextobjectid="58">
  <tileset firstgid="1" source="terrain.tsx"/>
  <layer id="5" name="cave_background" width="114" height="20" locked="1">
   <data encoding="csv">
@@ -259,15 +259,6 @@
   <object id="27" type="bridge" x="12396.4" y="1628.63" rotation="-90">
    <polygon points="-61.3307,58.1546 2.77037,18.7592 144.729,-30.6046 282.121,-43.5361 421.35,-33.1252 564.884,18.5962 627.84,58.1546 -56.208,58.1546"/>
   </object>
-  <object id="29" type="terrain_obstacle" x="4736" y="1926.33">
-   <polygon points="0,0 2.79508,0.458156 2.83337,249.667 0,249.667"/>
-  </object>
-  <object id="31" type="terrain_obstacle" x="2304" y="1792">
-   <polygon points="0,0 18.6667,256 0,256"/>
-  </object>
-  <object id="32" type="terrain_obstacle" x="2560" y="1792">
-   <polygon points="0,0 -18.6667,256 0,256"/>
-  </object>
   <object id="33" type="terrain" x="896" y="1792">
    <polygon points="0,0 128,0 256.333,119.333 274.667,128 492,128 512.333,118 768,-128 1280,-128 1408,0 1408,256 1664,256 1664,0 1900.38,0 1919.75,-7.75 2048,-128 2304,-128 2560,120.75 2576.25,128 3308.33,128 3328.33,121 3456,0 3712,0 3840,128 3841,384 4096,384 4096,128 4332.67,128 4352.33,118.667 4480,0 4589.33,0 4608,-7 4736,-128 4842.67,-128 4864,-134.333 4992,-256 5248,-256 5504.67,-7.33333 5521.67,0 6378.67,0 6404.67,-12.6667 6528,-128 6656,-128 6778.67,-11.3333 6802.67,0 6912,0 7040.25,118.25 7065.36,127.593 7168,128 8809.5,128.5 8839.5,118.5 8960,0 9344,0 9472,120.667 9490.67,128 10604.7,128 10626,118.667 10752,0 11117.3,0 11136,-7 11264,-128 11520,-128 11648,0 11648,256 12160,256 12160,0 12288,-128 12800,-128 12800,512 0,512"/>
   </object>
@@ -279,20 +270,11 @@
   <object id="42" type="obstacle_action" x="8478.04" y="1221.18" width="57.3381" height="57.3381"/>
   <object id="43" type="win_zone" x="13304.7" y="1548" width="260" height="128"/>
   <object id="45" type="warm_zone" x="8282" y="1628" width="1086" height="350"/>
-  <object id="47" type="terrain_obstacle" x="4992" y="2176">
-   <polygon points="0,0 2.79508,-0.458156 2.83337,-249.667 0,-249.667"/>
-  </object>
-  <object id="48" type="terrain_obstacle" x="2304" y="2048.67">
-   <polygon points="0,0 2.79508,-0.458156 2.83337,-249.667 0,-249.667"/>
-  </object>
-  <object id="49" type="terrain_obstacle" x="2557.25" y="1798.25">
-   <polygon points="0,0 2.79508,0.458156 2.83337,249.667 0,249.667"/>
-  </object>
-  <object id="50" type="terrain_obstacle" x="12544.8" y="2047.42">
-   <polygon points="0,0 2.79508,-0.458156 2.83337,-249.667 0,-249.667"/>
-  </object>
-  <object id="51" type="terrain_obstacle" x="13052" y="1800">
-   <polygon points="0,0 2.79508,0.458156 2.83337,249.667 0,249.667"/>
-  </object>
+  <object id="52" type="terrain_obstacle" x="13054" y="1792" width="2.02742" height="256"/>
+  <object id="53" type="terrain_obstacle" x="12544" y="1792" width="2.02742" height="256"/>
+  <object id="54" type="terrain_obstacle" x="4990" y="1920" width="2.02742" height="256"/>
+  <object id="55" type="terrain_obstacle" x="4736" y="1920" width="2.02742" height="256"/>
+  <object id="56" type="terrain_obstacle" x="2558" y="1792" width="2.02742" height="256"/>
+  <object id="57" type="terrain_obstacle" x="2304" y="1792" width="2.02742" height="256"/>
  </objectgroup>
 </map>

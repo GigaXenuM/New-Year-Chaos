@@ -23,9 +23,10 @@ constexpr float DEFAULT_ANIMATION_FRAME_TIME{ 0.075 };
 constexpr float DEFAULT_MANTADORY_HINT_TIME{ 3 };
 } // namespace
 
-Player::Player(b2World *world, sf::Shape *shape)
+Player::Player(b2World *world, sf::Shape *shape, bool menuMode)
     : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 45 },
                      std::make_unique<SnowBallGun>(this, world, 1.f, 150.f)),
+      _menuMode{ menuMode },
       _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run),
                      DEFAULT_ANIMATION_FRAME_TIME },
       _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_dead),
@@ -35,7 +36,7 @@ Player::Player(b2World *world, sf::Shape *shape)
       _idleAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_idle),
                       DEFAULT_ANIMATION_FRAME_TIME },
       _jumpAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_jump) },
-      _mandatoryHintTimer{ 0.f, 0.f, DEFAULT_MANTADORY_HINT_TIME }
+      _mandatoryHintTimer{ DEFAULT_MANTADORY_HINT_TIME, 0.f, DEFAULT_MANTADORY_HINT_TIME }
 {
     _sprite.setScale({ _scale, _scale });
 }
@@ -159,6 +160,9 @@ void Player::setWinStatus(const bool status)
 
 void Player::visitActions(const std::vector<IAction *> &actions)
 {
+    if (isStateActive(State::Dead))
+        return;
+
     _availableAction = nullptr;
 
     constexpr float threshold{ 100.f };
@@ -247,6 +251,7 @@ void Player::updateAnimation(float deltatime)
 
         return;
     }
+    _deadAnimation.stop();
 
     const bool isMoved{ isStateActive(State::Right) || isStateActive(State::Left) };
     if (isMoved)
@@ -264,7 +269,7 @@ void Player::updateAnimation(float deltatime)
 
 void Player::updateHealthPoint(float deltatime)
 {
-    if (isStateActive(State::Dead))
+    if (isStateActive(State::Dead) || _menuMode)
         return;
     freezeDamage(isStateActive(State::Warming) ? -deltatime * 3 : deltatime);
 }
@@ -348,11 +353,13 @@ void Player::setMentadoryHint(std::string hintText, bool disposable)
 
 void Player::updatePosition(float deltatime)
 {
+    const sf::Vector2f playerPos{ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE) };
+    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
+    _sprite.setPosition(playerPos);
+
     if (isStateActive(State::Dead))
-    {
-        collider()->SetType(b2_staticBody);
         return;
-    }
+
     if (isStateActive(State::Run) && (isStateActive(State::Right) || isStateActive(State::Left)))
     {
         updateStaminaPoint(deltatime);
@@ -361,10 +368,6 @@ void Player::updatePosition(float deltatime)
     {
         restoreStaminaPoints(deltatime);
     }
-
-    const sf::Vector2f playerPos{ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE) };
-    _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
-    _sprite.setPosition(playerPos);
 }
 
 void Player::update(float deltatime)

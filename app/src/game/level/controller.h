@@ -52,7 +52,7 @@ class Controller : public IUpdatable, public EventHandler
 
 public:
     explicit Controller(sf::RenderTarget *renderTarget, EventHandler *parent,
-                        std::string levelSource, const sf::View *view);
+                        std::string levelSource, const sf::View *view, bool menuMode = false);
     ~Controller();
 
     void update(float deltatime) override;
@@ -97,6 +97,8 @@ private:
     sf::FloatRect _mapGlobalRect;
 
     const sf::View *_view{ nullptr };
+
+    bool _menuMode{ false };
 };
 
 } // namespace Level

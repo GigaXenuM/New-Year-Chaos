@@ -25,35 +25,40 @@ bool PhysicalEntity::needDestroying() const
 
 void PhysicalEntity::updatePhysics()
 {
-    if (isStateActive(State::Dead))
+    if (isStateActive(State::Dead) && isStateActive(State::OnGround))
     {
         collider()->SetType(b2BodyType::b2_staticBody);
         _type = ItemType::NonCollided;
         return;
     }
 
+    collider()->SetType(b2BodyType::b2_dynamicBody);
+    _type = ItemType::Entity;
+
     b2Vec2 velocity{ collider()->GetLinearVelocity() };
-
-    velocity.x = 0.0f;
-
-    float runVelocity = _context.velocity;
-
-    if (isStateActive(State::Run) && _stamina > 0.f)
-        runVelocity *= 2;
-
-    if (isStateActive(State::Left))
-        velocity.x -= runVelocity;
-    if (isStateActive(State::Right))
-        velocity.x += runVelocity;
 
     const bool onGround{ isStateActive(State::OnGround) };
     const bool needJumping{ isStateActive(State::Jump) && onGround };
+    velocity.x = 0.0f;
 
-    if (needJumping)
-        velocity.y = 0.0f;
+    if (!isStateActive(State::Dead))
+    {
+        float runVelocity = _context.velocity;
 
-    if (velocity.x != 0.0f && velocity.y != 0.0f && onGround)
-        velocity.x *= runVelocity / velocity.Length();
+        if (isStateActive(State::Run) && _stamina > 0.f)
+            runVelocity *= 2;
+
+        if (isStateActive(State::Left))
+            velocity.x -= runVelocity;
+        if (isStateActive(State::Right))
+            velocity.x += runVelocity;
+
+        if (needJumping)
+            velocity.y = 0.0f;
+
+        if (velocity.x != 0.0f && velocity.y != 0.0f && onGround)
+            velocity.x *= runVelocity / velocity.Length();
+    }
 
     collider()->SetLinearVelocity(velocity);
 

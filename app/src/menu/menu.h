@@ -47,7 +47,7 @@ protected:
     sf::View *view() const override;
 
 private:
-    void initLooseLayout();
+    void initLooseLayout(sf::RenderTarget *renderTarget);
     void initDefaultLayout();
 
     void updateBackground(float deltatime);

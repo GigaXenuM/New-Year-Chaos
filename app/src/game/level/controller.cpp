@@ -79,12 +79,13 @@ namespace Level
 {
 
 Controller::Controller(sf::RenderTarget *renderTarget, EventHandler *parent,
-                       std::string levelSource, const sf::View *view)
+                       std::string levelSource, const sf::View *view, bool menuMode)
     : EventHandler{ parent },
       _renderTarget{ renderTarget },
       _physicalWorld{ std::make_unique<b2World>(b2Vec2(0.f, 3.8f)) },
       _mapGlobalRect{ { 0.f, 0.f }, { 0.f, 0.f } },
-      _view{ view }
+      _view{ view },
+      _menuMode{ menuMode }
 {
     loadLevel(std::move(levelSource));
     initPhisicalWorld();
@@ -323,7 +324,7 @@ void Controller::initPlayer()
     assert(playerContainer.size() == 1);
     sf::Shape *playerShape{ playerContainer.front() };
 
-    _player = new Player(_physicalWorld.get(), playerShape);
+    _player = new Player(_physicalWorld.get(), playerShape, _menuMode);
     _independentElements.insert({ Depth::Player, std::unique_ptr<Player>(_player) });
     _dependedElements.insert({ Depth::Hint, _player->hint() });
 }

@@ -31,11 +31,12 @@ Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vecto
       _looseLayout{ std::make_unique<VerticalLayout>(this) },
       _defaultLayout{ std::make_unique<VerticalLayout>(this) },
       _levelController{ std::make_unique<Game::Level::Controller>(renderTarget, nullptr,
-                                                                  "level/menu.tmx", _view.get()) },
+                                                                  "level/menu.tmx", _view.get(),
+                                                                  true) },
       _jumpTimer{ 0.f, 0.f, 3.f },
       _shootTimer{ 0.f, 0.f, 4.f }
 {
-    initLooseLayout();
+    initLooseLayout(renderTarget);
     initDefaultLayout();
 
     updateMenuLayout(MenuType::Default);
@@ -87,12 +88,14 @@ void Menu::updateMenuLayout(const MenuType type)
     switch (type)
     {
     case MenuType::Default:
+        _levelController->player()->updateState(Game::PhysicalEntity::State::Dead, false);
         titleColor = sf::Color::Green;
         tileText = "НОВОРІЧНИЙ ХАОС";
         _currentLayout = _defaultLayout.get();
         break;
     case MenuType::GameOver:
         _currentLayout = _looseLayout.get();
+        _levelController->player()->updateState(Game::PhysicalEntity::State::Dead, true);
         titleColor = sf::Color::Red;
         tileText = "ШОСЬ МЕНІ ЗЛЕ";
         break;
@@ -115,7 +118,7 @@ sf::View *Menu::view() const
     return _view.get();
 }
 
-void Menu::initLooseLayout()
+void Menu::initLooseLayout(sf::RenderTarget *renderTarget)
 {
     const sf::Vector2f mapCenter{ Util::pointBy(_levelController->mapGlobalRect(),
                                                 Util::ALIGN_CENTER_STATE) };
@@ -134,7 +137,16 @@ void Menu::initLooseLayout()
     auto exit{ std::make_shared<Graphics::TextButton>("Вихід", font, sf::Vector2f{ 180.0f, 50.0f },
                                                       _looseLayout.get()) };
 
+    // restartButton->onClick(
+    //     [this, renderTarget]()
+    //     {
+    //         _levelController
+    //             = std::make_unique<Game::Level::Controller>(renderTarget, nullptr,
+    //             "level/menu.tmx",
+    //                                                         _view.get(), true);
+    //     });
     restartButton->onClick([this]() { executeActions(ActionVariant::RestartGame); });
+
     exit->onClick([this]() { executeActions(ActionVariant::Exit); });
 
     _looseLayout->addItem(restartButton);

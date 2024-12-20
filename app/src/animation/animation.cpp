@@ -37,7 +37,7 @@ void Animation::stop()
 {
     _isPlaying = false;
     _currentFrame = 0;
-    _finished = true;
+    _finished = false;
 }
 
 bool Animation::isPlaying() const

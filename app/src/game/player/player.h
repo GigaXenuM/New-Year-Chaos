@@ -21,7 +21,7 @@ namespace Game
 class Player final : public PhysicalEntity, public IActionHandler
 {
 public:
-    Player(b2World *world, sf::Shape *shape);
+    Player(b2World *world, sf::Shape *shape, bool menuMode = false);
 
     void restoreFreezePoints();
     void restoreHealthPoints();
@@ -68,6 +68,8 @@ private:
     std::string hintText(IAction *action);
 
 private:
+    const bool _menuMode{ false };
+
     const float _scale{ 0.25f };
     const float _healthUpdateInterval{ 1.0f };
 
