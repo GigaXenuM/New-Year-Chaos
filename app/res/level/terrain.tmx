@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.90" orientation="orthogonal" renderorder="right-down" width="114" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="12" nextobjectid="45">
+<map version="1.10" tiledversion="1.11.90" orientation="orthogonal" renderorder="right-down" width="114" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="12" nextobjectid="47">
  <tileset firstgid="1" source="terrain.tsx"/>
  <layer id="5" name="cave_background" width="114" height="20" locked="1">
   <data encoding="csv">
@@ -250,7 +250,7 @@
   <object id="33" type="terrain" x="896" y="1792">
    <polygon points="0,0 128,0 256.333,119.333 274.667,128 492,128 512.333,118 768,-128 1280,-128 1408,0 1408,256 1664,256 1664,0 1900.38,0 1919.75,-7.75 2048,-128 2304,-128 2560,120.75 2576.25,128 3308.33,128 3328.33,121 3456,0 3712,0 3840,128 3841,384 4096,384 4096,128 4332.67,128 4352.33,118.667 4480,0 4589.33,0 4608,-7 4736,-128 4842.67,-128 4864,-134.333 4992,-256 5248,-256 5504.67,-7.33333 5521.67,0 6378.67,0 6404.67,-12.6667 6528,-128 6656,-128 6778.67,-11.3333 6802.67,0 6912,0 7040.25,118.25 7065.36,127.593 7168,128 8809.5,128.5 8839.5,118.5 8960,0 9344,0 9472,120.667 9490.67,128 10604.7,128 10626,118.667 10752,0 11117.3,0 11136,-7 11264,-128 11520,-128 11648,0 11648,256 12160,256 12160,0 12288,-128 12800,-128 12800,512 0,512"/>
   </object>
-  <object id="34" type="terrain" x="7936" y="1664">
+  <object id="34" type="terrain" x="7938" y="1664">
    <polygon points="0,0 128,-128 363,-128 387.5,-138.5 640,-384 1152,-384 1405,-137.5 1425,-128 1664,-128 1792,0 1664,128 1280,128 1024,-128 768,-128 512,128 128,128"/>
   </object>
   <object id="35" type="terrain_obstacle" x="12544" y="1792">
@@ -263,5 +263,6 @@
   <object id="38" type="terrain_obstacle" x="8546.76" y="837.947" width="588.059" height="454.886"/>
   <object id="42" type="obstacle_action" x="8478.04" y="1221.18" width="57.3381" height="57.3381"/>
   <object id="43" type="win_zone" x="13304.7" y="1548" width="260" height="128"/>
+  <object id="45" type="warm_zone" x="8282" y="1628" width="1086" height="350"/>
  </objectgroup>
 </map>

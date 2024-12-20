@@ -303,7 +303,16 @@ void Controller::initPhisicalWorld()
         _independentElements.insert(
             { Depth::PrefixPlayer, std::make_unique<StaticElement>(body, ItemType::DeadZone) });
     }
-    // END Dead Zones
+
+    // Warm Zones
+    const auto &warmZoneContainer{ _objectLayer->objects("warm_zone") };
+    for (auto *shape : warmZoneContainer)
+    {
+        b2Body *body{ ColliderFactory::create<ItemType::WarmZone>(_physicalWorld.get(),
+                                                                  { shape }) };
+        _independentElements.insert(
+            { Depth::PrefixPlayer, std::make_unique<StaticElement>(body, ItemType::WarmZone) });
+    }
 }
 
 void Controller::initPlayer()

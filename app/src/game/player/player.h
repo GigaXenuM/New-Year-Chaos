@@ -4,10 +4,13 @@
 #include "animation/animation.h"
 #include "items/entity/physicalentity.h"
 #include "tips/hint.h"
+#include "util/limitedvalue.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 
 #include <box2d/b2_body.h>
+
+#include <set>
 
 struct b2Body;
 
@@ -35,12 +38,15 @@ public:
     const Drawable *hint() const;
 
     void damage(float power) override;
+    void freezeDamage(float power);
 
     void kill();
     void setWinStatus(const bool status);
 
     void visitActions(const std::vector<IAction *> &actions) override;
     void executeAvailableAction() override;
+
+    void setMentadoryHint(std::string hintText);
 
 protected:
     void update(float deltatime) override;
@@ -56,14 +62,14 @@ private:
     void restoreHealthAndFreezePoints();
     void restoreStaminaPoints(float deltatime);
 
-    std::string hintText(IAction *action) const;
+    std::string hintText(IAction *action);
 
 private:
     const float _scale{ 0.25f };
     const float _healthUpdateInterval{ 1.0f };
 
-    float _freeze{ 100.f };
-    float _health{ 100.f };
+    Util::LimitedValueF _freeze{ 100.f, 0.f, 100.f };
+    Util::LimitedValueF _health{ 100.f, 0.f, 100.f };
 
     float _healthUpdateTimer{ 0.0f };
 
@@ -84,6 +90,10 @@ private:
     IAction *_availableAction{ nullptr };
 
     Hint _hint;
+
+    std::set<std::string> _mandatoryHints;
+    std::set<std::string> _showedMandatoryHints;
+    Util::LimitedValueF _mandatoryHintTimer;
 };
 
 } // namespace Game

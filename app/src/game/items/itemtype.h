@@ -12,6 +12,7 @@ enum class ItemType
     Loot,
     WaterZone,
     DeadZone,
+    WarmZone,
     WinZone,
     NonCollided,
 };

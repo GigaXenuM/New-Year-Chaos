@@ -24,6 +24,7 @@ public:
         Run,
         Jump,
         Dead,
+        Warming,
         RemoveMe,
     };
 

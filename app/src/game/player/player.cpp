@@ -20,7 +20,8 @@ namespace Game
 namespace
 {
 constexpr float DEFAULT_ANIMATION_FRAME_TIME{ 0.075 };
-}
+constexpr float DEFAULT_MANTADORY_HINT_TIME{ 3 };
+} // namespace
 
 Player::Player(b2World *world, sf::Shape *shape)
     : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 45 },
@@ -33,7 +34,8 @@ Player::Player(b2World *world, sf::Shape *shape)
                       DEFAULT_ANIMATION_FRAME_TIME },
       _idleAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_idle),
                       DEFAULT_ANIMATION_FRAME_TIME },
-      _jumpAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_jump) }
+      _jumpAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_jump) },
+      _mandatoryHintTimer{ 0.f, 0.f, DEFAULT_MANTADORY_HINT_TIME }
 {
     _sprite.setScale({ _scale, _scale });
 }
@@ -72,21 +74,21 @@ void Player::damage(float power)
     if (isStateActive(State::Dead))
         return;
 
-    if (_freeze > 0.f)
-    {
-        _freeze -= power;
-        if (_freeze <= 0.f)
-            _freeze = 0.f;
-    }
-    if (_health > 0 && _freeze < 0.01f)
-    {
-        _health -= power;
-        if (_health <= 0.f)
-        {
-            _health = 0.f;
-            updateState(State::Dead, true);
-        }
-    }
+    _health.move(-power);
+    if (_health.isMin())
+        updateState(State::Dead, true);
+}
+
+void Player::freezeDamage(float power)
+{
+    if (isStateActive(State::Dead))
+        return;
+
+    float lastValue{ _freeze.get() };
+    _freeze.move(-power);
+
+    if (_freeze.isMin())
+        damage(lastValue - power);
 }
 
 size_t Player::getHealCount() const
@@ -106,7 +108,8 @@ bool Player::isDead() const
 
 void Player::kill()
 {
-    damage(_health + _freeze + 1);
+    freezeDamage(_freeze.get() + 1);
+    damage(_health.get() + 1);
     _stamina = 0.f;
 }
 
@@ -156,6 +159,7 @@ void Player::executeAvailableAction()
     }
     case ActionVariant::PickUpTea:
     {
+        setMentadoryHint("Q - use tea to warm up");
         ++_countOfHealthItem;
         break;
     }
@@ -176,12 +180,12 @@ void Player::executeAvailableAction()
 
 float Player::getFreezPoints() const
 {
-    return _freeze;
+    return _freeze.get();
 }
 
 float Player::getHealthPoints() const
 {
-    return _health;
+    return _health.get();
 }
 
 float Player::getStaminaPoints() const
@@ -215,8 +219,10 @@ void Player::updateAnimation(float deltatime)
 
 void Player::updateHealthPoint(float deltatime)
 {
+    if (isStateActive(State::Dead))
+        return;
     restoreHealthAndFreezePoints();
-    damage(deltatime);
+    freezeDamage(isStateActive(State::Warming) ? -deltatime * 3 : deltatime);
 }
 
 void Player::updateStaminaPoint(float deltatime)
@@ -235,6 +241,8 @@ void Player::updateHint(float deltatime)
         _hint.setPosition(topRectPos + offset);
         _hint.update(deltatime);
     }
+
+    _mandatoryHintTimer.move(deltatime);
 }
 
 void Player::restoreStaminaPoints(float deltatime)
@@ -246,44 +254,54 @@ void Player::restoreStaminaPoints(float deltatime)
 
 void Player::restoreHealthAndFreezePoints()
 {
-    if (!_isHealthNeeded || _deadAnimation.isPlaying())
+    if (isStateActive(State::Dead) || !_isHealthNeeded)
         return;
 
     _isHealthNeeded = false;
 
     constexpr float restorationAmount = 25.0f;
 
-    if (_health < 100.0f)
+    if (!_health.isMax())
     {
-        float healthDeficit = 100.0f - _health;
+        float healthDeficit = 100.0f - _health.get();
 
         if (healthDeficit < restorationAmount)
         {
-            _health += healthDeficit;
-            _freeze += restorationAmount - healthDeficit;
+            _health.move(healthDeficit);
+            _freeze.move(restorationAmount - healthDeficit);
         }
         else
         {
-            _health += restorationAmount;
+            _health.move(restorationAmount);
         }
     }
-    else if (_freeze < 100.0f)
+    else if (!_freeze.isMax())
     {
-        float freezeDeficit = 100.0f - _freeze;
-
+        float freezeDeficit = 100.0f - _freeze.get();
         if (freezeDeficit < restorationAmount)
-        {
-            _freeze += freezeDeficit;
-        }
+            _freeze.move(freezeDeficit);
         else
-        {
-            _freeze += restorationAmount;
-        }
+            _freeze.move(restorationAmount);
     }
 }
 
-std::string Player::hintText(IAction *action) const
+std::string Player::hintText(IAction *action)
 {
+    const bool isTimerFinished{ _mandatoryHintTimer.isMax() };
+    const bool needShowMandatoryHint{ !_mandatoryHints.empty() || !isTimerFinished };
+    if (needShowMandatoryHint)
+    {
+        if (!isTimerFinished)
+            return _hint.text();
+
+        _mandatoryHintTimer.setMin();
+
+        std::string text{ *_mandatoryHints.begin() };
+        _showedMandatoryHints.insert(text);
+        _mandatoryHints.erase(_mandatoryHints.cbegin());
+        return text;
+    }
+
     if (action == nullptr)
         return {};
 
@@ -306,6 +324,12 @@ std::string Player::hintText(IAction *action) const
 
     assert(false);
     return {};
+}
+
+void Player::setMentadoryHint(std::string hintText)
+{
+    if (!_showedMandatoryHints.contains(hintText))
+        _mandatoryHints.insert(hintText);
 }
 
 void Player::updatePosition(float deltatime)

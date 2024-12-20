@@ -46,6 +46,11 @@ void Hint::setText(const std::string &text)
     updateGeometry();
 }
 
+std::string Hint::text() const
+{
+    return _text;
+}
+
 void Hint::setPosition(const sf::Vector2f pos)
 {
     if (empty())

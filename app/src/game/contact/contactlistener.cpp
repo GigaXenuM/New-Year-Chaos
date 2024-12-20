@@ -23,7 +23,7 @@ void ContactListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifold
     const UserData data{ toUserData(contact) };
 
     if (data.types.test(ItemType::Loot) || data.types.test(ItemType::WaterZone)
-        || data.types.test(ItemType::NonCollided))
+        || data.types.test(ItemType::WarmZone) || data.types.test(ItemType::NonCollided))
         contact->SetEnabled(false);
 
     if (std::all_of(data.itemTypeToItem.cbegin(), data.itemTypeToItem.cend(),
@@ -105,6 +105,16 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
     {
         if (auto *player{ dynamic_cast<Player *>(data.itemTypeToItem.at(ItemType::Entity)) })
             player->setWinStatus(true);
+    }
+    if (data.types.test(ItemType::WarmZone) && data.types.test(ItemType::Entity))
+    {
+        if (auto *player{ dynamic_cast<Player *>(data.itemTypeToItem.at(ItemType::Entity)) })
+        {
+            player->updateState(PhysicalEntity::State::Warming, contacted);
+
+            if (contacted)
+                player->setMentadoryHint("Hmm, looks like\nI can warm up here");
+        }
     }
 
     if (data.types.test(ItemType::Bullet) && contacted)

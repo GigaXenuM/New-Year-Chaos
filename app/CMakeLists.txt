@@ -45,6 +45,8 @@ set(HEADER_FILES
     src/game/items/bridge/openbridgeactionitem.h
     src/game/items/door/door.h
     src/game/items/mountain/mountain.h
+    src/game/items/deadzone/winzome.h
+    src/game/items/background/background.h
 
     src/visitor/ivisitor.h
     src/visitor/defaultvisitor.h
@@ -129,6 +131,8 @@ set(SOURCE_FILES
     src/game/items/bridge/openbridgeactionitem.cpp
     src/game/items/door/door.cpp
     src/game/items/mountain/mountain.cpp
+    src/game/items/deadzone/winzome.cpp
+    src/game/items/background/background.cpp
 
     src/game/items/colliderfactory.cpp
 
@@ -176,10 +180,30 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/app/src/event"
 )
 
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES}
-    src/game/items/deadzone/winzome.h src/game/items/deadzone/winzome.cpp
-    src/game/items/background/background.h src/game/items/background/background.cpp)
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-audio sfml-graphics tmxlite box2d)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/libs/earcut/include)
+
+# Post-build custom command and target
+if (WIN32)
+    add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/libs/sfml/extlibs/bin/x64/
+                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_BINARY_DIR}/libs/box2d/bin/
+                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMENT "Copying SFML and Box2D binaries to runtime output directory..."
+    )
+endif()
+
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/app/res/
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    COMMENT "Copying resources to runtime output directory..."
+)

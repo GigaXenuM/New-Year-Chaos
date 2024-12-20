@@ -16,6 +16,7 @@ public:
     bool empty() const;
 
     void setText(const std::string &text);
+    std::string text() const;
     void setPosition(const sf::Vector2f pos);
     void reset();
 
