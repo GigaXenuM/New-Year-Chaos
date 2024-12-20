@@ -19,7 +19,8 @@ enum class FontType
 
 enum class SoundType
 {
-    Background_music
+    Background_music,
+    Snowball,
 };
 
 enum class TextureType

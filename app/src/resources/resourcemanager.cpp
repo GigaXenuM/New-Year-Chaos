@@ -32,6 +32,7 @@ void ResourseManager::loadAllFonst()
 void ResourseManager::loadAllSounds()
 {
     loadSounds("sounds/", SoundType::Background_music, "Background_music");
+    loadSounds("sounds/", SoundType::Snowball, "Snowball");
 }
 
 void ResourseManager::loadAllTextures()

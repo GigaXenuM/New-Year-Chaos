@@ -4,6 +4,8 @@
 #include "items/loot/keyloot.h"
 #include "weapon/snowballgun.h"
 
+#include <resources/resourcemanager.h>
+
 namespace Game
 {
 
@@ -14,6 +16,8 @@ Enemy::Enemy(b2World *world, sf::Shape *shape, const PhysicalEntity *targetEntit
       _targetEntity{ targetEntity },
       _pos{ boundingRect().getPosition() }
 {
+    _shootSound.openFromFile(
+        ResourseManager::getInstance()->getSoundPath(SoundType::Snowball).string());
 }
 
 void Enemy::updatePhysics()
@@ -106,6 +110,7 @@ void Enemy::shootingScript()
         return;
 
     sf::Vector2f targetPos{ Util::pointBy(_targetEntity->boundingRect(), { Align::Top }) };
+    //_shootSound.play();
     shoot(targetPos);
 }
 

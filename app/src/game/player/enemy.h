@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SFML/Audio/Music.hpp"
 #include "items/entity/physicalentity.h"
 
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -46,6 +47,7 @@ private:
     sf::Vector2f _pos;
     const float _moveLimit{ 100.f };
     bool _isAvailableToShoot{ false };
+    sf::Music _shootSound;
 };
 
 } // namespace Game
