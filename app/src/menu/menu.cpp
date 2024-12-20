@@ -30,14 +30,20 @@ Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vecto
       _view{ std::make_unique<sf::View>(sf::FloatRect{ {}, viewSize }) },
       _looseLayout{ std::make_unique<VerticalLayout>(this) },
       _defaultLayout{ std::make_unique<VerticalLayout>(this) },
-      _levelController{ std::make_unique<Game::Level::Controller>(renderTarget, nullptr,
-                                                                  "level/menu.tmx", _view.get(),
-                                                                  true) },
+      _defaultLevelController{ std::make_unique<Game::Level::Controller>(renderTarget, nullptr,
+                                                                         "level/menu.tmx",
+                                                                         _view.get(), true) },
+      _winLevelController{ std::make_unique<Game::Level::Controller>(renderTarget, nullptr,
+                                                                     "level/menu_win.tmx",
+                                                                     _view.get(), true) },
+      _loseLevelController{ std::make_unique<Game::Level::Controller>(renderTarget, nullptr,
+                                                                      "level/menu.tmx", _view.get(),
+                                                                      true) },
       _jumpTimer{ 0.f, 0.f, 3.f },
       _shootTimer{ 0.f, 0.f, 4.f }
 {
-    initLooseLayout(renderTarget);
     initDefaultLayout();
+    initLooseLayout();
 
     updateMenuLayout(MenuType::Default);
 
@@ -56,7 +62,7 @@ void Menu::update(float deltatime)
 
     _renderTarget->clear(sf::Color(50, 56, 59, 255));
 
-    _levelController->update(deltatime);
+    _currentLevelController->update(deltatime);
     updateBackground(deltatime);
 
     for (const Item &item : _currentLayout->items())
@@ -71,10 +77,11 @@ void Menu::update(float deltatime)
 
 void Menu::updateViewSize(const sf::Vector2f &size)
 {
-    const sf::Vector2f mapCenter{ Util::pointBy(_levelController->mapGlobalRect(),
+    const sf::Vector2f mapCenter{ Util::pointBy(_defaultLevelController->mapGlobalRect(),
                                                 Util::ALIGN_CENTER_STATE) };
-    const sf::Vector2f playerCenter{ Util::pointBy(_levelController->player()->boundingRect(),
-                                                   Util::ALIGN_CENTER_STATE) };
+    const sf::Vector2f playerCenter{
+        Util::pointBy(_defaultLevelController->player()->boundingRect(), Util::ALIGN_CENTER_STATE)
+    };
     _view->setSize(size);
     _view->setCenter(mapCenter.x, playerCenter.y);
     _defaultLayout->setRect(viewRect(_view.get()));
@@ -88,21 +95,28 @@ void Menu::updateMenuLayout(const MenuType type)
     switch (type)
     {
     case MenuType::Default:
-        _levelController->player()->updateState(Game::PhysicalEntity::State::Dead, false);
+    {
+        _currentLevelController = _defaultLevelController.get();
         titleColor = sf::Color::Green;
         tileText = "НОВОРІЧНИЙ ХАОС";
         _currentLayout = _defaultLayout.get();
         break;
+    }
     case MenuType::GameOver:
+    {
+        _currentLevelController = _loseLevelController.get();
         _currentLayout = _looseLayout.get();
-        _levelController->player()->updateState(Game::PhysicalEntity::State::Dead, true);
         titleColor = sf::Color::Red;
         tileText = "ШОСЬ МЕНІ ЗЛЕ";
         break;
+    }
     case MenuType::Victory:
+    {
+        _currentLevelController = _winLevelController.get();
         tileText = "ПІШОВ МАРМЕЛАД ПО КИШКАХ";
         titleColor = sf::Color::Green;
         break;
+    }
     default:
         assert(false);
         break;
@@ -118,11 +132,13 @@ sf::View *Menu::view() const
     return _view.get();
 }
 
-void Menu::initLooseLayout(sf::RenderTarget *renderTarget)
+void Menu::initLooseLayout()
 {
-    const sf::Vector2f mapCenter{ Util::pointBy(_levelController->mapGlobalRect(),
+    _loseLevelController->player()->updateState(Game::PhysicalEntity::State::Dead, true);
+
+    const sf::Vector2f mapCenter{ Util::pointBy(_loseLevelController->mapGlobalRect(),
                                                 Util::ALIGN_CENTER_STATE) };
-    const sf::Vector2f playerCenter{ Util::pointBy(_levelController->player()->boundingRect(),
+    const sf::Vector2f playerCenter{ Util::pointBy(_loseLevelController->player()->boundingRect(),
                                                    Util::ALIGN_CENTER_STATE) };
     _view->setCenter(mapCenter.x, playerCenter.y);
     _looseLayout->setRect(viewRect(_view.get()));
@@ -137,14 +153,6 @@ void Menu::initLooseLayout(sf::RenderTarget *renderTarget)
     auto exit{ std::make_shared<Graphics::TextButton>("Вихід", font, sf::Vector2f{ 180.0f, 50.0f },
                                                       _looseLayout.get()) };
 
-    // restartButton->onClick(
-    //     [this, renderTarget]()
-    //     {
-    //         _levelController
-    //             = std::make_unique<Game::Level::Controller>(renderTarget, nullptr,
-    //             "level/menu.tmx",
-    //                                                         _view.get(), true);
-    //     });
     restartButton->onClick([this]() { executeActions(ActionVariant::RestartGame); });
 
     exit->onClick([this]() { executeActions(ActionVariant::Exit); });
@@ -155,10 +163,11 @@ void Menu::initLooseLayout(sf::RenderTarget *renderTarget)
 
 void Menu::initDefaultLayout()
 {
-    const sf::Vector2f mapCenter{ Util::pointBy(_levelController->mapGlobalRect(),
+    const sf::Vector2f mapCenter{ Util::pointBy(_defaultLevelController->mapGlobalRect(),
                                                 Util::ALIGN_CENTER_STATE) };
-    const sf::Vector2f playerCenter{ Util::pointBy(_levelController->player()->boundingRect(),
-                                                   Util::ALIGN_CENTER_STATE) };
+    const sf::Vector2f playerCenter{
+        Util::pointBy(_defaultLevelController->player()->boundingRect(), Util::ALIGN_CENTER_STATE)
+    };
     _view->setCenter(mapCenter.x, playerCenter.y);
     _defaultLayout->setRect(viewRect(_view.get()));
 
@@ -184,6 +193,10 @@ void Menu::updateBackground(float deltatime)
 {
     using PlayerState = Game::PhysicalEntity::State;
 
+    Game::Player *player{ _currentLevelController->player() };
+    if (player->isStateActive(Game::PhysicalEntity::State::Dead))
+        return;
+
     _jumpTimer.move(deltatime);
     const bool needJump{ _jumpTimer.isMax() };
     if (needJump)
@@ -194,7 +207,6 @@ void Menu::updateBackground(float deltatime)
     if (needShoot)
         _shootTimer.setMin();
 
-    Game::Player *player{ _levelController->player() };
     player->updateState(PlayerState::Jump, needJump);
     if (needShoot)
     {

@@ -47,7 +47,7 @@ protected:
     sf::View *view() const override;
 
 private:
-    void initLooseLayout(sf::RenderTarget *renderTarget);
+    void initLooseLayout();
     void initDefaultLayout();
 
     void updateBackground(float deltatime);
@@ -62,7 +62,11 @@ private:
 
     Layout *_currentLayout;
 
-    std::unique_ptr<Game::Level::Controller> _levelController;
+    std::unique_ptr<Game::Level::Controller> _defaultLevelController;
+    std::unique_ptr<Game::Level::Controller> _winLevelController;
+    std::unique_ptr<Game::Level::Controller> _loseLevelController;
+
+    Game::Level::Controller *_currentLevelController{ nullptr };
 
     Util::LimitedValueF _jumpTimer;
     Util::LimitedValueF _shootTimer;
