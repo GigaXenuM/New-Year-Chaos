@@ -41,7 +41,7 @@ private:
     const sf::View *_view{ nullptr };
 
     const sf::Vector2f _startViewPos;
-    std::array<ParallaxLayer, 3> _layers;
+    std::array<ParallaxLayer, 4> _layers;
 };
 
 } // namespace Game

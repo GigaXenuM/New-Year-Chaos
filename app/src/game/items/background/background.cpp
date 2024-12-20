@@ -17,7 +17,7 @@ sf::FloatRect backgroundRect(const sf::View *view, const sf::Vector2f &offset)
     const sf::Vector2f size{ view->getSize() };
     const sf::Vector2f center{ view->getCenter() };
     const sf::Vector2f position{ (center.x - (size.x / 2)), center.y - (size.y / 2) };
-    return { position + offset, { size.x, size.y } };
+    return { position + offset, size };
 }
 } // namespace
 
@@ -28,8 +28,10 @@ Background::Background(const sf::View *view)
           ParallaxLayer{ ResourseManager::getInstance()->getTextures(TextureType::Background).at(0),
                          0 },
           ParallaxLayer{ ResourseManager::getInstance()->getTextures(TextureType::Background).at(1),
-                         20 },
+                         0 },
           ParallaxLayer{ ResourseManager::getInstance()->getTextures(TextureType::Background).at(2),
+                         20 },
+          ParallaxLayer{ ResourseManager::getInstance()->getTextures(TextureType::Background).at(3),
                          -30 }
       }
 {
@@ -51,15 +53,24 @@ void Background::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
 void Background::updateSprites()
 {
-    auto viewRect{ backgroundRect(_view, {}) };
-    sf::Vector2f viewDeltaPos{ _startViewPos - viewRect.getPosition() };
+    const auto viewRect{ backgroundRect(_view, {}) };
+    const sf::Vector2f viewDeltaPos{ _startViewPos - viewRect.getPosition() };
 
     for (auto &layer : _layers)
     {
-        sf::Vector2f offset{ layer.offset + viewDeltaPos };
-        auto rect{ backgroundRect(_view, offset) };
+        const sf::Vector2f offset{ layer.offset + viewDeltaPos };
+        const auto rect{ backgroundRect(_view, offset) };
+
+        const sf::Vector2f viewSize{ rect.getSize() };
+        const sf::Vector2f textureSize{ layer.sprite.getTexture()->getSize() };
+        const sf::Vector2f spriteScaling{ viewSize.x / textureSize.x, viewSize.y / textureSize.y };
+        layer.sprite.setScale(spriteScaling);
+
         layer.sprite.setPosition(viewRect.getPosition());
-        layer.sprite.setTextureRect(Util::castSfRect<int>(rect));
+        sf::IntRect textureRect{ sf::Vector2i{ rect.getPosition() },
+                                 sf::Vector2i{ sf::Vector2f{ rect.width / spriteScaling.x,
+                                                             rect.height / spriteScaling.y } } };
+        layer.sprite.setTextureRect(textureRect);
     }
 }
 

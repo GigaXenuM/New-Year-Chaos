@@ -4,6 +4,6 @@
 int main()
 {
     ResourseManager::getInstance()->loadResourses();
-    MainWindow window{ 1000, 800, "New Year Chaos" };
+    MainWindow window{ 1920, 1080, "New Year Chaos" };
     return window.gameLoop();
 }
