@@ -39,7 +39,7 @@ public:
 
     ItemType type() const override
     {
-        return ItemType::Entity;
+        return _type;
     }
 
     bool needDestroying() const override;
@@ -65,6 +65,7 @@ private:
     std::unique_ptr<IWeapon> _weapon;
 
     Util::EnumFlag<State> _state;
+    ItemType _type{ ItemType::Entity };
 };
 
 } // namespace Game

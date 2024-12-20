@@ -28,6 +28,7 @@ void PhysicalEntity::updatePhysics()
     if (isStateActive(State::Dead))
     {
         collider()->SetType(b2BodyType::b2_staticBody);
+        _type = ItemType::NonCollided;
         return;
     }
 
@@ -83,6 +84,9 @@ PhysicalEntity::~PhysicalEntity() = default;
 
 void PhysicalEntity::shoot(const sf::Vector2f &target)
 {
+    if (isStateActive(State::Dead))
+        return;
+
     _weapon->shoot(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE), target);
 }
 
