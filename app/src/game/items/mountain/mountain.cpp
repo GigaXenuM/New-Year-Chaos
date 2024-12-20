@@ -11,7 +11,7 @@ Mountain::Mountain(b2World *world, sf::Shape *shape)
 
 std::string Mountain::hintText() const
 {
-    return "I have to find a way around it";
+    return "Мені варто знайти інший шлях";
 }
 
 bool Mountain::needDestroying() const

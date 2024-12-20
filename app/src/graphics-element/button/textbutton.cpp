@@ -19,13 +19,12 @@ namespace Graphics
 {
 TextButton::TextButton(const sf::String &text, const sf::Font &font, const sf::Vector2f &size,
                        EventHandler *parent)
-    : ILayoutItem{ parent },
-      _text{ text },
-      _font{ font },
-      _textItem{ _text, _font },
-      _shape{ size },
-      _onClickCallback{ []() {} }
+    : ILayoutItem{ parent }, _text{ text }, _font{ font }, _shape{ size }, _onClickCallback{ []() {
+      } }
 {
+    _textItem.setFont(_font);
+    _textItem.setString(sf::String::fromUtf8(_text.begin(), _text.end()));
+
     setup();
     updateGeometry();
 }

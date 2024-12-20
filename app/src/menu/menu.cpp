@@ -26,7 +26,6 @@ sf::FloatRect viewRect(const sf::View *view)
 
 Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vector2f &viewSize)
     : IView{ renderTarget, parent },
-      _title{ std::make_unique<sf::Text>() },
       _renderTarget{ renderTarget },
       _view{ std::make_unique<sf::View>(sf::FloatRect{ {}, viewSize }) },
       _looseLayout{ std::make_unique<VerticalLayout>(this) },
@@ -40,10 +39,10 @@ Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vecto
     initDefaultLayout();
 
     updateMenuLayout(MenuType::Default);
-    
-    _title->setFont(ResourseManager::getInstance()->getFont(FontType::Arial));
-    _title->setCharacterSize(30);
-    _title->setCharacterSize(70);
+
+    _title.setFont(ResourseManager::getInstance()->getFont(FontType::DejaVuSansBold));
+    _title.setCharacterSize(30);
+    _title.setCharacterSize(70);
 }
 
 Menu::~Menu() = default;
@@ -63,10 +62,10 @@ void Menu::update(float deltatime)
         _renderTarget->draw(*item);
 
     const sf::Vector2f viewCenter = _view->getCenter();
-    _title->setOrigin(Util::pointBy(_title->getLocalBounds(), Util::ALIGN_CENTER_STATE));
-    _title->setPosition(
-        { viewCenter.x, viewCenter.y - (viewCenter.y / 2 + _title->getGlobalBounds().height) });
-    _renderTarget->draw(*_title);
+    _title.setOrigin(Util::pointBy(_title.getLocalBounds(), Util::ALIGN_CENTER_STATE));
+    _title.setPosition(
+        { viewCenter.x, viewCenter.y - (viewCenter.y / 2 + _title.getGlobalBounds().height) });
+    _renderTarget->draw(_title);
 }
 
 void Menu::updateViewSize(const sf::Vector2f &size)
@@ -82,26 +81,32 @@ void Menu::updateViewSize(const sf::Vector2f &size)
 
 void Menu::updateMenuLayout(const MenuType type)
 {
+    std::string tileText;
+    sf::Color titleColor;
+
     switch (type)
     {
     case MenuType::Default:
-        _title->setFillColor(sf::Color::Green);
-        _title->setString("NEW YEAR CHAOS");
+        titleColor = sf::Color::Green;
+        tileText = "НОВОРІЧНИЙ ХАОС";
         _currentLayout = _defaultLayout.get();
         break;
     case MenuType::GameOver:
         _currentLayout = _looseLayout.get();
-        _title->setFillColor(sf::Color::Red);
-        _title->setString("GAME OVER");
+        titleColor = sf::Color::Red;
+        tileText = "ШОСЬ МЕНІ ЗЛЕ";
         break;
     case MenuType::Victory:
-        _title->setString("VICTORY");
-        _title->setFillColor(sf::Color::Green);
+        tileText = "ПІШОВ МАРМЕЛАД ПО КИШКАХ";
+        titleColor = sf::Color::Green;
         break;
     default:
+        assert(false);
         break;
     }
 
+    _title.setString(sf::String::fromUtf8(tileText.begin(), tileText.end()));
+    _title.setFillColor(titleColor);
     grabContext(_currentLayout);
 }
 
@@ -123,10 +128,10 @@ void Menu::initLooseLayout()
 
     const sf::Font font{ ResourseManager::getInstance()->getFont(FontType::Arial) };
 
-    auto restartButton{ std::make_shared<Graphics::TextButton>("Try again", font,
+    auto restartButton{ std::make_shared<Graphics::TextButton>("Спробувати ще раз", font,
                                                                sf::Vector2f{ 180.0f, 50.0f },
                                                                _looseLayout.get()) };
-    auto exit{ std::make_shared<Graphics::TextButton>("Exit", font, sf::Vector2f{ 180.0f, 50.0f },
+    auto exit{ std::make_shared<Graphics::TextButton>("Вихід", font, sf::Vector2f{ 180.0f, 50.0f },
                                                       _looseLayout.get()) };
 
     restartButton->onClick([this]() { executeActions(ActionVariant::RestartGame); });
@@ -149,10 +154,10 @@ void Menu::initDefaultLayout()
 
     const sf::Font font{ ResourseManager::getInstance()->getFont(FontType::Arial) };
 
-    auto startButton{ std::make_shared<Graphics::TextButton>("Start Game", font,
+    auto startButton{ std::make_shared<Graphics::TextButton>("Старт", font,
                                                              sf::Vector2f{ 180.0f, 50.0f },
                                                              _defaultLayout.get()) };
-    auto exitButton{ std::make_shared<Graphics::TextButton>("Exit", font,
+    auto exitButton{ std::make_shared<Graphics::TextButton>("Вихід", font,
                                                             sf::Vector2f{ 180.0f, 50.0f },
                                                             _defaultLayout.get()) };
 

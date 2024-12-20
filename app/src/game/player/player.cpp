@@ -159,7 +159,7 @@ void Player::executeAvailableAction()
     }
     case ActionVariant::PickUpTea:
     {
-        setMentadoryHint("Q - use tea to warm up");
+        setMentadoryHint("Q - випити чай, щоб зігрітись");
         ++_countOfHealthItem;
         break;
     }
@@ -309,11 +309,11 @@ std::string Player::hintText(IAction *action)
     {
     case ActionVariant::OpenBridge:
     {
-        return _hasKey ? action->hintText() : "Find a key to unlock";
+        return _hasKey ? action->hintText() : "Знайди ключ, щоб відчинити міст";
     }
     case ActionVariant::OpenDoor:
     {
-        return _hasKey ? action->hintText() : "Find a key to unlock";
+        return _hasKey ? action->hintText() : "Знайди ключ, щоб відчинити двері";
     }
     case ActionVariant::PickUpTea:
         [[fallthrough]];

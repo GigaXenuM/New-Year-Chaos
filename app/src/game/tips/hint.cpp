@@ -85,7 +85,7 @@ void Hint::update(float deltatime)
 
     _drawTextDuration = 0.f;
     const std::string text{ _text.substr(0, _characterIndex++ + 1) };
-    _textItem.setString(text);
+    _textItem.setString(sf::String::fromUtf8(text.begin(), text.end()));
 
     updateGeometry();
 }

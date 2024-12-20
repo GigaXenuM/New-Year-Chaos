@@ -26,6 +26,7 @@ void ResourseManager::loadResourses()
 void ResourseManager::loadAllFonst()
 {
     loadFonts("fonts/", FontType::Arial, "arial");
+    loadFonts("fonts/", FontType::DejaVuSansBold, "DejaVuSans-Bold");
 }
 
 void ResourseManager::loadAllSounds()

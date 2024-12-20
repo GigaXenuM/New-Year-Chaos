@@ -11,8 +11,8 @@ namespace Game
 
 namespace
 {
-constexpr const char *const OPEN_DOOR_HINT{ "Press E to open the door" };
-constexpr const char *const CLOSE_DOOR_HINT{ "Press E to close the door" };
+constexpr const char *const OPEN_DOOR_HINT{ "E - відкрити" };
+constexpr const char *const CLOSE_DOOR_HINT{ "E - закрити" };
 } // namespace
 
 Door::Door(b2World *world, sf::Shape *shape)

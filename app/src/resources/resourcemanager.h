@@ -13,7 +13,8 @@ class Texture;
 
 enum class FontType
 {
-    Arial
+    Arial,
+    DejaVuSansBold,
 };
 
 enum class SoundType

@@ -19,7 +19,7 @@ KeyLoot::KeyLoot(b2World *world, sf::Shape *shape)
 
 std::string KeyLoot::hintText() const
 {
-    return "Press E to pickup";
+    return "E - щоб взяти ключ";
 }
 
 bool KeyLoot::needDestroying() const

@@ -19,7 +19,7 @@ TeaLoot::TeaLoot(b2World *world, sf::Shape *shape)
 
 std::string TeaLoot::hintText() const
 {
-    return "Press E to pickup";
+    return "E - щоб взяти чай";
 }
 
 bool TeaLoot::needDestroying() const

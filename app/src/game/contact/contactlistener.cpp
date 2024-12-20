@@ -113,7 +113,7 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
             player->updateState(PhysicalEntity::State::Warming, contacted);
 
             if (contacted)
-                player->setMentadoryHint("Hmm, looks like\nI can warm up here");
+                player->setMentadoryHint("Хмм, здається, тут можна зігрітись");
         }
     }
 
