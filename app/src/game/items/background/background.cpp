@@ -1,7 +1,6 @@
 #include "background.h"
 
 #include "resources/resourcemanager.h"
-#include "util/geometryoperation.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
@@ -10,8 +9,6 @@ namespace Game
 
 namespace
 {
-const sf::Vector2f BACKGROUND_SCALE{ 2.f, 2.f };
-
 sf::FloatRect backgroundRect(const sf::View *view, const sf::Vector2f &offset)
 {
     const sf::Vector2f size{ view->getSize() };
@@ -67,9 +64,10 @@ void Background::updateSprites()
         layer.sprite.setScale(spriteScaling);
 
         layer.sprite.setPosition(viewRect.getPosition());
-        sf::IntRect textureRect{ sf::Vector2i{ rect.getPosition() },
-                                 sf::Vector2i{ sf::Vector2f{ rect.width / spriteScaling.x,
-                                                             rect.height / spriteScaling.y } } };
+        const sf::IntRect textureRect{ sf::Vector2i{ rect.getPosition() },
+                                       sf::Vector2i{
+                                           sf::Vector2f{ rect.width / spriteScaling.x,
+                                                         rect.height / spriteScaling.y } } };
         layer.sprite.setTextureRect(textureRect);
     }
 }

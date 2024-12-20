@@ -24,7 +24,7 @@
 
 namespace
 {
-constexpr float DEFAULT_WIDTH{ 1150 };
+constexpr float DEFAULT_WIDTH{ 1400 };
 sf::Vector2f defineViewSize(const sf::Vector2f &windowSize)
 {
     const float scaling{ DEFAULT_WIDTH / windowSize.x };

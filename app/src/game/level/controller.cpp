@@ -40,7 +40,7 @@
 namespace
 {
 
-constexpr float TIME_STEP = 1.0f / 60.0f;
+constexpr float TIME_STEP = 1.0f / 100.0f;
 constexpr int VELOCITY_ITERATIONS = 8;
 constexpr int POSITION_ITERATIONS = 3;
 
