@@ -23,15 +23,18 @@ class Player final : public PhysicalEntity, public IActionHandler
 public:
     Player(b2World *world, sf::Shape *shape);
 
-    void health();
-    void addHealthItem();
+    void restoreFreezePoints();
+    void restoreHealthPoints();
+    void addTeaItem();
+    void addHealItem();
 
     [[nodiscard]] bool isWon() const;
     [[nodiscard]] bool isDead() const;
     [[nodiscard]] float getFreezPoints() const;
     [[nodiscard]] float getHealthPoints() const;
     [[nodiscard]] float getStaminaPoints() const;
-    [[nodiscard]] size_t getHealCount() const;
+    [[nodiscard]] size_t getTeaCount() const;
+    [[nodiscard]] size_t getAidKitCount() const;
 
     [[nodiscard]] sf::Sprite &getSprite();
     [[nodiscard]] sf::Vector2f getPosition() const;
@@ -60,7 +63,6 @@ private:
     void updateStaminaPoint(float deltatime);
     void updateHint(float deltatime);
 
-    void restoreHealthAndFreezePoints();
     void restoreStaminaPoints(float deltatime);
 
     std::string hintText(IAction *action);
@@ -76,11 +78,11 @@ private:
 
     bool _isWon{ false };
     bool _hasKey{ false };
-    bool _isHealthNeeded{ false };
 
     sf::Sprite _sprite;
 
-    size_t _countOfHealthItem{ 2 };
+    size_t _countOfTeaItem{ 2 };
+    size_t _countOfHealthItem{ 1 };
 
     Animation _runAnimation;
     Animation _deadAnimation;

@@ -34,6 +34,7 @@ private:
     const Player *_player{ nullptr };
 
     std::unique_ptr<TeaIcon> _teaIcon;
+    std::unique_ptr<TeaIcon> _aidKitIcon;
     std::shared_ptr<WeaponIcon> _weaponIcon;
     std::unique_ptr<HUDHealthBar> _freezBar;
     std::unique_ptr<HUDHealthBar> _healthBar;

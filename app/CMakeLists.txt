@@ -41,6 +41,7 @@ set(HEADER_FILES
     src/game/action/actionvariant.h
     src/game/action/iactionhandler.h
     src/game/items/loot/keyloot.h
+    src/game/items/loot/healthloot.h
     src/game/items/bridge/bridgedrawablejoint.h
     src/game/items/bridge/openbridgeactionitem.h
     src/game/items/door/door.h
@@ -127,6 +128,7 @@ set(SOURCE_FILES
     src/game/weapon/snowballgun.cpp
     src/game/weapon/axegun.cpp
     src/game/items/loot/keyloot.cpp
+    src/game/items/loot/healthloot.cpp
     src/game/items/bridge/bridgedrawablejoint.cpp
     src/game/items/bridge/openbridgeactionitem.cpp
     src/game/items/door/door.cpp

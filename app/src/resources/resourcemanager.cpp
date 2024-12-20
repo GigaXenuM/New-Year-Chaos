@@ -46,10 +46,11 @@ void ResourseManager::loadAllTextures()
 
     // HUD
     loadTextures("hud/", TextureType::Tea, "Tea");
-    loadTextures("hud/", TextureType::Health_bar, "Health");
+    loadTextures("hud/", TextureType::Health_bar, "HealthBar");
     loadTextures("hud/", TextureType::HeartBar_icon, "Heart");
     loadTextures("hud/", TextureType::FreezBar_icon, "Ice");
     loadTextures("hud/", TextureType::Stamina_icon, "Stamina");
+    loadTextures("hud/", TextureType::Aid_Kit_loot, "AidKit");
 
     // Bot
     loadTextures("bot/", TextureType::Viking_walk, "Viking");

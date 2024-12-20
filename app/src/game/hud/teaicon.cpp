@@ -9,9 +9,8 @@ namespace Game
 
 TeaIcon::TeaIcon()
 {
-    _teaIcon.setTexture(ResourseManager::getInstance()->getTextures(TextureType::Tea)[0]);
     _teaIcon.setScale(0.48, 0.48);
-    _text.setFont(ResourseManager::getInstance()->getFont(FontType::Arial));
+    _text.setFont(ResourseManager::getInstance()->getFont(FontType::DejaVuSansBold));
     _text.setFillColor(sf::Color(54, 255, 137));
 }
 
@@ -20,12 +19,17 @@ sf::FloatRect TeaIcon::globalRect() const
     return _teaIcon.getGlobalBounds();
 }
 
+void TeaIcon::setTexture(sf::Texture &texture)
+{
+    _teaIcon.setTexture(texture);
+}
+
 void TeaIcon::setPosition(const sf::Vector2f pos)
 {
     _teaIcon.setOrigin(Util::pointBy(_teaIcon.getLocalBounds(), Util::ALIGN_CENTER_STATE));
-    _teaIcon.setPosition(pos);
+    _teaIcon.setPosition({ pos.x, pos.y - _teaIcon.getGlobalBounds().height / 2 });
     _text.setOrigin(Util::pointBy(_text.getLocalBounds(), Util::ALIGN_CENTER_STATE));
-    _text.setPosition(pos + sf::Vector2f{ 0, 3 });
+    _text.setPosition({ pos.x, pos.y + _text.getGlobalBounds().height * 1.2f });
 }
 
 const sf::Sprite *TeaIcon::getSprite() const
@@ -42,5 +46,10 @@ void TeaIcon::draw(sf::RenderTarget &target, sf::RenderStates states) const
 void TeaIcon::updateHealCount(size_t healCount)
 {
     _text.setString(std::to_string(healCount));
+}
+
+void TeaIcon::setScaleFactor(float x, float y)
+{
+    _teaIcon.setScale(x, y);
 }
 } // namespace Game

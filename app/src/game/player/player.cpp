@@ -40,16 +40,44 @@ Player::Player(b2World *world, sf::Shape *shape)
     _sprite.setScale({ _scale, _scale });
 }
 
-void Player::health()
+void Player::restoreFreezePoints()
 {
-    if (_countOfHealthItem <= 0)
+    if (isStateActive(State::Dead) || _countOfTeaItem == 0 || _freeze.isMax())
         return;
 
-    _isHealthNeeded = true;
+    constexpr float restorationAmount = 25.0f;
+    float freezeDeficit = 100.0f - _freeze.get();
+
+    if (freezeDeficit < restorationAmount)
+        _freeze.move(freezeDeficit);
+    else
+        _freeze.move(restorationAmount);
+
+    --_countOfTeaItem;
+}
+
+void Player::restoreHealthPoints()
+{
+    if (isStateActive(State::Dead) || _countOfHealthItem <= 0 || _health.isMax())
+        return;
+
+    constexpr float restorationAmount = 25.0f;
+    const float healthDeficit = 100.0f - _health.get();
+
+    if (healthDeficit < restorationAmount)
+        _health.move(healthDeficit);
+    else
+        _health.move(restorationAmount);
+
     --_countOfHealthItem;
 }
 
-void Player::addHealthItem()
+void Player::addTeaItem()
+{
+    _countOfTeaItem++;
+}
+
+void Player::addHealItem()
 {
     _countOfHealthItem++;
 }
@@ -77,14 +105,15 @@ void Player::damage(float power)
     _health.move(-power);
     if (_health.isMin())
         updateState(State::Dead, true);
+
+    if (_health.get() < _health.max() / 2.f)
+        setMentadoryHint("Р - юзай аптечку", true);
 }
 
 void Player::freezeDamage(float power)
 {
     if (isStateActive(State::Dead))
         return;
-
-    power *= 10;
 
     float lastValue{ _freeze.get() };
     _freeze.move(-power);
@@ -96,7 +125,12 @@ void Player::freezeDamage(float power)
         damage(power - lastValue);
 }
 
-size_t Player::getHealCount() const
+size_t Player::getTeaCount() const
+{
+    return _countOfTeaItem;
+}
+
+size_t Player::getAidKitCount() const
 {
     return _countOfHealthItem;
 }
@@ -164,12 +198,19 @@ void Player::executeAvailableAction()
     }
     case ActionVariant::PickUpTea:
     {
-        ++_countOfHealthItem;
+        // setMentadoryHint("Q - use tea to warm up");
+        ++_countOfTeaItem;
         break;
     }
     case ActionVariant::PickUpKey:
     {
         _hasKey = true;
+        break;
+    }
+    case ActionVariant::PickUpHealth:
+    {
+        // setMentadoryHint("H - use aid kit to warm up");
+        ++_countOfHealthItem;
         break;
     }
     case ActionVariant::MountainObstacle:
@@ -225,7 +266,6 @@ void Player::updateHealthPoint(float deltatime)
 {
     if (isStateActive(State::Dead))
         return;
-    restoreHealthAndFreezePoints();
     freezeDamage(isStateActive(State::Warming) ? -deltatime * 3 : deltatime);
 }
 
@@ -256,39 +296,6 @@ void Player::restoreStaminaPoints(float deltatime)
     _stamina += (deltatime * 10);
 }
 
-void Player::restoreHealthAndFreezePoints()
-{
-    if (isStateActive(State::Dead) || !_isHealthNeeded)
-        return;
-
-    _isHealthNeeded = false;
-
-    constexpr float restorationAmount = 25.0f;
-
-    if (!_health.isMax())
-    {
-        float healthDeficit = 100.0f - _health.get();
-
-        if (healthDeficit < restorationAmount)
-        {
-            _health.move(healthDeficit);
-            _freeze.move(restorationAmount - healthDeficit);
-        }
-        else
-        {
-            _health.move(restorationAmount);
-        }
-    }
-    else if (!_freeze.isMax())
-    {
-        float freezeDeficit = 100.0f - _freeze.get();
-        if (freezeDeficit < restorationAmount)
-            _freeze.move(freezeDeficit);
-        else
-            _freeze.move(restorationAmount);
-    }
-}
-
 std::string Player::hintText(IAction *action)
 {
     const bool isTimerFinished{ _mandatoryHintTimer.isMax() };
@@ -300,7 +307,7 @@ std::string Player::hintText(IAction *action)
 
         _mandatoryHintTimer.setMin();
 
-        const auto &[text, disposable]{ *_mandatoryHints.begin() };
+        const auto [text, disposable]{ *_mandatoryHints.begin() };
         if (disposable)
             _showedMandatoryHints.insert(text);
         _mandatoryHints.erase(_mandatoryHints.cbegin());
@@ -321,6 +328,8 @@ std::string Player::hintText(IAction *action)
         return _hasKey ? action->hintText() : "Знайди ключ, щоб відчинити двері";
     }
     case ActionVariant::PickUpTea:
+        [[fallthrough]];
+    case ActionVariant::PickUpHealth:
         [[fallthrough]];
     case ActionVariant::PickUpKey:
     case ActionVariant::MountainObstacle:

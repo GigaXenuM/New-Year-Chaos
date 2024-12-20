@@ -2,6 +2,7 @@
 
 #include "items/bullet/physicalbullet.h"
 #include "items/colliderfactory.h"
+#include "items/loot/healthloot.h"
 #include "weapon/snowballgun.h"
 
 #include "resources/resourcemanager.h"
@@ -74,5 +75,10 @@ void Bot::updateAnimation(float deltatime)
         _walkAnimation.start(deltatime, _sprite);
     }
 }
+std::vector<AbstractPhysicalItem *> Bot::dropLoots()
+{
+    sf::RectangleShape shape{ { 50, 50 } };
+    shape.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
+    return std::vector<AbstractPhysicalItem *>{ new HealthLoot(collider()->GetWorld(), &shape) };}
 
 } // namespace Game

@@ -15,7 +15,7 @@ namespace Game
 
 WeaponIcon::WeaponIcon(const PhysicalEntity *entity, const sf::Vector2f &size)
     : _entity{ entity },
-      _text{ "", ResourseManager::getInstance()->getFont(FontType::Arial) },
+      _text{ "", ResourseManager::getInstance()->getFont(FontType::DejaVuSansBold) },
       _size{ size }
 {
     _text.setFillColor(sf::Color{ 250, 90, 109 });
@@ -24,9 +24,14 @@ WeaponIcon::WeaponIcon(const PhysicalEntity *entity, const sf::Vector2f &size)
 void WeaponIcon::setPosition(const sf::Vector2f pos)
 {
     _icon.setOrigin(Util::pointBy(_icon.getLocalBounds(), Util::ALIGN_CENTER_STATE));
-    _icon.setPosition(pos);
+    _icon.setPosition({ pos.x, pos.y - _icon.getGlobalBounds().height / 2 });
     _text.setOrigin(Util::pointBy(_text.getLocalBounds(), Util::ALIGN_CENTER_STATE));
-    _text.setPosition(pos);
+    _text.setPosition({ pos.x, pos.y + _text.getGlobalBounds().height * 1.2f });
+}
+
+const sf::Sprite *WeaponIcon::getSprite() const
+{
+    return &_icon;
 }
 
 sf::FloatRect WeaponIcon::globalRect() const
@@ -48,7 +53,7 @@ void WeaponIcon::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     const IWeapon *weapon{ _entity->weapon() };
 
-    _icon.setTexture(*weapon->icon());
+    _icon.setTexture(ResourseManager::getInstance()->getTextures(TextureType::SnowBall)[2]);
     const sf::Vector2f currentSize{ _icon.getLocalBounds().getSize() };
     const sf::Vector2f scaling{ _size.x / currentSize.x, _size.y / currentSize.y };
     _icon.setScale(scaling);

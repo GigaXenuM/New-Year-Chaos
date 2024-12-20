@@ -70,6 +70,7 @@ enum class TextureType
     Dead_water_zone,
 
     Key,
+    Aid_Kit_loot,
 
     SnowBallGun,
     Door,

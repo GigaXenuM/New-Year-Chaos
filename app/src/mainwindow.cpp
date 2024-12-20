@@ -33,7 +33,7 @@ sf::Vector2f defineViewSize(const sf::Vector2f &windowSize)
 } // namespace
 
 MainWindow::MainWindow(unsigned int width, unsigned int height, const char *name)
-    : sf::RenderWindow{ sf::VideoMode({ width, height }), name, sf::Style::Fullscreen },
+    : sf::RenderWindow{ sf::VideoMode({ width, height }), name },
       EventHandler{ nullptr },
       _viewSize{ defineViewSize(sf::Vector2f(width, height)) },
       _menu{ std::make_unique<Menu::Menu>(this, this, _viewSize) },

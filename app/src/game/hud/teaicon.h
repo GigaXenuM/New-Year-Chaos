@@ -14,7 +14,10 @@ public:
 
     sf::FloatRect globalRect() const override;
 
+    void setTexture(sf::Texture &texture);
+
     void updateHealCount(size_t healCount);
+    void setScaleFactor(float x, float y);
 
     void setPosition(const sf::Vector2f pos);
     [[nodiscard]] const sf::Sprite *getSprite() const;

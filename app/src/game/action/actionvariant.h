@@ -7,6 +7,7 @@ enum class ActionVariant
 {
     PickUpTea,
     PickUpKey,
+    PickUpHealth,
     OpenBridge,
     OpenDoor,
     MountainObstacle,
