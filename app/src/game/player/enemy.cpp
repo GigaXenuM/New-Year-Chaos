@@ -86,7 +86,7 @@ void Enemy::walkingScript()
     sf::Vector2f targetPos{ Util::pointBy(_targetEntity->boundingRect(),
                                           Util::ALIGN_CENTER_STATE) };
 
-    if (targetPos.x >= _pos.x - (_moveLimit * 5) && targetPos.x <= _pos.x + (_moveLimit * 5))
+    if (targetPos.x >= _pos.x - (_moveLimit * 7) && targetPos.x <= _pos.x + (_moveLimit * 7))
         _isAvailableToShoot = true;
     else
         _isAvailableToShoot = false;

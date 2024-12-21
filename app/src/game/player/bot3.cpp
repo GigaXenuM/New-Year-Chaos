@@ -15,7 +15,7 @@ namespace Game
 {
 
 Bot3::Bot3(b2World *world, sf::Shape *shape, const PhysicalEntity *targetEntity)
-    : Enemy(world, shape, targetEntity, 3.f, 25.f),
+    : Enemy(world, shape, targetEntity, 1.f, 25.f),
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_3_walk) },
       _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_3_dead) },
       _hurtAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_3_hurt) },

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.90" orientation="orthogonal" renderorder="right-down" width="114" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="14" nextobjectid="58">
+<map version="1.10" tiledversion="1.11.90" orientation="orthogonal" renderorder="right-down" width="114" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="14" nextobjectid="61">
  <tileset firstgid="1" source="terrain.tsx"/>
  <layer id="5" name="cave_background" width="114" height="20" locked="1">
   <data encoding="csv">
@@ -247,7 +247,7 @@
   <object id="9" type="terrain_obstacle" x="896" y="1280">
    <polygon points="0,640 0,-1280 12800,-1280 12800,512 12672,512 12672,-1152 128,-1152 128,640"/>
   </object>
-  <object id="10" type="tea" x="1709.37" y="1602.14" width="50" height="50"/>
+  <object id="10" type="tea" x="8733.37" y="1859.47" width="50" height="50"/>
   <object id="12" type="water_place" x="4714" y="1986.99" width="297.128" height="38.0879"/>
   <object id="13" type="water_place" x="2280.52" y="1852.01" width="298.667" height="29.2474"/>
   <object id="14" type="snowman_2" x="6849.79" y="1666.16" width="60" height="110"/>
@@ -276,5 +276,8 @@
   <object id="55" type="terrain_obstacle" x="4736" y="1920" width="2.02742" height="256"/>
   <object id="56" type="terrain_obstacle" x="2558" y="1792" width="2.02742" height="256"/>
   <object id="57" type="terrain_obstacle" x="2304" y="1792" width="2.02742" height="256"/>
+  <object id="58" type="aid" x="8812.33" y="1860.33" width="50" height="50"/>
+  <object id="59" type="aid" x="5983.61" y="1469.67" width="50" height="50"/>
+  <object id="60" type="tea" x="4453.79" y="1720.45" width="50" height="50"/>
  </objectgroup>
 </map>

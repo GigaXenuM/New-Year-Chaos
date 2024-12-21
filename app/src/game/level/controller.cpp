@@ -10,6 +10,7 @@
 
 #include "items/deadzone/waterzone.h"
 #include "items/door/door.h"
+#include "items/loot/healthloot.h"
 #include "items/loot/tealoot.h"
 #include "items/mountain/mountain.h"
 #include "keyevents/keypressevent.h"
@@ -385,6 +386,15 @@ void Controller::initLoot()
         auto *lootItem = new TeaLoot{ _physicalWorld.get(), shape };
         lootItem->setCallback([lootItem]() { lootItem->prepareDestroy(); });
         _independentElements.insert({ Depth::PrefixPlayer, std::unique_ptr<TeaLoot>{ lootItem } });
+    }
+
+    const auto &aidContainer{ _objectLayer->objects("aid") };
+
+    for (auto *shape : aidContainer)
+    {
+        auto *lootItem = new HealthLoot{ _physicalWorld.get(), shape };
+        _independentElements.insert(
+            { Depth::PrefixPlayer, std::unique_ptr<HealthLoot>{ lootItem } });
     }
 }
 

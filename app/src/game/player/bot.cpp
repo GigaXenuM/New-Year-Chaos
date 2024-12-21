@@ -13,7 +13,7 @@ namespace Game
 {
 
 Bot::Bot(b2World *world, sf::Shape *shape, const PhysicalEntity *targetEntity)
-    : Enemy(world, shape, targetEntity, 3.f, 25.f),
+    : Enemy(world, shape, targetEntity, 2.5f, 15.f),
       _walkAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_1_walk) },
       _deadAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_1_dead) },
       _hurtAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Snowman_1_hurt) },
@@ -79,6 +79,7 @@ std::vector<AbstractPhysicalItem *> Bot::dropLoots()
 {
     sf::RectangleShape shape{ { 50, 50 } };
     shape.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
-    return std::vector<AbstractPhysicalItem *>{ new HealthLoot(collider()->GetWorld(), &shape) };}
+    return std::vector<AbstractPhysicalItem *>{ new HealthLoot(collider()->GetWorld(), &shape) };
+}
 
 } // namespace Game
