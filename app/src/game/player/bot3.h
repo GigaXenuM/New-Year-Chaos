@@ -16,6 +16,8 @@ protected:
     void updateAnimation(float deltatime) override;
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
+    std::vector<AbstractPhysicalItem *> dropLoots() override;
+
 private:
     void setupSprites();
 

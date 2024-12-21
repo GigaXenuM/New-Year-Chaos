@@ -9,17 +9,57 @@
 namespace Game
 {
 
-KeyLoot::KeyLoot(b2World *world, sf::Shape *shape)
+TextureType textureTypeBy(ActionVariant variant)
+{
+    switch (variant)
+    {
+    case ActionVariant::PickUpKeyBridge:
+        return TextureType::KeyBridge;
+    case ActionVariant::PickUpTea:
+        return TextureType::Tea;
+    case ActionVariant::PickUpKeyDoor:
+        return TextureType::KeyDoor;
+    default:
+        assert(false && "Is not a loot");
+    }
+
+    return {};
+}
+
+std::string hintTextBy(ActionVariant variant)
+{
+    switch (variant)
+    {
+    case ActionVariant::PickUpKeyBridge:
+        [[fallthrough]];
+    case ActionVariant::PickUpKeyDoor:
+        return "E - взяти ключ";
+    case ActionVariant::PickUpTea:
+        return "E - взяти чай";
+    default:
+        assert(false && "Is not a loot");
+    }
+
+    return {};
+}
+
+KeyLoot::KeyLoot(b2World *world, sf::Shape *shape, ActionVariant variant)
     : AbstractPhysicalItem{ ColliderFactory::create<ItemType::Loot>(world, { shape }) },
-      _sprite{ ResourseManager::getInstance()->getTextures(TextureType::Key).front() }
+      _sprite{ ResourseManager::getInstance()->getTextures(textureTypeBy(variant)).front() },
+      _variant{ variant }
 {
     _sprite.setOrigin(Util::pointBy(_sprite.getLocalBounds(), Util::ALIGN_CENTER_STATE));
     _sprite.setScale(0.2, 0.2);
 }
 
+ActionVariant KeyLoot::actionVariant() const
+{
+    return _variant;
+}
+
 std::string KeyLoot::hintText() const
 {
-    return "E - щоб взяти ключ";
+    return hintTextBy(_variant);
 }
 
 bool KeyLoot::needDestroying() const

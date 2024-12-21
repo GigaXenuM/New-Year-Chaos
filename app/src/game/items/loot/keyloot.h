@@ -11,16 +11,13 @@ namespace Game
 class KeyLoot : public AbstractPhysicalItem, public IAction
 {
 public:
-    KeyLoot(b2World *world, sf::Shape *shape);
+    KeyLoot(b2World *world, sf::Shape *shape, ActionVariant variant);
 
     ItemType type() const override
     {
         return ItemType::Loot;
     }
-    ActionVariant actionVariant() const override
-    {
-        return ActionVariant::PickUpKey;
-    }
+    ActionVariant actionVariant() const override;
 
     std::string hintText() const override;
 
@@ -35,6 +32,7 @@ public:
 
 private:
     sf::Sprite _sprite;
+    ActionVariant _variant;
     float _needDestroy{ false };
 };
 

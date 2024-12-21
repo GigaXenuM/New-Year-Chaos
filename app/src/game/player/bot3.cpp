@@ -1,5 +1,6 @@
 #include "bot3.h"
 
+#include "items/loot/keyloot.h"
 #include "player.h"
 
 #include "items/bullet/physicalbullet.h"
@@ -9,7 +10,6 @@
 #include "resources/resourcemanager.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
-
 
 namespace Game
 {
@@ -42,6 +42,14 @@ void Bot3::draw(sf::RenderTarget &target, sf::RenderStates states) const
     target.draw(_sprite, states);
     target.draw(_healthBar, states);
     target.draw(_health, states);
+}
+
+std::vector<AbstractPhysicalItem *> Bot3::dropLoots()
+{
+    sf::RectangleShape shape{ { 50, 50 } };
+    shape.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
+    return std::vector<AbstractPhysicalItem *>{ new KeyLoot(collider()->GetWorld(), &shape,
+                                                            ActionVariant::PickUpKeyBridge) };
 }
 
 void Bot3::setupSprites()

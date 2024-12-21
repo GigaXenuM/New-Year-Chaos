@@ -83,7 +83,8 @@ void ResourseManager::loadAllTextures()
 
     loadTextures("dead-zones/", TextureType::Dead_water_zone, "waterzone");
     loadTextures("win-zones/", TextureType::Win_gift_zone, "Gift");
-    loadTextures("key/", TextureType::Key, "key");
+    loadTextures("key/", TextureType::KeyDoor, "key_door");
+    loadTextures("key/", TextureType::KeyBridge, "key_bridge");
 
     loadTextures("level/door", TextureType::Door, "door");
     loadTextures("level/doorside", TextureType::DoorSide, "doorside");

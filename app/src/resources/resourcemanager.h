@@ -70,7 +70,8 @@ enum class TextureType
     Win_gift_zone,
     Dead_water_zone,
 
-    Key,
+    KeyDoor,
+    KeyBridge,
     Aid_Kit_loot,
 
     SnowBallGun,

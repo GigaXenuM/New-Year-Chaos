@@ -18,7 +18,6 @@ public:
     void updatePhysics() override;
 
     void damage(float power) override;
-    std::vector<AbstractPhysicalItem *> dropLoots() override;
 
     virtual void updateAnimation(float deltatime)
     {

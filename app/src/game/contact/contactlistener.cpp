@@ -128,7 +128,8 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
                             [bullet](auto &value) { return bullet->shooter() == value.second; })
             };
             const bool nonCollided{ data.itemTypeToItem.contains(ItemType::Loot)
-                                    || data.itemTypeToItem.contains(ItemType::NonCollided) };
+                                    || data.itemTypeToItem.contains(ItemType::NonCollided)
+                                    || data.itemTypeToItem.contains(ItemType::WarmZone) };
             if (!shooterCollided && !nonCollided)
             {
                 bullet->updateState(PhysicalBullet::State::Collide, true);

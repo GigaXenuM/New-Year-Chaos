@@ -190,13 +190,13 @@ void Player::executeAvailableAction()
     {
     case ActionVariant::OpenBridge:
     {
-        if (!_hasKey)
+        if (!_keyState.test(KeyState::BridgeKey))
             return;
         break;
     }
     case ActionVariant::OpenDoor:
     {
-        if (!_hasKey)
+        if (!_keyState.test(KeyState::DoorKey))
             return;
         break;
     }
@@ -206,9 +206,14 @@ void Player::executeAvailableAction()
         ++_countOfTeaItem;
         break;
     }
-    case ActionVariant::PickUpKey:
+    case ActionVariant::PickUpKeyDoor:
     {
-        _hasKey = true;
+        _keyState.set(KeyState::DoorKey);
+        break;
+    }
+    case ActionVariant::PickUpKeyBridge:
+    {
+        _keyState.set(KeyState::BridgeKey);
         break;
     }
     case ActionVariant::PickUpHealth:
@@ -326,17 +331,21 @@ std::string Player::hintText(IAction *action)
     {
     case ActionVariant::OpenBridge:
     {
-        return _hasKey ? action->hintText() : "Знайди ключ, щоб відчинити міст";
+        return _keyState.test(KeyState::BridgeKey) ? action->hintText()
+                                                   : "Потрібно знайти ключ\n"
+                                                     "щоб зняти ланцюги\nта опустити міст";
     }
     case ActionVariant::OpenDoor:
     {
-        return _hasKey ? action->hintText() : "Знайди ключ, щоб відчинити двері";
+        return _keyState.test(KeyState::DoorKey) ? action->hintText()
+                                                 : "Потрібно знайти ключ\nщоб відчинити двері";
     }
     case ActionVariant::PickUpTea:
         [[fallthrough]];
     case ActionVariant::PickUpHealth:
         [[fallthrough]];
-    case ActionVariant::PickUpKey:
+    case ActionVariant::PickUpKeyDoor:
+    case ActionVariant::PickUpKeyBridge:
     case ActionVariant::MountainObstacle:
         return action->hintText();
     }

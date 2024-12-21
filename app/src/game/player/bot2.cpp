@@ -2,6 +2,7 @@
 
 #include "items/bullet/physicalbullet.h"
 #include "items/colliderfactory.h"
+#include "items/loot/keyloot.h"
 #include "weapon/snowballgun.h"
 
 #include "resources/resourcemanager.h"
@@ -39,6 +40,14 @@ void Bot2::draw(sf::RenderTarget &target, sf::RenderStates states) const
     target.draw(_sprite, states);
     target.draw(_healthBar, states);
     target.draw(_health, states);
+}
+
+std::vector<AbstractPhysicalItem *> Bot2::dropLoots()
+{
+    sf::RectangleShape shape{ { 50, 50 } };
+    shape.setPosition(Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE));
+    return std::vector<AbstractPhysicalItem *>{ new KeyLoot(collider()->GetWorld(), &shape,
+                                                            ActionVariant::PickUpKeyDoor) };
 }
 
 void Bot2::setupSprites()

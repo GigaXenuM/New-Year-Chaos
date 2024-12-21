@@ -20,6 +20,12 @@ namespace Game
 
 class Player final : public PhysicalEntity, public IActionHandler
 {
+    enum class KeyState
+    {
+        DoorKey,
+        BridgeKey,
+    };
+
 public:
     Player(b2World *world, sf::Shape *shape, bool menuMode = false);
 
@@ -79,7 +85,6 @@ private:
     float _healthUpdateTimer{ 0.0f };
 
     bool _isWon{ false };
-    bool _hasKey{ false };
 
     sf::Sprite _sprite;
 
@@ -99,6 +104,8 @@ private:
     std::unordered_map<std::string, bool> _mandatoryHints;
     std::set<std::string> _showedMandatoryHints;
     Util::LimitedValueF _mandatoryHintTimer;
+
+    Util::EnumFlag<KeyState> _keyState;
 };
 
 } // namespace Game
