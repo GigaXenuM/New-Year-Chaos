@@ -22,6 +22,9 @@ public:
         MaxReached,
     };
 
+    LimitedValue()
+    {
+    }
     explicit LimitedValue(T value, T min, T max) : _value{ value }, _min{ min }, _max{ max }
     {
         assert(min <= value && value <= max);
@@ -65,6 +68,12 @@ public:
     {
         setValue(_min);
     }
+    void changeLimits(T min, T max)
+    {
+        _min = min;
+        _max = max;
+        setValue(_value);
+    }
 
     T get() const
     {
@@ -81,8 +90,8 @@ public:
 
 private:
     T _value{ T{} };
-    const T _min{ { T{} } };
-    const T _max{ T{} };
+    T _min{ T{} };
+    T _max{ T{} };
     EnumFlag<State> _state;
 };
 

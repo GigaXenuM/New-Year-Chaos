@@ -13,7 +13,7 @@ OpenBridgeActionItem::OpenBridgeActionItem(b2World *world, sf::Shape *shape, Bri
     : AbstractPhysicalItem{ ColliderFactory::create<ItemType::NonCollided>(world, { shape }) },
       _bridge{ bridge },
       _sprite{ ResourseManager::getInstance()->getTextures(TextureType::Stone).front() },
-      _hintText{ "E - зняти ланцюги" }
+      _hintText{ "[У] - зняти ланцюги" }
 {
     _sprite.scale(1.3f, 1.3f);
 }

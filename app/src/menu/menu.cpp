@@ -16,6 +16,13 @@
 namespace Menu
 {
 
+namespace
+{
+const sf::Color DEFAULT_TEXT_COLOR{ 54, 255, 137 };
+const sf::Color LOSE_TEXT_COLOR{ 196, 22, 62 };
+const sf::Color OUTLINE_COLOR{ 66, 59, 65 };
+} // namespace
+
 sf::FloatRect viewRect(const sf::View *view)
 {
     const sf::Vector2f center{ view->getCenter() };
@@ -53,6 +60,8 @@ Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vecto
     _title.setFont(ResourseManager::getInstance()->getFont(FontType::DejaVuSansBold));
     _title.setCharacterSize(30);
     _title.setCharacterSize(70);
+    _title.setOutlineThickness(5);
+    _title.setOutlineColor(OUTLINE_COLOR);
 }
 
 Menu::~Menu() = default;
@@ -105,7 +114,7 @@ void Menu::updateMenuLayout(const MenuType type)
     {
     case MenuType::Default:
     {
-        titleColor = sf::Color::Green;
+        titleColor = DEFAULT_TEXT_COLOR;
         tileText = "НОВОРІЧНИЙ ХАОС";
         _currentLayout = _defaultLayout.get();
         _soundController->playMusic(MusicController::SoundAssignment::DefaultMenu);
@@ -114,7 +123,7 @@ void Menu::updateMenuLayout(const MenuType type)
     case MenuType::GameOver:
     {
         _currentLayout = _looseLayout.get();
-        titleColor = sf::Color::Red;
+        titleColor = LOSE_TEXT_COLOR;
         tileText = "ШОСЬ МЕНІ ЗЛЕ";
         _soundController->playMusic(MusicController::SoundAssignment::LoseMenu);
         break;
@@ -122,7 +131,7 @@ void Menu::updateMenuLayout(const MenuType type)
     case MenuType::Victory:
     {
         tileText = "НАРЕШТІ НАЙШОВ ТІ САНИ";
-        titleColor = sf::Color::Green;
+        titleColor = DEFAULT_TEXT_COLOR;
         _currentLayout = _defaultLayout.get();
         _soundController->playMusic(MusicController::SoundAssignment::WinMenu);
         break;

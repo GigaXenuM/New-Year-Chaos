@@ -15,7 +15,7 @@ HealthLoot::HealthLoot(b2World *world, sf::Shape *shape)
 
 std::string HealthLoot::hintText() const
 {
-    return "E - взяти медичний набір";
+    return "[У] - взяти медичний набір";
 }
 
 bool HealthLoot::needDestroying() const

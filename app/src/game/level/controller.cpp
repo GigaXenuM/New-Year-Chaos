@@ -147,7 +147,7 @@ void Controller::keyReleaseEvent(KeyReleaseEvent *event)
         executeAvailableActions();
     if (event->key() == sf::Keyboard::Q)
         _player->restoreFreezePoints();
-    if (event->key() == sf::Keyboard::H)
+    if (event->key() == sf::Keyboard::F)
         _player->restoreHealthPoints();
 }
 

@@ -20,7 +20,9 @@ namespace Game
 namespace
 {
 constexpr float DEFAULT_ANIMATION_FRAME_TIME{ 0.075 };
-constexpr float DEFAULT_MANTADORY_HINT_TIME{ 5 };
+constexpr float MANTADORY_HINT_TIME_DEFINER{ 0.03125 };
+constexpr float MIN_MANTADORY_HINT_TIME{ 2 };
+constexpr float MAX_MANTADORY_HINT_TIME{ 5 };
 } // namespace
 
 Player::Player(b2World *world, sf::Shape *shape, bool menuMode)
@@ -36,7 +38,8 @@ Player::Player(b2World *world, sf::Shape *shape, bool menuMode)
       _idleAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_idle),
                       DEFAULT_ANIMATION_FRAME_TIME },
       _jumpAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_jump) },
-      _mandatoryHintTimer{ DEFAULT_MANTADORY_HINT_TIME, 0.f, DEFAULT_MANTADORY_HINT_TIME },
+      _mandatoryHintTimeDefiner{ MIN_MANTADORY_HINT_TIME, MIN_MANTADORY_HINT_TIME,
+                                 MAX_MANTADORY_HINT_TIME },
       _moveSounds{ { SoundAssignment::Walk,
                      sf::Sound{ ResourseManager::getInstance()->getSoundBuffer(SoundType::Walk) } },
                    { SoundAssignment::Run,
@@ -51,7 +54,8 @@ Player::Player(b2World *world, sf::Shape *shape, bool menuMode)
     if (!_menuMode)
     {
         setMentadoryHint("Чорт... Галімі сніговики вкрали подарунки. Треба повернути!", true);
-        setMentadoryHint("Ф/В - переміщення\nПробіл - Стрибати\nЛКМ - Стріляти", true);
+        setMentadoryHint("[Ф], [В] - переміщення\n[Пробіл] - Стрибнути\n[ЛКМ] - Кинути сніжку",
+                         true);
     }
 
     _pickUpSound.setPitch(1.5f);
@@ -124,7 +128,7 @@ void Player::damage(float power)
         updateState(State::Dead, true);
 
     if (_health.get() < _health.max() / 2.f)
-        setMentadoryHint("Р - юзай аптечку", true);
+        setMentadoryHint("[А] - юзай аптечку", true);
 }
 
 void Player::freezeDamage(float power)
@@ -136,7 +140,7 @@ void Player::freezeDamage(float power)
     _freeze.move(-power);
 
     if (_freeze.get() < _freeze.max() / 2.f)
-        setMentadoryHint("Й - випити чай, щоб зігрітись", true);
+        setMentadoryHint("[Й] - випити чай, щоб зігрітись", true);
 
     if (_freeze.isMin())
         damage(power - lastValue);
@@ -368,11 +372,16 @@ std::string Player::hintText(IAction *action)
         if (!isTimerFinished)
             return _hint.text();
 
-        _mandatoryHintTimer.setMin();
-
         const auto [text, disposable]{ *_mandatoryHints.begin() };
         if (disposable)
+        {
             _showedMandatoryHints.insert(text);
+            _mandatoryHintTimeDefiner.setValue(MANTADORY_HINT_TIME_DEFINER * text.size());
+            _mandatoryHintTimer.changeLimits(_mandatoryHintTimer.min(),
+                                             _mandatoryHintTimeDefiner.get());
+            _mandatoryHintTimer.setMin();
+        }
+
         _mandatoryHints.erase(_mandatoryHints.cbegin());
         return text;
     }

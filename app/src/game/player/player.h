@@ -112,6 +112,7 @@ private:
     std::unordered_map<std::string, bool> _mandatoryHints;
     std::set<std::string> _showedMandatoryHints;
     Util::LimitedValueF _mandatoryHintTimer;
+    Util::LimitedValueF _mandatoryHintTimeDefiner;
 
     Util::EnumFlag<KeyState> _keyState;
 
