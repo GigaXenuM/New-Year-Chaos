@@ -77,6 +77,10 @@ template <> b2FixtureDef fixtureDefinition<ItemType::DeadZone>()
 {
     return frictionDencityFixDef();
 }
+template <> b2FixtureDef fixtureDefinition<ItemType::WinZone>()
+{
+    return frictionDencityFixDef();
+}
 template <> b2FixtureDef fixtureDefinition<ItemType::WarmZone>()
 {
     return frictionDencityFixDef();
@@ -111,6 +115,10 @@ template <> b2BodyDef bodyDefinition<ItemType::WaterZone>()
     return staticBodyDef();
 }
 template <> b2BodyDef bodyDefinition<ItemType::DeadZone>()
+{
+    return staticBodyDef();
+}
+template <> b2BodyDef bodyDefinition<ItemType::WinZone>()
 {
     return staticBodyDef();
 }

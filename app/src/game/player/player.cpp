@@ -20,7 +20,7 @@ namespace Game
 namespace
 {
 constexpr float DEFAULT_ANIMATION_FRAME_TIME{ 0.075 };
-constexpr float DEFAULT_MANTADORY_HINT_TIME{ 3 };
+constexpr float DEFAULT_MANTADORY_HINT_TIME{ 5 };
 } // namespace
 
 Player::Player(b2World *world, sf::Shape *shape, bool menuMode)
@@ -47,6 +47,12 @@ Player::Player(b2World *world, sf::Shape *shape, bool menuMode)
     _sprite.setScale({ _scale, _scale });
     for (auto &[_, value] : _moveSounds)
         value.setLoop(true);
+
+    if (!_menuMode)
+    {
+        setMentadoryHint("Чорт... Галімі сніговики вкрали подарунки. Треба повернути!", true);
+        setMentadoryHint("Ф/В - переміщення\nПробіл - Стрибати\nЛКМ - Стріляти", true);
+    }
 
     _pickUpSound.setPitch(1.5f);
 }
@@ -130,7 +136,7 @@ void Player::freezeDamage(float power)
     _freeze.move(-power);
 
     if (_freeze.get() < _freeze.max() / 2.f)
-        setMentadoryHint("Q - випити чай, щоб зігрітись", true);
+        setMentadoryHint("Й - випити чай, щоб зігрітись", true);
 
     if (_freeze.isMin())
         damage(power - lastValue);
@@ -188,7 +194,8 @@ void Player::visitActions(const std::vector<IAction *> &actions)
         }
     }
 
-    _hint.setText(hintText(_availableAction));
+    if (!_menuMode)
+        _hint.setText(hintText(_availableAction));
 }
 
 void Player::executeAvailableAction()
@@ -232,6 +239,11 @@ void Player::executeAvailableAction()
     {
         _pickUpSound.play();
         ++_countOfHealthItem;
+        break;
+    }
+    case ActionVariant::FinishGame:
+    {
+        setWinStatus(true);
         break;
     }
     case ActionVariant::MountainObstacle:
@@ -389,6 +401,10 @@ std::string Player::hintText(IAction *action)
     case ActionVariant::PickUpKeyBridge:
     case ActionVariant::MountainObstacle:
         return action->hintText();
+        break;
+    case ActionVariant::FinishGame:
+        return action->hintText();
+        break;
     }
 
     assert(false);

@@ -5,6 +5,7 @@ namespace Game
 
 enum class ActionVariant
 {
+    FinishGame,
     PickUpTea,
     PickUpKeyDoor,
     PickUpKeyBridge,

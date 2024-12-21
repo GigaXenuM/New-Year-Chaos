@@ -9,9 +9,15 @@ namespace Game
 {
 
 WinZone::WinZone(b2World *world, sf::Shape *shape)
-    : AbstractPhysicalItem{ ColliderFactory::create<ItemType::WaterZone>(world, { shape }) },
+    : AbstractPhysicalItem{ ColliderFactory::create<ItemType::WinZone>(world, { shape }) },
       _sprite(ResourseManager::getInstance()->getTextures(TextureType::Win_gift_zone)[0])
 {
+}
+
+std::string WinZone::hintText() const
+{
+    return "Хах... це було легше чим я собі думав!\n Давай подаруємо цьому світу свято\n натисни У "
+           "для завершення гри.";
 }
 
 bool WinZone::needDestroying() const

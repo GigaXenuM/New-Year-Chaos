@@ -33,9 +33,9 @@ std::string hintTextBy(ActionVariant variant)
     case ActionVariant::PickUpKeyBridge:
         [[fallthrough]];
     case ActionVariant::PickUpKeyDoor:
-        return "E - взяти ключ";
+        return "У - взяти ключ";
     case ActionVariant::PickUpTea:
-        return "E - взяти чай";
+        return "У - взяти чай";
     default:
         assert(false && "Is not a loot");
     }
