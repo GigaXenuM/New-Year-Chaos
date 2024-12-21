@@ -5,6 +5,8 @@
 #include <items/deadzone/waterzone.h>
 #include <items/loot/tealoot.h>
 
+#include <resources/resourcemanager.h>
+
 namespace Game
 {
 
@@ -50,6 +52,12 @@ ContactListener *ContactListener::instance()
 {
     static auto instance{ std::unique_ptr<ContactListener>{ new ContactListener } };
     return instance.get();
+}
+
+ContactListener::ContactListener()
+    : _shootSound{ ResourseManager::getInstance()->getSoundBuffer(SoundType::Snowball) }
+{
+    _shootSound.setPitch(1.5f);
 }
 
 UserData ContactListener::toUserData(b2Contact *contact)
@@ -132,6 +140,7 @@ void ContactListener::handleContact(b2Contact *contact, bool contacted)
                                     || data.itemTypeToItem.contains(ItemType::WarmZone) };
             if (!shooterCollided && !nonCollided)
             {
+                _shootSound.play();
                 bullet->updateState(PhysicalBullet::State::Collide, true);
 
                 if (data.types.test(ItemType::Entity))

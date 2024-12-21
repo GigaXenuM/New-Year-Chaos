@@ -4,6 +4,8 @@
 #include "items/itemtype.h"
 #include "util/enumflag.h"
 
+#include <SFML/Audio/Sound.hpp>
+
 #include <box2d/b2_contact.h>
 #include <box2d/b2_world_callbacks.h>
 
@@ -31,10 +33,13 @@ public:
     static ContactListener *instance();
 
 private:
-    ContactListener() = default;
+    ContactListener();
 
     UserData toUserData(b2Contact *contact);
     void handleContact(b2Contact *contact, bool contacted);
+
+    sf::Sound _shootSound;
+    sf::Sound _lootSound;
 };
 
 } // namespace Game

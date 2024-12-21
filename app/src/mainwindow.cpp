@@ -16,7 +16,7 @@
 #include "menu/menu.h"
 
 #include "game/scene.h"
-#include "resources/resourcemanager.h"
+#include "musiccontroller.h"
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Window/Event.hpp>
@@ -36,11 +36,11 @@ MainWindow::MainWindow(unsigned int width, unsigned int height, const char *name
     : sf::RenderWindow{ sf::VideoMode({ width, height }), name },
       EventHandler{ nullptr },
       _viewSize{ defineViewSize(sf::Vector2f(width, height)) },
-      _menu{ std::make_unique<Menu::Menu>(this, this, _viewSize) },
-      _scene{ std::make_unique<Game::Scene>(this, this, _viewSize) },
+      _soundController{ std::make_shared<MusicController>() },
+      _menu{ std::make_unique<Menu::Menu>(this, this, _viewSize, _soundController) },
+      _scene{ std::make_unique<Game::Scene>(this, this, _viewSize, _soundController) },
       _latestMouseMoveEvent{ {}, {} }
 {
-    initBackgroundMusic();
     composeMenu();
 
     switchView();
@@ -63,14 +63,13 @@ int MainWindow::gameLoop()
         _currentView->update(deltatime);
         if (_scene->isGameOver())
         {
-            _backgroundMusic.stop();
             _menu->updateMenuLayout(MenuType::GameOver);
             switchView(_menu.get());
         }
         if (_scene->isPlayerWon())
         {
             _menu->updateMenuLayout(MenuType::Victory);
-            _scene = std::make_unique<Game::Scene>(this, this, _viewSize);
+            _scene = std::make_unique<Game::Scene>(this, this, _viewSize, _soundController);
             switchView(_menu.get());
         }
 
@@ -159,18 +158,11 @@ void MainWindow::composeMenu()
     _menu->registerAction(Menu::ActionVariant::RestartGame,
                           [this]()
                           {
-                              _scene = std::make_unique<Game::Scene>(this, this, _viewSize);
+                              _scene = std::make_unique<Game::Scene>(this, this, _viewSize,
+                                                                     _soundController);
                               _menu->updateMenuLayout(MenuType::Default);
                               switchView(_scene.get());
                           });
-}
-
-void MainWindow::initBackgroundMusic()
-{
-    _backgroundMusic.openFromFile(
-        ResourseManager::getInstance()->getSoundPath(SoundType::Background_music).string());
-    _backgroundMusic.setLoop(true);
-    _backgroundMusic.setVolume(10);
 }
 
 void MainWindow::switchView()
@@ -185,6 +177,9 @@ void MainWindow::switchView()
 
 void MainWindow::switchView(IView *view)
 {
+    if (view == _scene.get())
+        _soundController->playMusic(MusicController::SoundAssignment::Geme);
+
     grabContext(view);
     _currentView = view;
 }

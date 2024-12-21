@@ -85,7 +85,6 @@ set(HEADER_FILES
     src/action/actionstorage.h
 
     src/util/timeaccumulator.h
-    src/menu/gameovermenu.h
 
     src/util/enumflag.h
     src/util/geometryoperation.h
@@ -95,6 +94,8 @@ set(HEADER_FILES
     src/util/typetraits.h
 
     src/game/tips/hint.h
+
+    src/musiccontroller.h
 )
 
 set(SOURCE_FILES
@@ -162,13 +163,14 @@ set(SOURCE_FILES
     src/util/timeaccumulator.cpp
 
     src/menu/menu.cpp
-    src/menu/gameovermenu.cpp
 
     src/util/debugdrawer.cpp
     src/util/geometryoperation.cpp
     src/util/timeaccumulator.cpp
 
     src/game/tips/hint.cpp
+
+    src/musiccontroller.cpp
 )
 
 include_directories(

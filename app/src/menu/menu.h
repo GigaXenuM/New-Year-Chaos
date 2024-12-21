@@ -11,6 +11,7 @@
 #include <memory>
 
 class Layout;
+class MusicController;
 
 namespace sf
 {
@@ -35,7 +36,7 @@ class Menu : public IView, public Action::ActionStorage<ActionVariant>
 {
 public:
     explicit Menu(sf::RenderTarget *renderTarget, EventHandler *parent,
-                  const sf::Vector2f &viewSize);
+                  const sf::Vector2f &viewSize, std::shared_ptr<MusicController> soundController);
     ~Menu();
 
     void update(float deltatime) override;
@@ -49,6 +50,8 @@ protected:
 private:
     void initLooseLayout();
     void initDefaultLayout();
+
+    Game::Level::Controller *levelControllerBy(MenuType type);
 
     void updateBackground(float deltatime);
 
@@ -70,6 +73,8 @@ private:
 
     Util::LimitedValueF _jumpTimer;
     Util::LimitedValueF _shootTimer;
+
+    std::shared_ptr<MusicController> _soundController;
 };
 
 } // namespace Menu

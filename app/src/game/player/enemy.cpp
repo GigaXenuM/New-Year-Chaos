@@ -3,8 +3,6 @@
 #include "items/colliderfactory.h"
 #include "weapon/snowballgun.h"
 
-#include <resources/resourcemanager.h>
-
 namespace Game
 {
 
@@ -15,8 +13,6 @@ Enemy::Enemy(b2World *world, sf::Shape *shape, const PhysicalEntity *targetEntit
       _targetEntity{ targetEntity },
       _pos{ boundingRect().getPosition() }
 {
-    _shootSound.openFromFile(
-        ResourseManager::getInstance()->getSoundPath(SoundType::Snowball).string());
 }
 
 void Enemy::updatePhysics()
@@ -101,8 +97,11 @@ void Enemy::shootingScript()
     if (!_isAvailableToShoot)
         return;
 
-    sf::Vector2f targetPos{ Util::pointBy(_targetEntity->boundingRect(), { Align::Top }) };
-    //_shootSound.play();
+    sf::Vector2f playerPos{ Util::pointBy(_targetEntity->boundingRect(),
+                                          Util::ALIGN_CENTER_STATE) };
+    sf::Vector2f currentPos{ Util::pointBy(boundingRect(), Util::ALIGN_CENTER_STATE) };
+    float distance{ Util::distance(playerPos - currentPos) };
+    sf::Vector2f targetPos{ playerPos - sf::Vector2f{ 0, distance / 2 } };
     shoot(targetPos);
 }
 

@@ -8,6 +8,8 @@
 
 #include <memory>
 
+class MusicController;
+
 namespace sf
 {
 class RenderTarget;
@@ -36,7 +38,7 @@ class Scene : public IView
 {
 public:
     explicit Scene(sf::RenderTarget *renderTarget, EventHandler *parent,
-                   const sf::Vector2f &viewSize);
+                   const sf::Vector2f &viewSize, std::shared_ptr<MusicController> soundController);
     virtual ~Scene();
 
     void update(float deltatime) override;
@@ -58,6 +60,7 @@ private:
     std::unique_ptr<HUDComponents> _hudComponents;
 
     Util::EnumFlag<State> _sceneState;
+    std::shared_ptr<MusicController> _soundController;
 };
 
 } // namespace Game

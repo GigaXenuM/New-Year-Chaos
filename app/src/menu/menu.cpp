@@ -5,6 +5,7 @@
 #include "controller.h"
 #include "item/abstractitem.h"
 #include "layout/verticallayout.h"
+#include "musiccontroller.h"
 #include "player/player.h"
 #include "resources/resourcemanager.h"
 
@@ -24,7 +25,8 @@ sf::FloatRect viewRect(const sf::View *view)
     return { rectPosition, size };
 }
 
-Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vector2f &viewSize)
+Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vector2f &viewSize,
+           std::shared_ptr<MusicController> soundController)
     : IView{ renderTarget, parent },
       _renderTarget{ renderTarget },
       _view{ std::make_unique<sf::View>(sf::FloatRect{ {}, viewSize }) },
@@ -40,7 +42,8 @@ Menu::Menu(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vecto
                                                                       "level/menu.tmx", _view.get(),
                                                                       true) },
       _jumpTimer{ 0.f, 0.f, 3.f },
-      _shootTimer{ 0.f, 0.f, 4.f }
+      _shootTimer{ 0.f, 0.f, 4.f },
+      _soundController{ std::move(soundController) }
 {
     initDefaultLayout();
     initLooseLayout();
@@ -92,29 +95,36 @@ void Menu::updateMenuLayout(const MenuType type)
     std::string tileText;
     sf::Color titleColor;
 
+    auto *nextLevelController{ levelControllerBy(type) };
+    if (_currentLevelController == nextLevelController)
+        return;
+
+    _currentLevelController = nextLevelController;
+
     switch (type)
     {
     case MenuType::Default:
     {
-        _currentLevelController = _defaultLevelController.get();
         titleColor = sf::Color::Green;
         tileText = "НОВОРІЧНИЙ ХАОС";
         _currentLayout = _defaultLayout.get();
+        _soundController->playMusic(MusicController::SoundAssignment::DefaultMenu);
         break;
     }
     case MenuType::GameOver:
     {
-        _currentLevelController = _loseLevelController.get();
         _currentLayout = _looseLayout.get();
         titleColor = sf::Color::Red;
         tileText = "ШОСЬ МЕНІ ЗЛЕ";
+        _soundController->playMusic(MusicController::SoundAssignment::LoseMenu);
         break;
     }
     case MenuType::Victory:
     {
-        _currentLevelController = _winLevelController.get();
-        tileText = "ПІШОВ МАРМЕЛАД ПО КИШКАХ";
+        tileText = "НАРЕШТІ НАЙШОВ ТІ САНИ";
         titleColor = sf::Color::Green;
+        _currentLayout = _defaultLayout.get();
+        _soundController->playMusic(MusicController::SoundAssignment::WinMenu);
         break;
     }
     default:
@@ -187,6 +197,23 @@ void Menu::initDefaultLayout()
 
     _defaultLayout->addItem(startButton);
     _defaultLayout->addItem(exitButton);
+}
+
+Game::Level::Controller *Menu::levelControllerBy(MenuType type)
+{
+    switch (type)
+    {
+    case MenuType::Default:
+        return _defaultLevelController.get();
+    case MenuType::GameOver:
+        return _loseLevelController.get();
+    case MenuType::Victory:
+        return _winLevelController.get();
+    }
+
+    assert(false);
+
+    return nullptr;
 }
 
 void Menu::updateBackground(float deltatime)

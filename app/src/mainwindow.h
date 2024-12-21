@@ -1,13 +1,13 @@
 #pragma once
 
-#include "SFML/Audio/Music.hpp"
 #include "event/eventhandler.h"
 #include "event/mouseevents/mousemoveevent.h"
-#include "gameovermenu.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include <memory>
+
+class MusicController;
 
 class IView;
 namespace Menu
@@ -35,15 +35,15 @@ private:
     void handleSfmlEvent(const sf::Event &event);
 
     void composeMenu();
-    void initBackgroundMusic();
 
     void switchView();
     void switchView(IView *view);
 
     sf::Clock _clock;
-    sf::Music _backgroundMusic;
 
     sf::Vector2f _viewSize;
+
+    std::shared_ptr<MusicController> _soundController;
 
     std::unique_ptr<Menu::Menu> _menu;
     std::unique_ptr<Game::Scene> _scene;

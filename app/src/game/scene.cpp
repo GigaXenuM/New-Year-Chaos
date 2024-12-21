@@ -5,19 +5,22 @@
 #include "event/mouseevents/mousescrollevent.h"
 
 #include "player/player.h"
+#include "musiccontroller.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
 namespace Game
 {
-Scene::Scene(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vector2f &viewSize)
+Scene::Scene(sf::RenderTarget *renderTarget, EventHandler *parent, const sf::Vector2f &viewSize,
+             std::shared_ptr<MusicController> soundController)
     : IView{ renderTarget, parent },
       _renderTarget{ renderTarget },
       _view{ std::make_unique<sf::View>(sf::FloatRect{ {}, viewSize }) },
       _levelController{ std::make_unique<Level::Controller>(renderTarget, this, "level/terrain.tmx",
                                                             _view.get()) },
       _hudComponents{ std::make_unique<HUDComponents>(_renderTarget, _view.get(),
-                                                      _levelController->player()) }
+                                                      _levelController->player()) },
+      _soundController{ std::move(soundController) }
 {
 }
 

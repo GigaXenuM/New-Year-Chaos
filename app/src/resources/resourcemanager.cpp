@@ -31,8 +31,14 @@ void ResourseManager::loadAllFonst()
 
 void ResourseManager::loadAllSounds()
 {
-    loadSounds("sounds/", SoundType::Background_music, "Background_music");
+    loadSounds("sounds/", SoundType::Game, "game");
+    loadSounds("sounds/", SoundType::WinMenu, "win_menu");
+    loadSounds("sounds/", SoundType::LoseMenu, "lose_menu");
+    loadSounds("sounds/", SoundType::DefaultMenu, "default_menu");
+    loadSounds("sounds/", SoundType::Run, "run");
+    loadSounds("sounds/", SoundType::Walk, "walk");
     loadSounds("sounds/", SoundType::Snowball, "Snowball");
+    loadSounds("sounds/", SoundType::PickUp, "pick_up");
 }
 
 void ResourseManager::loadAllTextures()
@@ -109,8 +115,13 @@ void ResourseManager::loadSounds(const std::filesystem::path &path, const SoundT
 
 void ResourseManager::loadSound(const std::filesystem::path &filePath, const SoundType type)
 {
-    _sounds[type] = std::move(filePath);
-    std::cout << "Loaded sound path: " << filePath << std::endl;
+    sf::SoundBuffer buffer;
+    if (!buffer.loadFromFile(filePath.string()))
+        std::cerr << "Error loading sound: " << filePath << std::endl;
+
+    _sounds[type] = buffer;
+
+    std::cout << "Loaded sound path: " << filePath.string() << std::endl;
 }
 
 void ResourseManager::loadfont(const std::string &filePath, const FontType type)
@@ -204,7 +215,7 @@ sf::Font &ResourseManager::getFont(const FontType type)
     return it->second;
 }
 
-std::filesystem::path &ResourseManager::getSoundPath(const SoundType type)
+sf::SoundBuffer &ResourseManager::getSoundBuffer(const SoundType type)
 {
     auto it = _sounds.find(type);
     if (it == _sounds.end())

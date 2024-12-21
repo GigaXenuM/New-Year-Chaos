@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SFML/Audio/Sound.hpp"
 #include "action/iactionhandler.h"
 #include "animation/animation.h"
 #include "items/entity/physicalentity.h"
@@ -24,6 +25,12 @@ class Player final : public PhysicalEntity, public IActionHandler
     {
         DoorKey,
         BridgeKey,
+    };
+    enum class SoundAssignment
+    {
+        None,
+        Run,
+        Walk,
     };
 
 public:
@@ -68,6 +75,7 @@ private:
     void updateHealthPoint(float deltatime);
     void updateStaminaPoint(float deltatime);
     void updateHint(float deltatime);
+    void updateMoveSound();
 
     void restoreStaminaPoints(float deltatime);
 
@@ -106,6 +114,10 @@ private:
     Util::LimitedValueF _mandatoryHintTimer;
 
     Util::EnumFlag<KeyState> _keyState;
+
+    std::unordered_map<SoundAssignment, sf::Sound> _moveSounds;
+    sf::Sound _pickUpSound;
+    SoundAssignment _currentMoveSound{ SoundAssignment::None };
 };
 
 } // namespace Game

@@ -1,7 +1,8 @@
 #pragma once
 
-#include <filesystem>
+#include <SFML/Audio.hpp>
 
+#include <filesystem>
 #include <unordered_map>
 #include <vector>
 
@@ -19,8 +20,14 @@ enum class FontType
 
 enum class SoundType
 {
-    Background_music,
+    Game,
+    WinMenu,
+    LoseMenu,
+    DefaultMenu,
+    Walk,
+    Run,
     Snowball,
+    PickUp,
 };
 
 enum class TextureType
@@ -93,7 +100,7 @@ public:
     void loadResourses();
     [[nodiscard]] sf::Font &getFont(const FontType type);
     [[nodiscard]] TexturePack &getTextures(const TextureType type);
-    [[nodiscard]] std::filesystem::path &getSoundPath(const SoundType type);
+    [[nodiscard]] sf::SoundBuffer &getSoundBuffer(const SoundType type);
 
 private:
     ResourseManager() = default;
@@ -119,5 +126,5 @@ private:
 private:
     std::unordered_map<FontType, sf::Font> _fonts;
     std::unordered_map<TextureType, TexturePack> _textures;
-    std::unordered_map<SoundType, std::filesystem::path> _sounds;
+    std::unordered_map<SoundType, sf::SoundBuffer> _sounds;
 };

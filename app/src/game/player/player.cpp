@@ -25,7 +25,7 @@ constexpr float DEFAULT_MANTADORY_HINT_TIME{ 3 };
 
 Player::Player(b2World *world, sf::Shape *shape, bool menuMode)
     : PhysicalEntity(ColliderFactory::create<ItemType::Entity>(world, { shape }), { 5, 45 },
-                     std::make_unique<SnowBallGun>(this, world, 1.f, 150.f)),
+                     std::make_unique<SnowBallGun>(this, world, 2.f, 25.f)),
       _menuMode{ menuMode },
       _runAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_run),
                      DEFAULT_ANIMATION_FRAME_TIME },
@@ -36,9 +36,19 @@ Player::Player(b2World *world, sf::Shape *shape, bool menuMode)
       _idleAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_idle),
                       DEFAULT_ANIMATION_FRAME_TIME },
       _jumpAnimation{ ResourseManager::getInstance()->getTextures(TextureType::Player_jump) },
-      _mandatoryHintTimer{ DEFAULT_MANTADORY_HINT_TIME, 0.f, DEFAULT_MANTADORY_HINT_TIME }
+      _mandatoryHintTimer{ DEFAULT_MANTADORY_HINT_TIME, 0.f, DEFAULT_MANTADORY_HINT_TIME },
+      _moveSounds{ { SoundAssignment::Walk,
+                     sf::Sound{ ResourseManager::getInstance()->getSoundBuffer(SoundType::Walk) } },
+                   { SoundAssignment::Run,
+                     sf::Sound{
+                         ResourseManager::getInstance()->getSoundBuffer(SoundType::Run) } } },
+      _pickUpSound{ ResourseManager::getInstance()->getSoundBuffer(SoundType::PickUp) }
 {
     _sprite.setScale({ _scale, _scale });
+    for (auto &[_, value] : _moveSounds)
+        value.setLoop(true);
+
+    _pickUpSound.setPitch(1.5f);
 }
 
 void Player::restoreFreezePoints()
@@ -202,23 +212,25 @@ void Player::executeAvailableAction()
     }
     case ActionVariant::PickUpTea:
     {
-        // setMentadoryHint("Q - use tea to warm up");
+        _pickUpSound.play();
         ++_countOfTeaItem;
         break;
     }
     case ActionVariant::PickUpKeyDoor:
     {
+        _pickUpSound.play();
         _keyState.set(KeyState::DoorKey);
         break;
     }
     case ActionVariant::PickUpKeyBridge:
     {
+        _pickUpSound.play();
         _keyState.set(KeyState::BridgeKey);
         break;
     }
     case ActionVariant::PickUpHealth:
     {
-        // setMentadoryHint("H - use aid kit to warm up");
+        _pickUpSound.play();
         ++_countOfHealthItem;
         break;
     }
@@ -262,7 +274,6 @@ void Player::updateAnimation(float deltatime)
     if (isMoved)
     {
         Animation &animation{ isStateActive(State::Run) ? _runAnimation : _walkAnimation };
-
         animation.start(deltatime, _sprite);
         const float direction{ isStateActive(State::Right) ? _scale : -_scale };
         _sprite.setScale({ direction, _scale });
@@ -297,6 +308,36 @@ void Player::updateHint(float deltatime)
     }
 
     _mandatoryHintTimer.move(deltatime);
+}
+
+void Player::updateMoveSound()
+{
+    const bool isMoved{ isStateActive(State::Right) || isStateActive(State::Left) };
+    if (isStateActive(State::OnGround) && isMoved)
+    {
+        SoundAssignment soundAssignment{ isStateActive(State::Run) ? SoundAssignment::Run
+                                                                   : SoundAssignment::Walk };
+        for (auto &[key, value] : _moveSounds)
+        {
+            if (key == soundAssignment)
+            {
+                if (_currentMoveSound != key)
+                {
+                    _currentMoveSound = key;
+                    value.play();
+                }
+                continue;
+            }
+            value.stop();
+        }
+
+        return;
+    }
+
+    if (_currentMoveSound != SoundAssignment::None)
+        for (auto &[_, value] : _moveSounds)
+            value.stop();
+    _currentMoveSound = SoundAssignment::None;
 }
 
 void Player::restoreStaminaPoints(float deltatime)
@@ -387,6 +428,7 @@ void Player::update(float deltatime)
     updateAnimation(deltatime);
     updateHealthPoint(deltatime);
     updateHint(deltatime);
+    updateMoveSound();
 }
 
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const
